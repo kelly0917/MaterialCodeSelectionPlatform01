@@ -1,0 +1,221 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">登录名/姓名：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" class="layui-input" id="txtName" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">角色：</label>
+            <div class="layui-input-inline">
+                <select name="role" lay-filter="appSelect" id="selFlag">
+                    <option value="-1" selected="selected">全部</option>
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">绑定状态：</label>
+            <div class="layui-input-inline">
+                <select name="flag" lay-filter="appSelect" id="selFlag">
+                    <option value="-1" selected="selected">全部</option>
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">新增</button>
+        </div>
+    </div>
+</div>
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="edit">编辑</a>
+
+    {{# if(d.Status==0){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-sm permission" action="4" lay-event="stop">停用</a>
+
+    <a class="layui-btn  layui-btn-sm layui-btn-radius permission" action="8" lay-event="setproject">分配项目</a>
+    <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="changepwd">修改密码</a>
+    <a class="layui-btn  layui-btn-sm layui-btn-normal permission" action="8" lay-event="changerole">修改角色</a>
+    {{# }else if(d.Status==1){}}
+    <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="start">启用</a>
+    {{# } }}
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">删除</a>
+</script>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            form.render();
+
+            window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/User/GetDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: 'Name', title: '姓名' }
+                        , { field: 'LoginName', title: '登录名' }
+                        ,  {
+                            field: 'Role', title: '角色', templet: function(d) {
+                                if (d.Role == 0) {
+                                    return "超级管理员";
+                                } if (d.Role == 1) {
+                                    return "应用管理员";
+                                }else {
+                                    return "普通用户";
+                                }
+                            }}
+                        , {
+                            field: 'Status', title: '状态', templet: function(d) {
+                                if (d.Status == 0) {
+                                    return "正常";
+                                } else {
+                                    return "停用";
+                                }
+                            }}
+                        , { field: 'right', title: '操作', width: 500, templet: "#barDemo",align:'center' }
+                    ]]
+                    , id: 'testReload',
+                  
+                });
+
+                //监听工具条
+                table.on('tool(useruv)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'detail') {
+
+                        layer.open({
+                            type: 2,
+                            content: '/User/Detail?id=' + data.Id + "&" + Math.random(),
+                            title: '查看用户信息',
+                            area: ["540px;", "320px;"]
+                        });
+
+                    } else if (obj.event === 'delete') {
+                        layer.confirm('确定删除吗', function (index) {
+                            $.ajax({
+                                url: '/User/DeleteById?id=' + data.Id + "&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("删除成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("删除失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    } else if (obj.event === 'edit') {
+                        layer.open({
+                            type: 2,
+                            content: '/User/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
+                            title: '编辑用户信息',
+                            area: ["540px;", "440px;"]//宽 高
+                        });
+                    }
+                    else if (obj.event === 'changerole') {
+                        layer.open({
+                            type: 2,
+                            content: '/User/ChangeRole?id=' + data.Id + "&" + Math.random(),
+                            title: '修改角色',
+                            area: ["400px;", "180px;"]//宽 高
+                        });
+                    }
+                    else if (obj.event === 'setproject') {
+                        layer.open({
+                            type: 2,
+                            content: '/User/SetProject?id=' + data.Id + "&" + Math.random(),
+                            title: '分配项目',
+                            area: ["700px;", "550px;"]//宽 高
+                        });
+                    }
+                    else if (obj.event === 'changepwd') {
+
+                        layer.open({
+                            type: 2,
+                            content: '/User/ChangePwd?id=' + data.Id + "&" + Math.random(),
+                            title: '修改密码',
+                            area: ["400px;", "220px;"]//宽 高
+                        });
+                     
+                    }
+                    else if (obj.event === 'stop') {
+                        layer.confirm('确定停用吗', function (index) {
+                            $.ajax({
+                                url: '/User/SaveStatus?id=' + data.Id + "&status=1&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("停用成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("停用失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+
+                     
+                    }
+                    else if (obj.event === 'start') {
+                        $.ajax({
+                            url: '/User/SaveStatus?id=' + data.Id + "&status=0" + Math.random(),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.Success) {
+                                    layer.msg("启用成功");
+                                    loadData();
+                                } else {
+                                    layer.msg("启用失败", { icon: 5 });
+                                }
+                            }
+                        });
+                     
+                    }
+                });
+            }
+            //刷新表格
+            window.flush = function () {
+                //table.reload("testReload", {
+                //    //page: { curr: 2 }
+                //});
+                loadData();
+            }
+            loadData();
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    content: '/User/AddOrEditPage',
+                    title: '新增用户信息',
+                    area: ["540px;", "440px;"]//宽 高
+                });
+            }
+
+        });
+
+
+</script>

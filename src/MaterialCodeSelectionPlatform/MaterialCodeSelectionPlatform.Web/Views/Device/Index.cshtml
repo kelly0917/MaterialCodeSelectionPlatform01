@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label">项目：</label>
+            <div class="layui-input-inline">
+                <select name="projectId" lay-search></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">装置名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" class="layui-input" id="txtName"/>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">装置代码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="code" class="layui-input" id="txtCode"/>
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">新增</button>
+        </div>
+    </div>
+</div>
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="edit">编辑</a>
+
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">删除</a>
+</script>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            form.render();
+
+            window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: 'ProjectName', title: '项目名称' },
+                        { field: 'Name', title: '装置名称' }
+                        , { field: 'Code', title: '装置代码' }
+                        , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
+                    ]]
+                    , id: 'testReload',
+                   
+                });
+
+                //监听工具条
+                table.on('tool(useruv)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'detail') {
+
+                        layer.open({
+                            type: 2,
+                            content: '/Device/Detail?id=' + data.Id + "&" + Math.random(),
+                            title: '查看装置信息',
+                            area: ["540px;", "340px;"]
+                        });
+
+                    } else if (obj.event === 'delete') {
+                        layer.confirm('确定删除吗', function (index) {
+                            $.ajax({
+                                url: '/Device/DeleteById?id=' + data.Id + "&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("删除成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("删除失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    } else if (obj.event === 'edit') {
+                        layer.open({
+                            type: 2,
+                            content: '/Device/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
+                            title: '编辑装置信息',
+                            area: ["540px;", "380px;"]//宽 高
+                        });
+                    }
+
+                 
+                });
+            }
+            //刷新表格
+            window.flush = function () {
+                loadData();
+            }
+            loadData();
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    content: '/Device/AddOrEditPage?projectId='+$("[name=projectId]").val(),
+                    title: '新增装置信息',
+                    area: ["540px;", "380px;"]//宽 高
+                });
+            }
+            var defaultValue = "@ViewData["projectId"]";
+            //select 控件加载完再初始化table
+            $("select[name=projectId]").dropdownlist({
+                url: "/Device/GetProjectList" + "?pt=" + Math.random(), defaultValue: defaultValue, complete: function () {
+                    loadData();
+                }
+            });    
+        });
+  
+</script>

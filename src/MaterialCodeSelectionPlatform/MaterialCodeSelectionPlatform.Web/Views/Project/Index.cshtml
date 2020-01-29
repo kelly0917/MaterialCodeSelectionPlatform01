@@ -1,0 +1,184 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">项目名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" class="layui-input" id="txtName" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">项目代码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="code" class="layui-input" id="txtCode" />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-inline">
+                <select name="status" lay-filter="appSelect" id="selFlag">
+                    <option value="-1" selected="selected">全部</option>
+                    <option value="0">正常</option>
+                    <option value="1">停用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">新增</button>
+        </div>
+    </div>
+</div>
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="edit">编辑</a>
+
+    {{# if(d.Status==0){ }}
+    <a class="layui-btn layui-btn-danger layui-btn-sm permission" action="4" lay-event="stop">停用</a>
+    <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="device">装置</a>
+    {{# }else if(d.Status==1){}}
+    <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="start">启用</a>
+    {{# } }}
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">删除</a>
+</script>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            form.render();
+
+            window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/Project/GetDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: 'Name', title: '项目名称' }
+                        , { field: 'Code', title: '项目代码' }
+                        , {
+                            field: 'Status', title: '状态', templet: function(d) {
+                                if (d.Status == 0) {
+                                    return "正常";
+                                } else {
+                                    return "停用";
+                                }
+                            }}
+                        , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
+                    ]]
+                    , id: 'testReload',
+                   
+                });
+
+                //监听工具条
+                table.on('tool(useruv)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'detail') {
+
+                        layer.open({
+                            type: 2,
+                            content: '/Project/Detail?id=' + data.Id + "&" + Math.random(),
+                            title: '查看项目信息',
+                            area: ["540px;", "320px;"]
+                        });
+
+                    } else if (obj.event === 'delete') {
+                        layer.confirm('确定删除吗', function (index) {
+                            $.ajax({
+                                url: '/Project/DeleteById?id=' + data.Id + "&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("删除成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("删除失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    } else if (obj.event === 'edit') {
+                        layer.open({
+                            type: 2,
+                            content: '/Project/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
+                            title: '编辑项目信息',
+                            area: ["540px;", "340px;"]//宽 高
+                        });
+                    }
+                
+                    else if (obj.event === 'stop') {
+                        layer.confirm('确定停用吗', function (index) {
+                            $.ajax({
+                                url: '/Project/SaveStatus?id=' + data.Id + "&status=1&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("停用成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("停用失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    }
+                    else if (obj.event === 'start') {
+                        $.ajax({
+                            url: '/Project/SaveStatus?id=' + data.Id + "&status=0" + Math.random(),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.Success) {
+                                    layer.msg("启用成功");
+                                    loadData();
+                                } else {
+                                    layer.msg("启用失败", { icon: 5 });
+                                }
+                            }
+                        });
+
+                    }
+                    else if (obj.event === 'device') {
+
+                        var projectId = data.Id;
+                        parent.locationPage('装置管理', "/Device/Index?projectId=" + projectId + "&pt=" + Math.random());  
+
+
+                    }
+                });
+            }
+            //刷新表格
+            window.flush = function () {
+                //table.reload("testReload", {
+                //    //page: { curr: 2 }
+                //});
+                loadData();
+            }
+            loadData();
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    content: '/Project/AddOrEditPage',
+                    title: '新增项目信息',
+                    area: ["540px;", "340px;"]//宽 高
+                });
+            }
+
+        });
+
+
+</script>

@@ -1,0 +1,112 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+    ViewData["Title"] = "系统登录";
+}
+
+
+<div class="layui-loginbody">
+    <div class="layui-loginwindow layui-anim layui-anim-scale">
+        <div class="layui-login-title">
+            <label>登录 login</label>
+        </div>
+        <div class="layui-login-input username">
+            <label>用户名：</label>
+            <input type="text" id="txtUserName" />
+        </div>
+        <div class="layui-login-input password">
+            <label>密&nbsp;&nbsp;&nbsp;码：</label>
+            <input type="password" id="txtPws" />
+        </div>
+
+
+        <div class="errMsg">
+            <label id="txtError"></label>
+        </div>
+        <div class="loginbtn">
+            <button id="btnLogin" onclick="login()">登&nbsp;&nbsp;&nbsp;录</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/script/md5.js"></script>
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+    //框架页跳转
+    if (top.location != self.location) {
+        top.location = self.location;
+    }
+
+    var isVerifyCode = "True" == "@ViewBag.IsVerifyCode";
+
+
+
+    var $username = $("#txtUserName");
+    var $password = $("#txtPws");
+    var $errorMsg = $("#txtError");
+    var $valiCode = $("#txtValiCode");
+
+
+    //隐藏错误信息框
+    //$errorMsg.hide();
+    function login() {
+            if (!validate()) {
+                return;
+        }
+
+
+
+        //密码传输加密
+        var pwd = $password.val();
+
+        //pwd = encodeURIComponent(pwd);
+
+        $.ajax({
+                url: "/Login/LoginUserName",
+            type: "post",
+            data: { userName: $username.val(), password: hex_md5(pwd) },
+            success: function (data) {
+                $errorMsg.html("");
+
+                if (data == "success") {
+                    layer.msg("登录成功！");
+                    window.location.href = "/Home/Index";
+                }
+                else {
+                     $errorMsg.html(data);
+                }
+            },
+            eror: function (errorData) {
+
+
+            }
+            });
+        }
+
+
+        //验证输入情况
+        function validate() {
+            if ($username.val() == '') {
+            $errorMsg.html("请输入用户名称");
+                return false;
+            }
+            if ($password.val() == '') {
+            $errorMsg.html("请输入密码");
+                return false;
+            }
+            if (isVerifyCode &&$valiCode.val() == '') {
+            $errorMsg.html("请输入验证码");
+                return false;
+            }
+            return true;
+        }
+
+
+
+    //回车响应
+    $(".layui-loginbody").keydown(
+        function (e) {
+            if (e.keyCode == 13) {
+                login();
+            }
+        });
+</script>

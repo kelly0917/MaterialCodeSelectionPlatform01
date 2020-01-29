@@ -1,0 +1,143 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+
+    .layui-input-block {
+        margin-left: 150px;
+    }
+</style>
+<link href="~/css/formSelects-v4.css" rel="stylesheet" />
+<script src="~/js/script/md5.js"></script>
+<script src="~/js/jsencrypt.min.js"></script>
+<form class="layui-form layui-form-model" action="" id="fmAddOrEdit">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="LoginName" required lay-verify="required|loginname" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Name" required lay-verify="required|trueNameverdata" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别：</label>
+                <div class="layui-input-block">
+                    <select name="Sex" lay-search>
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色：</label>
+        <div class="layui-input-block">
+            <select name="Role" lay-search>
+                <option value="0">超级管理员</option>
+                <option value="1">应用管理员</option>
+                <option value="2">普通用户</option>
+            </select>
+        </div>
+    </div>
+
+</form>
+
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+
+
+    layui.use(['form', 'upload', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var id = "@ViewData["id"]";
+        form.verify({
+            loginname: function (value, item) {
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+                var msg = "";
+                $.ajax({
+                    url: "/User/VerifData" + "?" + Math.random(),
+                    type: 'get',
+                    data: { "value": value, "type": "LoginName","id":"@ViewData["id"]" },
+                    dataType: 'json',
+                    async: false,
+                    success: function (result) {
+                        msg = result.Data;
+                    },
+                    error: function (errorResult) {
+                        debugger;
+                    }
+                });
+                if (msg == false) {
+                    return "登录名不能重复";
+                }
+
+            },
+            pwdCommit: function (value, item) {
+                var Password = $("input[name=Password]").val();
+                var CommitPassword = $("input[name=CommitPassword]").val();
+                if (Password != CommitPassword) {
+                    return '确认密码必需和密码相同';
+                }
+            }
+
+        });
+
+        form.render();
+        //时间控件绑定
+        laydate.render({
+            elem: '#date',
+            format: 'yyyy-MM-dd'
+        });
+
+        var editPwd;
+        var getdata = function () {
+
+            $.ajax({
+                url: "/User/GetById?Id=" + '@ViewData["Id"]' + "&pt=" + Math.random(),
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    debugger;
+                    $("#fmAddOrEdit").fillData(result.Data);
+                    editPwd = result.Data.Password;
+                    $("[name=CommitPassword]").val(editPwd);
+                },
+                error: function (errorResult) {
+                    debugger;
+                }
+            });
+
+        }
+        getdata();
+
+
+
+    });
+
+</script>

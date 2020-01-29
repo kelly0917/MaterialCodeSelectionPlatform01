@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "LookAttribute";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/javascript">
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function() {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+
+
+             window.loadData = function () {
+                var para = "?id=@ViewData["Id"]";
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/CommodityCodeSelect/GetAttributeByMCId' + para + "&" + Math.random()//数据接口
+                    , page: false//分页
+                    , cols: [[ //表头
+                        { field: 'AttributeName', title: '属性名' },
+                        { field: 'Value', title: '属性值' }
+                        
+                    ]]
+                    , id: 'testReload',
+
+                });
+             }
+        });
+</script>

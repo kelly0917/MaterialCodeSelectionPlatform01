@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+<style>
+    .selType {
+        display: none;
+    }
+</style>
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <label class="layui-form-label">项目：</label>
+            <div class="layui-input-inline">
+                <select lay-search></select>
+            </div>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <label class="layui-form-label">装置：</label>
+            <div class="layui-input-inline">
+                <select name="deviceId" lay-search></select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label">物资类型：</label>
+            <div class="layui-input-inline" id="divsel1">
+                <select lay-search name="sel1" lay-filter="sel1"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel2">
+                <select lay-search name="sel2" lay-filter="sel2"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel3">
+                <select lay-search name="sel3"  lay-filter="sel3"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel4">
+                <select lay-search name="sel4" lay-filter="sel4"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel5">
+                <select lay-search name="sel5" lay-filter="sel5"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel6">
+                <select lay-search name="sel6" lay-filter="sel6"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel7">
+                <select lay-search name="sel7" lay-filter="sel7"></select>
+            </div>
+            <div class="layui-input-inline  selType" id="divsel8">
+                <select lay-search name="sel8" lay-filter="sel8"></select>
+            </div>
+            <div class="layui-input-inline  selType" id="divsel9">
+                <select lay-search name="sel9" lay-filter="sel9"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel10">
+                <select lay-search name="sel10"  lay-filter="sel10"></select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item search">
+    </div>
+</div>
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
+
+</script>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+         
+           
+            window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: '物资类型', title: '物资类型' },
+                        { field: 'Name', title: '物资编码' }
+                        , { field: 'Code', title: '描述' }
+                        , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
+                    ]]
+                    , id: 'testReload',
+
+                });
+
+                //监听工具条
+                table.on('tool(useruv)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'detail') {
+
+                        layer.open({
+                            type: 2,
+                            content: '/Device/Detail?id=' + data.Id + "&" + Math.random(),
+                            title: '查看装置信息',
+                            area: ["540px;", "340px;"]
+                        });
+
+                    } else if (obj.event === 'delete') {
+                        layer.confirm('确定删除吗', function (index) {
+                            $.ajax({
+                                url: '/Device/DeleteById?id=' + data.Id + "&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("删除成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("删除失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    } else if (obj.event === 'edit') {
+                        layer.open({
+                            type: 2,
+                            content: '/Device/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
+                            title: '编辑装置信息',
+                            area: ["540px;", "380px;"]//宽 高
+                        });
+                    }
+
+
+                });
+            }
+            //刷新表格
+            window.flush = function () {
+                loadData();
+            }
+         
+           
+            var defaultValue = "@ViewData["projectId"]";
+            //select 控件加载完再初始化table
+            $("select[name=projectId]").dropdownlist({
+                url: "/Device/GetProjectList" + "?pt=" + Math.random(), defaultValue: defaultValue, complete: function () {
+                    loadData();
+                }
+            });
+
+            $("select[name=sel1]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                }
+            });
+            form.render();
+            form.on('select(sel1)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel2]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel2]").val() != "") {
+                                $("#divsel2").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel2)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel3]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel3]").val() != "") {
+                                $("#divsel3").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel3)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel4]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel4]").val() != "") {
+                                $("#divsel4").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel4)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel5]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel5]").val() != "") {
+                                $("#divsel5").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel5)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel6]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel6]").val() != "") {
+                                $("#divsel6").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel6)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel7]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel7]").val() != "") {
+                                $("#divsel7").show();
+                            }
+                        }
+                    });
+                });
+            form.on('select(sel7)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=sel8]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            if ($("select[name=sel8]").val() != "") {
+                                $("#divsel8").show();
+                            }
+                        }
+                    });
+                });
+
+
+
+        });
+
+</script>

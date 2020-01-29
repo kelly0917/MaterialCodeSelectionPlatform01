@@ -1,0 +1,172 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+
+    .layui-input-block {
+        margin-left: 150px;
+    }
+</style>
+<link href="~/css/formSelects-v4.css" rel="stylesheet" />
+<script src="~/js/script/md5.js"></script>
+<script src="~/js/jsencrypt.min.js"></script>
+<form class="layui-form layui-form-model" action="" id="fmAddOrEdit">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">项目名称：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Name" required lay-verify="required|name" placeholder="请输入项目名称" autocomplete="off" class="layui-input" maxlength="50">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">项目编码：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Code" required lay-verify="required|code" placeholder="请输入项目编码" autocomplete="off" class="layui-input" maxlength="50">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述：</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入描述" class="layui-textarea" name="Remark" maxlength="200"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="save">保存</button>
+            <button type="reset" class="layui-btn layui-bg-blue layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+
+
+    layui.use(['form', 'upload', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var id = "@ViewData["id"]";
+        form.verify({
+            name: function (value, item) {
+                var msg = "";
+                $.ajax({
+                    url: "/Project/VerifData" + "?" + Math.random(),
+                    type: 'get',
+                    data: { "value": value, "type": "name","id":"@ViewData["id"]" },
+                    dataType: 'json',
+                    async: false,
+                    success: function (result) {
+                        msg = result.Data;
+                    },
+                    error: function (errorResult) {
+                        debugger;
+                    }
+                });
+
+                if (msg == false) {
+                    return "项目名不能重复！";
+                }
+            },
+            code: function (value, item) {
+                var msg = "";
+                $.ajax({
+                    url: "/Project/VerifData" + "?" + Math.random(),
+                    type: 'get',
+                    data: { "value": value, "type": "name","id":"@ViewData["id"]" },
+                    dataType: 'json',
+                    async: false,
+                    success: function (result) {
+                        msg = result.Data;
+                    },
+                    error: function (errorResult) {
+                        debugger;
+                    }
+                });
+
+                if (msg == false) {
+                    return "项目编码不能重复！";
+                }
+            }
+        });
+
+        form.render();
+       
+        var editPwd;
+        var getdata = function () {
+
+            $.ajax({
+                url: "/Project/GetById?Id=" + '@ViewData["Id"]' + "&pt=" + Math.random(),
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                    debugger;
+                    $("#fmAddOrEdit").fillData(result.Data);
+           
+                },
+                error: function (errorResult) {
+                    debugger;
+                }
+            });
+
+        }
+        if (id != "") {
+            getdata();
+        }
+  
+
+        form.on('submit(save)', function (data) {
+
+
+            var submitdata = "" +
+                "Id=" +
+                $('[name=Id]').val() +
+                "&Name=" +
+                encodeURIComponent(($('[name=Name]').val())) +
+                "&Code=" +
+                encodeURIComponent(($('[name=Code]').val())) +
+                "&Remark=" +
+                $('[name=Remark]').val();
+         
+
+            $.ajax({
+                url: "/Project/SaveOrUpdate",
+                type: 'post',
+                data: submitdata,
+                dataType: 'json',
+                success: function (result) {
+                    debugger;
+                    if (dealResult(result)) {
+                        parent.loadData();
+                        parent.closeiframe("保存成功！");
+                    }
+                },
+                error: function (errorResult) {
+                    debugger;
+                }
+            });
+            return false;
+
+
+
+        });
+
+
+    });
+
+</script>

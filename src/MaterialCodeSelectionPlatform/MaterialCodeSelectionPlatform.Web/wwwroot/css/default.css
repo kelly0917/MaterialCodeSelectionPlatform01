@@ -1,0 +1,233 @@
+﻿.layui-body .lay-nav {
+    height: 40px;
+    border-bottom: 1px solid #CED7E6;
+    font-size: 16px;
+    padding-left: 10px;
+    vertical-align: center;
+    line-height: 40px;
+}
+
+    .layui-body .lay-nav div {
+        float: left;
+    }
+
+    .layui-body .lay-nav .navTitle {
+        color: #434F67;
+    }
+
+    .layui-body .lay-nav .navTitleCur {
+        color: #4FA8EC;
+    }
+
+.layui-body .lay-content {
+    padding: 5px;
+}
+
+.layui-loginbody {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: url('../images/home/bg.png') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+    .layui-loginbody .layui-loginwindow {
+        background-color: #ffffff;
+        border-radius: 5px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        width: 400px;
+        height: 400px;
+    }
+
+        .layui-loginbody .layui-loginwindow .layui-login-title {
+            color: #3E6E96;
+            border-bottom: 3px solid #407297;
+            height: 50px;
+            position: relative;
+            top: 15px;
+            left: 30px;
+            font-size: 35px;
+            font-style: italic;
+            font-weight: bolder;
+            width: 170px;
+            text-align: center;
+        }
+
+        .layui-loginbody .layui-loginwindow .layui-login-input {
+            color: #878DAD;
+            height: 30px;
+            position: relative;
+            left: 30px;
+            font-size: 18px;
+            border-bottom: 1px solid #D1D6DA;
+            width: 85%;
+        }
+
+            .layui-loginbody .layui-loginwindow .layui-login-input label {
+                *border: 0px;
+                float: left;
+                width: 80px;
+            }
+
+            .layui-loginbody .layui-loginwindow .layui-login-input input {
+                border: 0px;
+                float: left;
+                color: #878DAD;
+                width: 250px;
+            }
+
+        .layui-loginbody .layui-loginwindow .layui-login-input2 {
+            color: #878DAD;
+            height: 30px;
+            position: relative;
+            left: 30px;
+            font-size: 18px;
+            /*border-bottom: 1px solid #D1D6DA;*/
+            width: 85%;
+        }
+
+        .layui-loginbody .layui-loginwindow .layui-login-input2 label {
+            *border: 0px;
+            float: left;
+            width: 80px;
+        }
+
+        .layui-loginbody .layui-loginwindow .layui-login-input2 input {
+            /*border: 0px;*/
+            float: left;
+            color: #878DAD;
+            width: 80px;
+            margin-right:10px;
+            text-indent:5px;
+        }
+
+        .layui-loginbody .layui-loginwindow .username {
+            top: 57px;
+        }
+
+        .layui-loginbody .layui-loginwindow .password {
+            top: 94px;
+        }
+        .layui-loginbody .layui-loginwindow .verifyCodeline {
+            top: 120px;
+        }
+        .layui-loginbody .layui-loginwindow .title {
+            top: 135px;
+        }
+        .layui-loginbody .layui-loginwindow .loginbtn {
+            position: relative;
+            top: 160px;
+            left: 250px;
+            float: left;
+        }
+
+            .layui-loginbody .layui-loginwindow .loginbtn button {
+                height: 50px;
+                width: 120px;
+                background-color: #326082;
+                border-radius: 3px;
+                color: #ffffff;
+                font-size: 16px;
+                border: 1px solid #326082;
+                cursor: pointer;
+            }
+
+                .layui-loginbody .layui-loginwindow .loginbtn button:hover {
+                    background-color: #205C93;
+                }
+
+        .layui-loginbody .layui-loginwindow .errMsg {
+            position: relative;
+            top: 150px;
+            left: 30px;
+            height: 20px;
+        }
+
+            .layui-loginbody .layui-loginwindow .errMsg label {
+                color: #F6505A;
+                font-size: 16px;
+            }
+
+.layui-form .search {
+    background-color: #F2F2F2;
+    padding: 5px 0;
+}
+
+
+.layui-form-model {
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.layui-align-right {
+    text-align: right;
+}
+.layui-align-center {
+    text-align: center;
+    float: none;
+}
+
+.layui-padding-left5 {
+    padding-left: 5px;
+}
+
+.layui-float-right {
+    float: right;
+}
+/*.layui-layer-title {
+    background-color: #3D729A;
+    color: #F2FFFF;
+    font-size: 16px;
+}*/
+
+
+.layui-row .layui-input-row {
+    width: 90%;
+    height: 20px;
+
+}
+
+.xtree_contianer {
+    width: 100%;
+    overflow: auto;
+    margin-bottom: 30px;
+    background-color: #fff;
+    height: 300px;
+}
+
+.xtree_searchText {
+    color: red !important;
+}
+
+.permission {
+   
+    /*display: none;*/
+}
+.tree-select-tips[style]:hover {
+    background-color: #FFF !important;
+}
+
+.tree-select-none {
+    display: none;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.tree-select-empty {
+    display: block
+}
+
+.layui-xtree-item {
+    white-space: nowrap;
+}
+

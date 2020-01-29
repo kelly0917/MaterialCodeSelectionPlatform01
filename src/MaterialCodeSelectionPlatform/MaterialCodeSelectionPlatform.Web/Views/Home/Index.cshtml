@@ -1,0 +1,247 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>材料选码平台</title>
+
+    <link href="~/lib/layui/css/layui.css?pt=@DateTime.Now" rel="stylesheet" />
+    <link href="~/css/default.css?pt=@DateTime.Now" rel="stylesheet" />
+    <script src="~/js/script/jquery-1.12.1.min.js"></script>
+    <script src="~/js/script/jquery.cookie.js"></script>
+
+</head>
+<body class="layui-layout-body">
+    <input type="hidden" id="featureTxt" />
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">材料选码平台</div>
+            <!-- 头部区域（可配合layui已有的水平导航） -->
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="~/images/home/Eascuser.png" class="layui-nav-img">
+                        @ViewData["TrueName"]
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">基本资料</a></dd>
+                        <dd><a href="">安全设置</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="javascript:logout()">退出</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-side layui-bg-pr">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test" id="menuul"></ul>
+            </div>
+        </div>
+
+        <div class="layui-body">
+            <div class="layui-row lay-nav">
+                <div class="navTitle">
+                    <label id="lblMenuP"></label>
+                </div>
+                <div class="navTitleCur">
+                    <label id="lblMenuC"></label>
+                </div>
+            </div>
+            <div class="layui-row lay-content">
+                <!-- 内容主体区域 -->
+                <iframe id="ifmContent" style="height: 100%; width: 100%; border: 0;"></iframe>
+            </div>
+
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            底部固定区域
+        </div>
+
+    </div>
+
+    <script>
+        function initContent() {
+            var height = document.documentElement.clientHeight;
+            $("#ifmContent").height(height - 158);
+        }
+
+        $(function () {
+            initContent();;
+        });
+        window.onresize = function () {
+            initContent();
+        };
+    </script>
+
+    <script src="~/lib/layui/layui.js"></script>
+    <script type="text/javascript">
+        loadMenu();
+        function loadMenu() {
+            var liP = '<li class="layui-nav-item">';
+            var titleP = '<a href="javascript:;" url="urlValue" FeatureId="FeatureIdValue">Title</a>';
+            var liPEnd = '</li>';
+            var dlH = '<dl class="layui-nav-child">';
+            var dlHEnd = "</dl>";
+            var menuC = '<dd><a href="javascript:;" url="urlValue" FeatureId="FeatureIdValue" MenuP="MenuPValue">Title</a></dd>';
+
+            $.ajax({
+                url: "/Home/GetMenuData" + "?pt" + Math.random(),
+                type: "get",
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    var sumMenuStr = '';
+                    //循环加载菜单
+                    for (var i = 0; i < data.length; i++) {
+                        var menuP = liP;
+                        menuP += titleP.replace("Title", data[i].name).replace("urlValue", data[i].url).replace("FeatureIdValue", data[i].featureId);
+                        if (data[i].childrenMenus.length > 0) {
+                            menuP += dlH;
+                            for (var j = 0; j < data[i].childrenMenus.length; j++) {
+                                menuP += menuC.replace("Title", data[i].childrenMenus[j].name)
+                                    .replace("urlValue", data[i].childrenMenus[j].url)
+                                    .replace("MenuPValue", data[i].name)
+                                    .replace("FeatureIdValue", data[i].childrenMenus[j].featureId);
+                            }
+                            menuP += dlHEnd;
+                        }
+                        menuP += liPEnd;
+                        sumMenuStr += menuP;
+                    }
+
+                    $("#menuul").html(sumMenuStr);
+                    bindMenuClck();
+                },
+                error: function (errorData) {
+                    debugger;
+                }
+            });
+
+
+        }
+
+        //跳转页面
+        function locationPage(featureid, parastr) {
+            var dom = $('a[featureid=' + featureid + ']');
+            var url = dom.attr("url");//原来的url;
+            debugger;
+            if (parastr) {
+                dom.attr("url", parastr) //替换url
+            }
+            dom.trigger('click');
+            dom.attr("url", url)
+
+        }
+        //获取当前点击的模块id
+        function getFeatureId() {
+            return $('#featureTxt').val();
+        }
+
+        function bindMenuClck() {
+            var menus = $("[url]");
+            menus.click(function () {
+                var url = $(this).attr('url');
+                if (url != '') {
+                    var menuP = $(this).attr("MenuP");
+                    var menuC = $(this).html();
+                    if (menuP) {
+                        $("#lblMenuP").html(menuP + "&nbsp;&nbsp;/&nbsp;&nbsp;");
+                        $("#lblMenuC").html(menuC);
+                    } else {
+                        $("#lblMenuP").html(menuC);
+                    }
+                    $("#ifmContent").attr("src", url);
+                    $('#featureTxt').val($(this).attr('FeatureId'));
+                    //$.ajax({
+                    //    url: "/AppLog/AppLog/Save" + "?pt=" + Math.random(),
+                    //    type: 'post',
+                    //    data: { "AppResourceId": $(this).attr('FeatureId'), "ActionType": 0 },
+                    //    dataType: 'json',
+                    //    success: function (result) {
+                    //        debugger;
+                    //    },
+                    //    error: function (errorResult) {
+                    //        debugger;
+                    //    }
+                    //});
+                }
+            });
+
+            //JavaScript代码区域
+            layui.use('element', function () {
+                var element = layui.element;
+                element.init();
+
+            });
+        }
+
+        layui.use(['layer', 'jquery'],
+
+            function () {
+                var layer = layui.layer;
+                var $ = layui.jquery;
+                window.logout = function () {
+                    layer.confirm('确定退出吗', function (index) {
+                  
+                        $.ajax({
+                            url: "/EascLogin/LoginOut?pt=" + Math.random(),
+                            success: function (data) {
+                                if (data == "success") {
+                                    window.location.href = "/EascLogin/Index";
+                                }
+                            },
+                            error: function (errorData) {
+                                debugger;
+                            }
+                        })
+                    });
+
+                }
+
+
+                //根据保存的地址F5只刷新当前页面
+           
+                var menus = $("[url]");
+                //var storage = window.sessionStorage;
+                menus.each(function () {
+                    var url = $(this).attr('url'); //当前url
+                    var li = $(this).parent().parent().parent();
+                    var dd = $(this).parent();
+                    if ($.cookie('historyUrl') != "" && $.cookie('historyUrl') != null && $.cookie('historyUrl') != 'null') {
+                        if ($.cookie('historyUrl').indexOf('EascLogin/Index') > 0) { //刚登录默认首页
+                            if (url.indexOf('SystemHome/Index') > 0) {
+                                li.addClass("layui-nav-itemed")
+                                dd.addClass("layui-this")
+                                $(this).trigger('click');
+                                return false;
+                            }
+                        }
+                        else {
+                            if ($.cookie('historyUrl').indexOf(url) > 0) { //根据历史记录加载页面
+                                li.addClass("layui-nav-itemed")
+                                dd.addClass("layui-this")
+                                $(this).click();
+                                return false;
+                            }
+
+                        }
+                    }
+
+                })
+
+
+
+            });
+
+
+    </script>
+
+
+</body>
+</html>

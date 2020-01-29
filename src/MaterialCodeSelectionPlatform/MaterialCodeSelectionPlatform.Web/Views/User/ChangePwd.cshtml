@@ -1,0 +1,68 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<script src="~/js/script/md5.js"></script>
+<script src="~/js/jsencrypt.min.js"></script>
+<div class="layui-form layui-form-model" id="fmAddOrEdit">
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">重复密码：</label>
+        <div class="layui-input-block">
+            <input type="password" name="commitpassword" required lay-verify="required|pwdCommit" placeholder="请输入重复密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="save">保存</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    layui.use(['form', 'layer'],
+        function() {
+            var form = layui.form;
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            form.verify({
+                pwdCommit: function(value, item) {
+                    var password = $("input[name=password]").val();
+                    var commitPassword = $("input[name=commitpassword]").val();
+                    if (password != commitPassword) {
+                        return '确认密码必需和密码相同';
+                    }
+                }
+            });
+            form.render();
+            form.on('submit(save)',
+                function(data) {
+                    var password = $('[name=password]').val();
+                    var pwd = hex_md5(password);
+                    $.ajax({
+                        url: "/User/SavePwd",
+                        type: 'post',
+                        data: { "pwd": pwd, "id": "@ViewData["id"]" },
+                        dataType: 'json',
+                        success: function (result) {
+                            if (dealResult(result)) {
+                                parent.flush();
+                                parent.closeiframe("保存成功！");
+                            }
+                        },
+                        error: function(errorResult) {
+                            debugger;
+                        }
+                    });
+
+                });
+        });
+
+</script>

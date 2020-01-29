@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaterialCodeSelectionPlatform.Data\MaterialCodeSelectionPlatform.Data.csproj" />
+    <ProjectReference Include="..\MaterialCodeSelectionPlatform.Domain\MaterialCodeSelectionPlatform.Domain.csproj" />
+    <ProjectReference Include="..\MaterialCodeSelectionPlatform.Utilities\MaterialCodeSelectionPlatform.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ServiceGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServiceGenerator.cs</LastGenOutput>
+    </None>
+    <None Update="ServiceImplGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServiceImplGenerator.cs</LastGenOutput>
+    </None>
+    <None Update="ServiceServiceExtensionGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServiceServiceExtensionGenerator.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ServiceGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServiceGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Update="ServiceImplGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServiceImplGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Update="ServiceServiceExtensionGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServiceServiceExtensionGenerator.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

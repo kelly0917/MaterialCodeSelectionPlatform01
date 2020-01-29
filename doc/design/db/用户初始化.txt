@@ -1,0 +1,4 @@
+USE [MaterialCodeSelectionPlatform]
+GO
+INSERT [dbo].[User] ([Id], [Name], [LoginName], [Role], [Remark], [Password], [Ico], [Sex], [Flag], [Status], [CreateUserId], [CreateTime], [LastModifyUserId], [LastModifyTime]) VALUES (N'24271a95-c37e-4fd2-bde5-4c41cab7fb74', N'admin', N'admin', 0, NULL, N'202cb962ac59075b964b07152d234b70', NULL, 0, 0, 0, N'332cb2c9-6eb4-4b29-9272-dc35a35313b6', CAST(0x0000AB4C0080AA60 AS DateTime), N'687c6d6b-1055-471d-b9a3-6818785ab0fe', CAST(0x0000AB4C0080AA60 AS DateTime))
+GO

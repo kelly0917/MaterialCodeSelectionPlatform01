@@ -1,0 +1,81 @@
+USE [MaterialCodeSelectionPlatform]
+GO
+/****** Object:  Table [dbo].[Temp_ComponentType]    Script Date: 2020/1/29 15:49:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Temp_ComponentType](
+	[CLASS_NO] [int] NULL,
+	[CLASS_ID] [varchar](50) NULL,
+	[CATALOG_NO] [int] NULL,
+	[SEQ_NO] [int] NULL,
+	[DESCR] [varchar](500) NULL,
+	[PARENT_CLASS_NO] [int] NULL
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Temp_MaterialCode]    Script Date: 2020/1/29 15:49:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Temp_MaterialCode](
+	[COMMODITY_NO] [varchar](500) NULL,
+	[COMMODITY_ID] [varchar](500) NULL,
+	[COMMODITY_CLASS_NO] [varchar](500) NULL,
+	[CATALOG_NO] [varchar](500) NULL
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[Temp_Property]    Script Date: 2020/1/29 15:49:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Temp_Property](
+	[ENTITY_PROPERTY_NO] [nchar](10) NULL,
+	[ENTITY_PROPERTY_ID] [nchar](10) NULL,
+	[CATALOG_NO] [nchar](10) NULL
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Temp_PurchasingCode]    Script Date: 2020/1/29 15:49:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Temp_PurchasingCode](
+	[PART_NO] [nchar](10) NULL,
+	[PART_ID] [nchar](10) NULL,
+	[CATLOG_NO] [nchar](10) NULL,
+	[COMMODITY_NO] [nchar](10) NULL
+) ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[Temp_PurchasingCodeAttribute]    Script Date: 2020/1/29 15:49:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Temp_PurchasingCodeAttribute](
+	[CATALOG_NO] [int] NULL,
+	[INSTANCE_NO] [int] NULL,
+	[CLASS_NO] [int] NULL,
+	[ENTITY_PROPERTY_NO] [int] NULL,
+	[PROPERTY_VALUE] [varchar](500) NULL
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+GO

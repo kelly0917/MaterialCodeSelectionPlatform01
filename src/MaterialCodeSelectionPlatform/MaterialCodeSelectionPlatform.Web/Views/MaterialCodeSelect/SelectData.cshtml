@@ -1,0 +1,87 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+
+<form class="layui-form layui-form-model" action="" id="fmAddOrEdit">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        @*<div class="layui-col-xs6">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属项目：</label>
+                <div class="layui-input-block">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs6">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属装置：</label>
+                <div class="layui-input-block">
+                    
+                </div>
+            </div>
+        </div>*@
+        <div class="layui-col-xs12">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 400px">@ViewData["Description"]</label>
+            </div>
+            <div class="layui-form-item">
+                <table class="layui-hide" id="test" lay-filter="useruv"></table>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="save">保存</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+
+    layui.use(['form'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var id = "@ViewData["id"]";
+        var projectId = "@ViewData["projectId"]";
+        var deviceId = "@ViewData["deviceId"]";
+
+        form.render();
+
+     window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: '物资类型', title: '采购码' },
+                        { field: 'Name', title: '尺寸' }
+                        , { field: 'Code', title: '数量', edit: 'text' }
+                    ]]
+                    , id: 'testReload',
+                });
+     }
+       
+
+
+        form.on('submit(save)', function (data) {
+
+
+
+
+        });
+
+
+    });
+
+</script>
