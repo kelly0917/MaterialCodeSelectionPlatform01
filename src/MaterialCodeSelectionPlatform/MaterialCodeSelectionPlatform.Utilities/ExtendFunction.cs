@@ -1,4 +1,4 @@
-﻿namespace CommodityCodeSelectionPlatform.Utilities
+﻿namespace MaterialCodeSelectionPlatform.Utilities
 {
     public static class ExtendFunction
     {

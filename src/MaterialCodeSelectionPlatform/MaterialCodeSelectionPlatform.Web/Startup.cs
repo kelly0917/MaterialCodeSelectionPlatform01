@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
-using CommodityCodeSelectionPlatform.Data.Exentions.DependencyInjection;
-using CommodityCodeSelectionPlatform.Service.Exentions.DependencyInjection;
-using CommodityCodeSelectionPlatform.Utilities;
+using MaterialCodeSelectionPlatform.Data.Exentions.DependencyInjection;
+using MaterialCodeSelectionPlatform.Service.Exentions.DependencyInjection;
+using MaterialCodeSelectionPlatform.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CommodityCodeSelectionPlatform.Web
+namespace MaterialCodeSelectionPlatform.Web
 {
     public class Startup
     {

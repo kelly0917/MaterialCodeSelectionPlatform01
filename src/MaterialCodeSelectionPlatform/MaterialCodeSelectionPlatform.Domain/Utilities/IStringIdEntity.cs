@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     public interface IStringIdEntity : IIdEntity<string>
     {

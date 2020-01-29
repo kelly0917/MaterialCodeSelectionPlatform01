@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
-using CommodityCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Service;
 using Microsoft.AspNetCore.Mvc;
-using CommodityCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.ManagerWeb;
 using NPOI.OpenXmlFormats.Wordprocessing;
 
-namespace CommodityCodeSelectionPlatform.Web.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class UserController : BaseController<IUserService, User>
     {

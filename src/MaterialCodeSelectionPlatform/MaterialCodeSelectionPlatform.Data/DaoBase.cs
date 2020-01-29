@@ -7,12 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
-using CommodityCodeSelectionPlatform.Data;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Utilities;
+using MaterialCodeSelectionPlatform.Data;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Utilities;
 
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public partial class EntityDaoBase<TEntity> :  IEntityDao<TEntity>, ILogable where TEntity :IDataEntity,new()
     { 

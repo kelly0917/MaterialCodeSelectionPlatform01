@@ -5,10 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using log4net;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Service;
-using CommodityCodeSelectionPlatform.Utilities;
-using CommodityCodeSelectionPlatform.Web;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.Utilities;
+using MaterialCodeSelectionPlatform.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CommodityCodeSelectionPlatform.ManagerWeb
+namespace MaterialCodeSelectionPlatform.ManagerWeb
 {
     public class BaseController<S,T> : Controller where T:IDataEntity,new()
     where S:IEntityService<T>

@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
-using CommodityCodeSelectionPlatform.SysDataTool.IServices;
+using MaterialCodeSelectionPlatform.SysDataTool.IServices;
 using Quartz;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool
+namespace MaterialCodeSelectionPlatform.SysDataTool
 {
     /// <summary>
     /// 特性

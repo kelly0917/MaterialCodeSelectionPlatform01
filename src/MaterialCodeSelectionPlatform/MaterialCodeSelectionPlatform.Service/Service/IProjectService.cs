@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
-namespace CommodityCodeSelectionPlatform.Service
+namespace MaterialCodeSelectionPlatform.Service
 {
     public partial interface IProjectService
     {

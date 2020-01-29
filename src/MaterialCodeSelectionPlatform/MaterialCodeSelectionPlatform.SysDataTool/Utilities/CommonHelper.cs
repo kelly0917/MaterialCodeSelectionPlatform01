@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Common.Logging;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
+namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
 {
     public class CommonHelper
     {
@@ -66,6 +66,58 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
         }
 
         /// <summary>
+        /// 从sql server读取数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="connString"></param>
+        /// <returns></returns>
+        public static List<T> GetDataFromSqlServer<T>(string sql, string connString) where T:new()
+        {
+            SqlConnection conn = new SqlConnection(connString);
+            try
+            {
+                conn.Open();
+                SqlCommand command = new SqlCommand(sql, conn);
+                DataSet ds = new DataSet();
+
+                SqlDataAdapter oracleDataAdapter = new SqlDataAdapter(command);
+                oracleDataAdapter.Fill(ds);
+
+                DataTable table = ds.Tables[0];
+
+                List<T> result = new List<T>();
+
+                foreach (DataRow tableRow in table.Rows)
+                {
+                    T t = new T();
+                    Type type = t.GetType();
+                    foreach (DataColumn tableColumn in table.Columns)
+                    {
+                        PropertyInfo pp = type.GetProperty(tableColumn.ColumnName);
+                        if (pp != null)
+                        {
+                            var value = tableRow[tableColumn.ColumnName].ToString();
+                            pp.SetValue(t, value);
+                        }
+                    }
+                    result.Add(t);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                return new List<T>();
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        /// <summary>
         /// 从oracle数据库抽取数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -84,8 +136,7 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
                 oracleDataAdapter.Fill(ds);
 
                 DataTable table = ds.Tables[0];
-
-                            return table;
+                return table;
             }
             catch (Exception ex)
             {
@@ -96,8 +147,6 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
             {
                 conn.Close();
             }
-
-
         }
         /// <summary>   
         /// 使用SqlBulkCopy方式插入数据   

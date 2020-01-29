@@ -5,14 +5,14 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
-using CommodityCodeSelectionPlatform.Data;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Data;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace CommodityCodeSelectionPlatform.Service
+namespace MaterialCodeSelectionPlatform.Service
 {
     /// <summary>
     /// A Service Impl for Temp_ComponentType table.
@@ -27,38 +27,38 @@ namespace CommodityCodeSelectionPlatform.Service
 	}
 
     /// <summary>
-    /// A Service Impl for Temp_CommodityCode table.
+    /// A Service Impl for Temp_MaterialCode table.
     /// </summary>
-	public partial class TempCommodityCodeServiceImpl : EntityServiceBase<TempCommodityCode>, ITempCommodityCodeService
+	public partial class TempMaterialCodeServiceImpl : EntityServiceBase<TempMaterialCode>, ITempMaterialCodeService
 	{
-		 ITempCommodityCodeDao _TempCommodityCodeDao { get; set; }
-		public TempCommodityCodeServiceImpl(ITempCommodityCodeDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
+		 ITempMaterialCodeDao _TempMaterialCodeDao { get; set; }
+		public TempMaterialCodeServiceImpl(ITempMaterialCodeDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
 		{
-			_TempCommodityCodeDao = dao;
+			_TempMaterialCodeDao = dao;
 		}
 	}
 
     /// <summary>
-    /// A Service Impl for Temp_PartNumber table.
+    /// A Service Impl for Temp_PurchasingCode table.
     /// </summary>
-	public partial class TempPartNumberServiceImpl : EntityServiceBase<TempPartNumber>, ITempPartNumberService
+	public partial class TempPurchasingCodeServiceImpl : EntityServiceBase<TempPurchasingCode>, ITempPurchasingCodeService
 	{
-		 ITempPartNumberDao _TempPartNumberDao { get; set; }
-		public TempPartNumberServiceImpl(ITempPartNumberDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
+		 ITempPurchasingCodeDao _TempPurchasingCodeDao { get; set; }
+		public TempPurchasingCodeServiceImpl(ITempPurchasingCodeDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
 		{
-			_TempPartNumberDao = dao;
+			_TempPurchasingCodeDao = dao;
 		}
 	}
 
     /// <summary>
-    /// A Service Impl for Temp_PartNumberAttribute table.
+    /// A Service Impl for Temp_PurchasingCodeAttribute table.
     /// </summary>
-	public partial class TempPartNumberAttributeServiceImpl : EntityServiceBase<TempPartNumberAttribute>, ITempPartNumberAttributeService
+	public partial class TempPurchasingCodeAttributeServiceImpl : EntityServiceBase<TempPurchasingCodeAttribute>, ITempPurchasingCodeAttributeService
 	{
-		 ITempPartNumberAttributeDao _TempPartNumberAttributeDao { get; set; }
-		public TempPartNumberAttributeServiceImpl(ITempPartNumberAttributeDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
+		 ITempPurchasingCodeAttributeDao _TempPurchasingCodeAttributeDao { get; set; }
+		public TempPurchasingCodeAttributeServiceImpl(ITempPurchasingCodeAttributeDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
 		{
-			_TempPartNumberAttributeDao = dao;
+			_TempPurchasingCodeAttributeDao = dao;
 		}
 	}
 
@@ -71,18 +71,6 @@ namespace CommodityCodeSelectionPlatform.Service
 		public TempPropertyServiceImpl(ITempPropertyDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
 		{
 			_TempPropertyDao = dao;
-		}
-	}
-
-    /// <summary>
-    /// A Service Impl for Catalog table.
-    /// </summary>
-	public partial class CatalogServiceImpl : EntityServiceBase<Catalog>, ICatalogService
-	{
-		 ICatalogDao _CatalogDao { get; set; }
-		public CatalogServiceImpl(ICatalogDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
-		{
-			_CatalogDao = dao;
 		}
 	}
 
@@ -239,6 +227,18 @@ namespace CommodityCodeSelectionPlatform.Service
 		public UserProjectMapServiceImpl(IUserProjectMapDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
 		{
 			_UserProjectMapDao = dao;
+		}
+	}
+
+    /// <summary>
+    /// A Service Impl for Catalog table.
+    /// </summary>
+	public partial class CatalogServiceImpl : EntityServiceBase<Catalog>, ICatalogService
+	{
+		 ICatalogDao _CatalogDao { get; set; }
+		public CatalogServiceImpl(ICatalogDao dao,ILoggerFactory loggerFactory) : base(dao,loggerFactory) 
+		{
+			_CatalogDao = dao;
 		}
 	}
 

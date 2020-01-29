@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     [DataContract]
     public class DataPage

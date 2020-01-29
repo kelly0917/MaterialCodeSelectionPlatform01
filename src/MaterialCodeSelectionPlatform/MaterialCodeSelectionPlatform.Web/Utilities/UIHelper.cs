@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace CommodityCodeSelectionPlatform.Web.Common
+namespace MaterialCodeSelectionPlatform.Web.Common
 {
     public static class UIHelper
     {

@@ -1,12 +1,12 @@
-﻿using CommodityCodeSelectionPlatform.Domain.Entities;
+﻿using MaterialCodeSelectionPlatform.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public partial interface IUserDao
     {

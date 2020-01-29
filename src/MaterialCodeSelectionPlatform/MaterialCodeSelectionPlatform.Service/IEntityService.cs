@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using SqlSugar;
-using CommodityCodeSelectionPlatform.Data;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Data;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
 
-namespace CommodityCodeSelectionPlatform.Service
+namespace MaterialCodeSelectionPlatform.Service
 {
     public partial interface IEntityService<TEntity> : ILogable where TEntity : IDataEntity
     {

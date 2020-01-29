@@ -1,6 +1,6 @@
 using System;
 
-namespace CommodityCodeSelectionPlatform.Web.Models
+namespace MaterialCodeSelectionPlatform.Web.Models
 {
     public class ErrorViewModel
     {

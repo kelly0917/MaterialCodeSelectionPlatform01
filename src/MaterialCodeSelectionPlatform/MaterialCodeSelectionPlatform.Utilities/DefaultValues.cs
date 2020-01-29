@@ -1,4 +1,4 @@
-﻿namespace CommodityCodeSelectionPlatform.Utilities
+﻿namespace MaterialCodeSelectionPlatform.Utilities
 {
     /// <summary>
     /// 配置默值

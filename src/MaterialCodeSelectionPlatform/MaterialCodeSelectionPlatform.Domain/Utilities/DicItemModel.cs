@@ -1,4 +1,4 @@
-﻿namespace CommodityCodeSelectionPlatform.Domain
+﻿namespace MaterialCodeSelectionPlatform.Domain
 {
 
     public class DicItemModel

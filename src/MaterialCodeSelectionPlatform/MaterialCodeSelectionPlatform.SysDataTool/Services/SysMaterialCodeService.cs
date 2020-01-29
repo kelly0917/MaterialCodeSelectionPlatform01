@@ -2,11 +2,11 @@
 using System.Data;
 using System.Linq;
 using Common.Logging;
-using CommodityCodeSelectionPlatform.SysDataTool.IServices;
-using CommodityCodeSelectionPlatform.SysDataTool.Model;
-using CommodityCodeSelectionPlatform.SysDataTool.Utilities;
+using MaterialCodeSelectionPlatform.SysDataTool.IServices;
+using MaterialCodeSelectionPlatform.SysDataTool.Model;
+using MaterialCodeSelectionPlatform.SysDataTool.Utilities;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool.Services
+namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 {
     public class SysCommodityCodeService: ISysDataService
     {
@@ -29,7 +29,7 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Services
             else
             {
                 realSysData(CacheData.ConfigCache
-                    .Where(c => c.CAT_ID.Equals(catlog, StringComparison.OrdinalIgnoreCase)).FirstOrDefault());
+                    .Where(c => c.Name.Equals(catlog, StringComparison.OrdinalIgnoreCase)).FirstOrDefault());
             }
         }
 
@@ -37,13 +37,13 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Services
         {
 
             //物资编码
-            var sql = $"SELECT COMMODITY_NO,COMMODITY_ID,COMMODITY_CLASS_NO,CATALOG_NO FROM COMMODITY WHERE CATALOG_NO = {configModel.CAT_ID} AND APPROVAL_STATUS_NO =2  ";
+            var sql = $"SELECT COMMODITY_NO,COMMODITY_ID,COMMODITY_CLASS_NO,CATALOG_NO FROM COMMODITY WHERE CATALOG_NO = {configModel.Code} AND APPROVAL_STATUS_NO =2  ";
             DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
             var tempTableName = "Temp_CommodityCode";
             CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
 
             //采购码
-            sql = $"select PART_NO,PART_ID,CATLOG_NO,COMMODITY_NO from part where CATALOG_NO = {configModel.CAT_ID} ";
+            sql = $"select PART_NO,PART_ID,CATLOG_NO,COMMODITY_NO from part where CATALOG_NO = {configModel.Code} ";
             DataTable table1 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
             var tempTableName1 = "Temp_PartNumber";
             CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName1);
@@ -55,7 +55,7 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Services
             CommonHelper.SqlBulkCopyInsert(table2, CacheData.SqlConn, tempTableName2);
 
             //同步字典属性
-            sql = $"SELECT ENTITY_PROPERTY_NO,ENTITY_PROPERTY_ID,CATALOG_NO FROM ENTITY_PROPERTY WHERE CATALOG_NO ={configModel.CAT_ID} ";
+            sql = $"SELECT ENTITY_PROPERTY_NO,ENTITY_PROPERTY_ID,CATALOG_NO FROM ENTITY_PROPERTY WHERE CATALOG_NO ={configModel.Code} ";
             DataTable table3 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
             var tempTableName3 = "Temp_Property";
             CommonHelper.SqlBulkCopyInsert(table3, CacheData.SqlConn, tempTableName3);

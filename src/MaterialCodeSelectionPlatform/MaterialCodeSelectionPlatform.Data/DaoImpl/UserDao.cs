@@ -4,11 +4,11 @@ using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 using SqlSugar;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public partial class UserDaoImpl
     {

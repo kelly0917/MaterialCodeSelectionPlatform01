@@ -1,7 +1,7 @@
 ﻿using System;
 using log4net;
 
-namespace CommodityCodeSelectionPlatform.Web
+namespace MaterialCodeSelectionPlatform.Web
 {
     public class LogHelper
     {

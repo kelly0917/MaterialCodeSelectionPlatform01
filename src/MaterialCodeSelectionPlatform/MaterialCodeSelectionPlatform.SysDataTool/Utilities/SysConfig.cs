@@ -1,4 +1,4 @@
-﻿namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
+﻿namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
 {
    
 }

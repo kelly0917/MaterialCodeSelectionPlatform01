@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CommodityCodeSelectionPlatform.Web
+namespace MaterialCodeSelectionPlatform.Web
 {
     /// <summary>
     /// layuiXtree 数据实体类

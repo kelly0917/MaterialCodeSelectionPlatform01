@@ -1,6 +1,6 @@
 ﻿using System;
 using log4net;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace CommodityCodeSelectionPlatform.Web
+namespace MaterialCodeSelectionPlatform.Web
 {
 
     /// <summary>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     /// <summary>
     /// 搜索条件基类

@@ -5,13 +5,13 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
 
-namespace CommodityCodeSelectionPlatform.Service
+namespace MaterialCodeSelectionPlatform.Service
 {
     /// <summary>
     /// A Service interface for Temp_ComponentType table.
@@ -21,23 +21,23 @@ namespace CommodityCodeSelectionPlatform.Service
 	}
 
     /// <summary>
-    /// A Service interface for Temp_CommodityCode table.
+    /// A Service interface for Temp_MaterialCode table.
     /// </summary>
-	public partial interface ITempCommodityCodeService : IEntityService<TempCommodityCode>
+	public partial interface ITempMaterialCodeService : IEntityService<TempMaterialCode>
 	{
 	}
 
     /// <summary>
-    /// A Service interface for Temp_PartNumber table.
+    /// A Service interface for Temp_PurchasingCode table.
     /// </summary>
-	public partial interface ITempPartNumberService : IEntityService<TempPartNumber>
+	public partial interface ITempPurchasingCodeService : IEntityService<TempPurchasingCode>
 	{
 	}
 
     /// <summary>
-    /// A Service interface for Temp_PartNumberAttribute table.
+    /// A Service interface for Temp_PurchasingCodeAttribute table.
     /// </summary>
-	public partial interface ITempPartNumberAttributeService : IEntityService<TempPartNumberAttribute>
+	public partial interface ITempPurchasingCodeAttributeService : IEntityService<TempPurchasingCodeAttribute>
 	{
 	}
 
@@ -45,13 +45,6 @@ namespace CommodityCodeSelectionPlatform.Service
     /// A Service interface for Temp_Property table.
     /// </summary>
 	public partial interface ITempPropertyService : IEntityService<TempProperty>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for Catalog table.
-    /// </summary>
-	public partial interface ICatalogService : IEntityService<Catalog>
 	{
 	}
 
@@ -143,6 +136,13 @@ namespace CommodityCodeSelectionPlatform.Service
     /// A Service interface for UserProjectMap table.
     /// </summary>
 	public partial interface IUserProjectMapService : IEntityService<UserProjectMap>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for Catalog table.
+    /// </summary>
+	public partial interface ICatalogService : IEntityService<Catalog>
 	{
 	}
 

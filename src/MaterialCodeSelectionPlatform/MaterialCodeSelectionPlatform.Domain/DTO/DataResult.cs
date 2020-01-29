@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     /// <summary>
     /// 前后端统一返回数据类

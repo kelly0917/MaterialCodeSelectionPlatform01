@@ -4,11 +4,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
-using CommodityCodeSelectionPlatform.Data;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Data;
+using MaterialCodeSelectionPlatform.Domain;
 
 
-namespace CommodityCodeSelectionPlatform.Service
+namespace MaterialCodeSelectionPlatform.Service
 {
     public partial class EntityServiceBase<TEntity> : IEntityService<TEntity> where TEntity : IDataEntity
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Topshelf;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool
+namespace MaterialCodeSelectionPlatform.SysDataTool
 {
     class Program
     {

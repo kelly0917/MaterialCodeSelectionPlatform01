@@ -7,7 +7,7 @@ using log4net;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
-namespace CommodityCodeSelectionPlatform.Web.Common
+namespace MaterialCodeSelectionPlatform.Web.Common
 {
     public class ExcelHelper
     {

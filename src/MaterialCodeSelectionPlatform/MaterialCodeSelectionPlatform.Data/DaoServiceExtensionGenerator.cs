@@ -5,14 +5,14 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
-namespace CommodityCodeSelectionPlatform.Data.Exentions.DependencyInjection
+namespace MaterialCodeSelectionPlatform.Data.Exentions.DependencyInjection
 {
 /// <summary>
     /// Dao实例注入扩展
@@ -26,11 +26,10 @@ namespace CommodityCodeSelectionPlatform.Data.Exentions.DependencyInjection
         public static void AddScopedDao(this IServiceCollection services)
         {
 			services.AddScoped<ITempComponentTypeDao, TempComponentTypeDaoImpl>();
-			services.AddScoped<ITempCommodityCodeDao, TempCommodityCodeDaoImpl>();
-			services.AddScoped<ITempPartNumberDao, TempPartNumberDaoImpl>();
-			services.AddScoped<ITempPartNumberAttributeDao, TempPartNumberAttributeDaoImpl>();
+			services.AddScoped<ITempMaterialCodeDao, TempMaterialCodeDaoImpl>();
+			services.AddScoped<ITempPurchasingCodeDao, TempPurchasingCodeDaoImpl>();
+			services.AddScoped<ITempPurchasingCodeAttributeDao, TempPurchasingCodeAttributeDaoImpl>();
 			services.AddScoped<ITempPropertyDao, TempPropertyDaoImpl>();
-			services.AddScoped<ICatalogDao, CatalogDaoImpl>();
 			services.AddScoped<ICommodityCodeDao, CommodityCodeDaoImpl>();
 			services.AddScoped<ICommodityCodeAttributeDao, CommodityCodeAttributeDaoImpl>();
 			services.AddScoped<IComponentTypeDao, ComponentTypeDaoImpl>();
@@ -44,6 +43,7 @@ namespace CommodityCodeSelectionPlatform.Data.Exentions.DependencyInjection
 			services.AddScoped<ISynchroRecordDao, SynchroRecordDaoImpl>();
 			services.AddScoped<IUserDao, UserDaoImpl>();
 			services.AddScoped<IUserProjectMapDao, UserProjectMapDaoImpl>();
+			services.AddScoped<ICatalogDao, CatalogDaoImpl>();
 		}
 	}
 }

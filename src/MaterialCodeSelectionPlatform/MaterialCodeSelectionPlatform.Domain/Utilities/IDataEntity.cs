@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using SqlSugar;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     public abstract class IDataEntity : IStringIdEntity, IIdEntity<string>
     {

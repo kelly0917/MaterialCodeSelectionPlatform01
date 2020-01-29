@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommodityCodeSelectionPlatform.Domain.Utilities
+namespace MaterialCodeSelectionPlatform.Domain.Utilities
 {
     /// <summary>
     /// 用户拥有的权限数据信息

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 using SqlSugar;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public partial class CommodityCodeDaoImpl
     {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
-using CommodityCodeSelectionPlatform.ManagerWeb;
-using CommodityCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CommodityCodeSelectionPlatform.Web.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class ProjectController : BaseController<IProjectService, Project>
     {

@@ -1,4 +1,4 @@
-﻿namespace CommodityCodeSelectionPlatform.SysDataTool.IServices
+﻿namespace MaterialCodeSelectionPlatform.SysDataTool.IServices
 {
     public interface ISysDataService
     {

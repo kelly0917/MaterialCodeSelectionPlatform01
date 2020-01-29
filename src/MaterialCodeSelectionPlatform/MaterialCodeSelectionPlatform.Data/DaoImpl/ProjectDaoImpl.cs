@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
-using CommodityCodeSelectionPlatform.Utilities;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Utilities;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public partial class ProjectDaoImpl
     {

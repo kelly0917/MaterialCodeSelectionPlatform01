@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace CommodityCodeSelectionPlatform.Utilities
+namespace MaterialCodeSelectionPlatform.Utilities
 {
     /// <summary>
     /// 系统配置类

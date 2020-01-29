@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("CommodityCodeSelectionPlatform.SysDataTool")]
+[assembly: AssemblyTitle("MaterialCodeSelectionPlatform.SysDataTool")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("CommodityCodeSelectionPlatform.SysDataTool")]
+[assembly: AssemblyProduct("MaterialCodeSelectionPlatform.SysDataTool")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

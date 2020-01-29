@@ -5,7 +5,7 @@ using Common.Logging;
 using Quartz;
 using Quartz.Impl;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool
+namespace MaterialCodeSelectionPlatform.SysDataTool
 {
     /// <summary>
     /// 调度器，控制任务的执行

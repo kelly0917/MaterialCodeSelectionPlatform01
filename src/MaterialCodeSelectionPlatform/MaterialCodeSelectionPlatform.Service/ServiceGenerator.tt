@@ -32,7 +32,7 @@ It is based on the T4 template from the PetaPoco project which in turn is based 
     ConnectionStringName = ""; // Uses last connection string in config if not specified
 	ConfigPath = @""; //Looks in current project for web.config or app.config by default. This overrides to a relative path - useful for seperate class library projects.
     // TODO: Configuration
-	string NamespacePrefix = "CommodityCodeSelectionPlatform";
+	string NamespacePrefix = "MaterialCodeSelectionPlatform";
     Namespace = NamespacePrefix + ".Service";
 	ClassPrefix = "";
 	ClassSuffix = "";
@@ -241,7 +241,7 @@ string GetConnectionString(ref string connectionStringName, out string providerN
 }
 
 // TODO: Configuration
-string _connectionString="data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd";
+string _connectionString="data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd";
 string _providerName="System.Data.SqlClient";
 
 void InitConnectionString()

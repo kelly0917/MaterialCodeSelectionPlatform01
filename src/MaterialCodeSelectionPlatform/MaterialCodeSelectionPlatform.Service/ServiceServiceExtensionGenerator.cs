@@ -5,14 +5,14 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
-namespace CommodityCodeSelectionPlatform.Service.Exentions.DependencyInjection
+namespace MaterialCodeSelectionPlatform.Service.Exentions.DependencyInjection
 {
 /// <summary>
     /// Service实例注入扩展
@@ -26,11 +26,10 @@ namespace CommodityCodeSelectionPlatform.Service.Exentions.DependencyInjection
         public static void AddScopedService(this IServiceCollection services)
         {
 			services.AddScoped<ITempComponentTypeService, TempComponentTypeServiceImpl>();
-			services.AddScoped<ITempCommodityCodeService, TempCommodityCodeServiceImpl>();
-			services.AddScoped<ITempPartNumberService, TempPartNumberServiceImpl>();
-			services.AddScoped<ITempPartNumberAttributeService, TempPartNumberAttributeServiceImpl>();
+			services.AddScoped<ITempMaterialCodeService, TempMaterialCodeServiceImpl>();
+			services.AddScoped<ITempPurchasingCodeService, TempPurchasingCodeServiceImpl>();
+			services.AddScoped<ITempPurchasingCodeAttributeService, TempPurchasingCodeAttributeServiceImpl>();
 			services.AddScoped<ITempPropertyService, TempPropertyServiceImpl>();
-			services.AddScoped<ICatalogService, CatalogServiceImpl>();
 			services.AddScoped<ICommodityCodeService, CommodityCodeServiceImpl>();
 			services.AddScoped<ICommodityCodeAttributeService, CommodityCodeAttributeServiceImpl>();
 			services.AddScoped<IComponentTypeService, ComponentTypeServiceImpl>();
@@ -44,6 +43,7 @@ namespace CommodityCodeSelectionPlatform.Service.Exentions.DependencyInjection
 			services.AddScoped<ISynchroRecordService, SynchroRecordServiceImpl>();
 			services.AddScoped<IUserService, UserServiceImpl>();
 			services.AddScoped<IUserProjectMapService, UserProjectMapServiceImpl>();
+			services.AddScoped<ICatalogService, CatalogServiceImpl>();
 		}
 	}
 }

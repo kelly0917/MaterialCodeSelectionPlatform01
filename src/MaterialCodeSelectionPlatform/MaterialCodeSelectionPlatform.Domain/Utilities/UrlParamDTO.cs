@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommodityCodeSelectionPlatform.Domain
+namespace MaterialCodeSelectionPlatform.Domain
 {
     public class UrlParamDTO
     {

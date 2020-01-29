@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using log4net.Util;
-using CommodityCodeSelectionPlatform.Domain;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using CommodityCodeSelectionPlatform.ManagerWeb;
-using CommodityCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.Service;
 
-namespace CommodityCodeSelectionPlatform.Web.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class DeviceController : BaseController<IDeviceService,Device>
     {

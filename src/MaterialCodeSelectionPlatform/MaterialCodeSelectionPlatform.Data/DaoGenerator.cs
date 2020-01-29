@@ -5,14 +5,14 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
 using System;
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     /// <summary>
     /// A Dao interface for Temp_ComponentType table.
@@ -22,23 +22,23 @@ namespace CommodityCodeSelectionPlatform.Data
 	}
 
     /// <summary>
-    /// A Dao interface for Temp_CommodityCode table.
+    /// A Dao interface for Temp_MaterialCode table.
     /// </summary>
-	public partial interface ITempCommodityCodeDao : IEntityDao<TempCommodityCode>
+	public partial interface ITempMaterialCodeDao : IEntityDao<TempMaterialCode>
 	{
 	}
 
     /// <summary>
-    /// A Dao interface for Temp_PartNumber table.
+    /// A Dao interface for Temp_PurchasingCode table.
     /// </summary>
-	public partial interface ITempPartNumberDao : IEntityDao<TempPartNumber>
+	public partial interface ITempPurchasingCodeDao : IEntityDao<TempPurchasingCode>
 	{
 	}
 
     /// <summary>
-    /// A Dao interface for Temp_PartNumberAttribute table.
+    /// A Dao interface for Temp_PurchasingCodeAttribute table.
     /// </summary>
-	public partial interface ITempPartNumberAttributeDao : IEntityDao<TempPartNumberAttribute>
+	public partial interface ITempPurchasingCodeAttributeDao : IEntityDao<TempPurchasingCodeAttribute>
 	{
 	}
 
@@ -46,13 +46,6 @@ namespace CommodityCodeSelectionPlatform.Data
     /// A Dao interface for Temp_Property table.
     /// </summary>
 	public partial interface ITempPropertyDao : IEntityDao<TempProperty>
-	{
-	}
-
-    /// <summary>
-    /// A Dao interface for Catalog table.
-    /// </summary>
-	public partial interface ICatalogDao : IEntityDao<Catalog>
 	{
 	}
 
@@ -144,6 +137,13 @@ namespace CommodityCodeSelectionPlatform.Data
     /// A Dao interface for UserProjectMap table.
     /// </summary>
 	public partial interface IUserProjectMapDao : IEntityDao<UserProjectMap>
+	{
+	}
+
+    /// <summary>
+    /// A Dao interface for Catalog table.
+    /// </summary>
+	public partial interface ICatalogDao : IEntityDao<Catalog>
 	{
 	}
 

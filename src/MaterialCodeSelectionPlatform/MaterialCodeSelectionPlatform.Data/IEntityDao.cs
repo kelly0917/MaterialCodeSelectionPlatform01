@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
-using CommodityCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     public interface IEntityDao<TDataEntity> : IDao<TDataEntity, string> where TDataEntity : IDataEntity
     {

@@ -5,13 +5,13 @@
 // 
 //     Connection String Name: ``
 //     Provider:               `System.Data.SqlClient`
-//     Connection String:      `data source=127.0.0.1;initial catalog=CommodityCodeSelectionPlatform;user id=devuser;password=devpwd`
+//     Connection String:      `data source=127.0.0.1;initial catalog=MaterialCodeSelectionPlatform;user id=devuser;password=devpwd`
 //     Include Views:          `True`
 
-using CommodityCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace CommodityCodeSelectionPlatform.Data
+namespace MaterialCodeSelectionPlatform.Data
 {
     /// <summary>
     /// A Dao Impl for Temp_ComponentType table.
@@ -22,27 +22,27 @@ namespace CommodityCodeSelectionPlatform.Data
 	}
 
     /// <summary>
-    /// A Dao Impl for Temp_CommodityCode table.
+    /// A Dao Impl for Temp_MaterialCode table.
     /// </summary>
-	public partial class TempCommodityCodeDaoImpl : EntityDaoBase<TempCommodityCode>, ITempCommodityCodeDao
+	public partial class TempMaterialCodeDaoImpl : EntityDaoBase<TempMaterialCode>, ITempMaterialCodeDao
 	{
-		public TempCommodityCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempMaterialCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for Temp_PartNumber table.
+    /// A Dao Impl for Temp_PurchasingCode table.
     /// </summary>
-	public partial class TempPartNumberDaoImpl : EntityDaoBase<TempPartNumber>, ITempPartNumberDao
+	public partial class TempPurchasingCodeDaoImpl : EntityDaoBase<TempPurchasingCode>, ITempPurchasingCodeDao
 	{
-		public TempPartNumberDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempPurchasingCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for Temp_PartNumberAttribute table.
+    /// A Dao Impl for Temp_PurchasingCodeAttribute table.
     /// </summary>
-	public partial class TempPartNumberAttributeDaoImpl : EntityDaoBase<TempPartNumberAttribute>, ITempPartNumberAttributeDao
+	public partial class TempPurchasingCodeAttributeDaoImpl : EntityDaoBase<TempPurchasingCodeAttribute>, ITempPurchasingCodeAttributeDao
 	{
-		public TempPartNumberAttributeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempPurchasingCodeAttributeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -51,14 +51,6 @@ namespace CommodityCodeSelectionPlatform.Data
 	public partial class TempPropertyDaoImpl : EntityDaoBase<TempProperty>, ITempPropertyDao
 	{
 		public TempPropertyDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
-	}
-
-    /// <summary>
-    /// A Dao Impl for Catalog table.
-    /// </summary>
-	public partial class CatalogDaoImpl : EntityDaoBase<Catalog>, ICatalogDao
-	{
-		public CatalogDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -163,6 +155,14 @@ namespace CommodityCodeSelectionPlatform.Data
 	public partial class UserProjectMapDaoImpl : EntityDaoBase<UserProjectMap>, IUserProjectMapDao
 	{
 		public UserProjectMapDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
+    /// A Dao Impl for Catalog table.
+    /// </summary>
+	public partial class CatalogDaoImpl : EntityDaoBase<Catalog>, ICatalogDao
+	{
+		public CatalogDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
 }

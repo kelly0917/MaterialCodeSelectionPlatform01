@@ -5,15 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using CommodityCodeSelectionPlatform.Domain.Entities;
-using CommodityCodeSelectionPlatform.Models;
-using CommodityCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.Domain.Entities;
+using MaterialCodeSelectionPlatform.Models;
+using MaterialCodeSelectionPlatform.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
-using CommodityCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.ManagerWeb;
 
-namespace CommodityCodeSelectionPlatform.Web.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class HomeController : BaseController<IUserService,User>
     {

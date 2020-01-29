@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using CommodityCodeSelectionPlatform.SysDataTool.Model;
+using MaterialCodeSelectionPlatform.SysDataTool.Model;
 using Newtonsoft.Json;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool.Utilities
+namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
 {
     public static class CacheData
     {

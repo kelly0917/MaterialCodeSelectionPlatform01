@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CommodityCodeSelectionPlatform.SysDataTool.IServices;
-using CommodityCodeSelectionPlatform.SysDataTool.Utilities;
+using MaterialCodeSelectionPlatform.SysDataTool.IServices;
+using MaterialCodeSelectionPlatform.SysDataTool.Utilities;
 
-namespace CommodityCodeSelectionPlatform.SysDataTool.Services
+namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 {
     public class SysContext
     {
@@ -17,7 +17,7 @@ namespace CommodityCodeSelectionPlatform.SysDataTool.Services
         /// </summary>
         public SysContext()
         {
-            Catlogs = CacheData.ConfigCache.Select(c => c.CAT_ID).ToList();
+            Catlogs = CacheData.ConfigCache.Select(c => c.Name).ToList();
         }
 
 

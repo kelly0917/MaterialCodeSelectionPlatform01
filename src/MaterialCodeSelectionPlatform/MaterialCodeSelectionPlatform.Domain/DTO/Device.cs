@@ -1,6 +1,6 @@
 ﻿using SqlSugar;
 
-namespace CommodityCodeSelectionPlatform.Domain.Entities
+namespace MaterialCodeSelectionPlatform.Domain.Entities
 {
     public partial class Device
     {  
