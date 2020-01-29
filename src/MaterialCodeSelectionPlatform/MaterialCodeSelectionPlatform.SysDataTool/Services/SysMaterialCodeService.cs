@@ -15,7 +15,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
         /// <summary>
         /// 同步数据
         /// </summary>
-        public void SysData(string catlog)
+        public void SysData(string catlog = null)
         {
             if (string.IsNullOrEmpty(catlog))//同步所有编码库
             {

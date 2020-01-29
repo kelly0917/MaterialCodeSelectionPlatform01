@@ -21,9 +21,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
                 });
                 x.StartAutomatically();
                 x.RunAsLocalSystem();
-                x.SetDescription("UDP转发服务");
-                x.SetDisplayName("UDP转发服务");
-                x.SetServiceName("UDP转发服务");
+                x.SetDescription("材料编码同步服务");
+                x.SetDisplayName("材料编码同步服务");
+                x.SetServiceName("材料编码同步服务");
             });
             Console.Read();
 

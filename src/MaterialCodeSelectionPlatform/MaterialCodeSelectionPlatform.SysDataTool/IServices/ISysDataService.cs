@@ -5,7 +5,7 @@
         /// <summary>
         /// 同步数据
         /// </summary>
-        void SysData(string catlog);
+        void SysData(string catlog=null);
 
 
     }
