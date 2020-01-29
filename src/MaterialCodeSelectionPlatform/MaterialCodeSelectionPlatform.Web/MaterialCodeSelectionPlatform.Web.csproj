@@ -121,6 +121,11 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Templates\综合材料统计表\" />
+    <Folder Include="Templates\管道材料统计表\" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="MaterialCodeSelectionPlatform" /></VisualStudio></ProjectExtensions>
 
 </Project>
