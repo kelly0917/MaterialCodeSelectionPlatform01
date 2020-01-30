@@ -52,5 +52,19 @@ namespace MaterialCodeSelectionPlatform.Data
             return null;
 
         }
+        public async Task<List<PartNumberSizeAttribute>> GetCommodityCodeDataList(string id, int languageType)
+        {
+            //var query = Db
+            //    .Queryable<PartNumber, PartNumberSizeAttribute, PartNumberSizeDescription
+            //    >((a, b, c) => new object[]
+            //    {
+            //        JoinType.Inner, a.Id == b.PartNumberId,
+            //        JoinType.Inner, a.Id == b.PartNumberId
+            //    });
+
+
+            return null;
+
+        }
     }
 }
