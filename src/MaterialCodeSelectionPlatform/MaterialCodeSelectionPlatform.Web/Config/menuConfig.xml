@@ -3,6 +3,6 @@
   <Menu_P Name="用户管理" Url="/User/Index" FeatureId="用户管理" ></Menu_P>
   <Menu_P Name="项目管理" Url="/Project/Index" FeatureId="项目管理" ></Menu_P>
   <Menu_P Name="装置管理" Url="/Device/Index" FeatureId="装置管理" ></Menu_P>
-  <Menu_P Name="物资编码选择及开料界面" Url="/CommodityCodeSelect/Index" FeatureId="物资编码选择及开料界面" ></Menu_P>
-  <Menu_P Name="物资编码同步界面" Url="/Equipment/BasSiteInfo/Index" FeatureId="物资编码同步界面" ></Menu_P>
+  <Menu_P Name="物资选码" Url="/CommodityCodeSelect/Index" FeatureId="物资选码" ></Menu_P>
+  <Menu_P Name="编码同步" Url="/Equipment/BasSiteInfo/Index" FeatureId="编码同步" ></Menu_P>
 </Menus>
