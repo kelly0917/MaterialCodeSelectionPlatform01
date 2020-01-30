@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using Common.Logging;
 using MaterialCodeSelectionPlatform.SysDataTool.IServices;
 using MaterialCodeSelectionPlatform.SysDataTool.Model;
 using MaterialCodeSelectionPlatform.SysDataTool.Utilities;
@@ -14,6 +15,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
     /// </summary>
     public class SysClassDataService:ISysDataService
     {
+        private ILog log = LogManager.GetLogger<SysClassDataService>();
         
         public SysClassDataService()
         {
@@ -43,33 +45,43 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
         private void realSysData(SysConfigModel configModel)
         {
-            //and approval_status_no =2
-            var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no =3 ";
-            DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-            var tempTableName = "Temp_ComponentType";
+            try
+            { 
+                //and approval_status_no =2
+                var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no =3 ";
+                DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
+                var tempTableName = "Temp_ComponentType";
 
-            //递归排除掉 审批状态不为2,
+                //递归排除掉 审批状态不为2,
 
-            string deleteSql = $"delete from Temp_ComponentType where CATALOG_NO={configModel.Code}";
-            CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
+                string deleteSql = $"delete from Temp_ComponentType where CATALOG_NO={configModel.Code}";
+                CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
-            CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
-            var SP_Name = "SP_SysClassData";
+                CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
+                var SP_Name = "SP_SysComponentType";
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter()
+                List<SqlParameter> parameters = new List<SqlParameter>();
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@UserId",
+                    Value = CacheData.AdminUserId,
+                    DbType = DbType.String
+                });
+                parameters.Add(new SqlParameter()
+                {
+                    ParameterName = "@CatalogNo",
+                    Value = configModel.Code,
+                    DbType = DbType.Int32
+                });
+                CommonHelper.ExcuteSP(SP_Name, CacheData.SqlConn, parameters);
+
+            }
+            catch (Exception e)
             {
-                ParameterName = "@UserId",
-                Value = CacheData.AdminUserId,
-                DbType = DbType.String
-            });
-            parameters.Add(new SqlParameter()
-            {
-                ParameterName = "@CatalogNo",
-                Value = configModel.Code,
-                DbType = DbType.Int32
-            });
-            CommonHelper.ExcuteSP(SP_Name, CacheData.SqlConn);
+                log.Error(e);
+
+            }
+           
         }
 
     }
