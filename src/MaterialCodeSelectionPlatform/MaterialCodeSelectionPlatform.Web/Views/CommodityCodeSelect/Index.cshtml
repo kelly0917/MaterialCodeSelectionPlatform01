@@ -16,13 +16,13 @@
         <div class="layui-inline layui-float-right">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
-                <select lay-search></select>
+                <select lay-search name="selProject" lay-filter="selProject"></select>
             </div>
         </div>
         <div class="layui-inline layui-float-right">
             <label class="layui-form-label">装置：</label>
             <div class="layui-input-inline">
-                <select name="deviceId" lay-search></select>
+                <select lay-search  id="selDevice" name="selDevice" lay-filter="selDevice"></select>
             </div>
         </div>
     </div>
@@ -85,14 +85,17 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    elem: '#test',
+                    height: 'full-80',
+                   // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random()//数据接口
                     , page: true //开启分页
-                    , limit: 20
-                    , limits: [20, 50, 100]
+                    , limit: 10
+                    , limits: [10, 20,50, 100]
                     , cols: [[ //表头
-                        { field: '物资类型', title: '物资类型' },
-                        { field: 'Name', title: '物资编码' }
-                        , { field: 'Code', title: '描述' }
+                        { field: 'Desc', title: '物资类型' },
+                        { field: 'Code', title: '物资编码' }
+                        , { field: 'CN_ShortDesc', title: '描述' }
                         , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
@@ -151,7 +154,25 @@
                     loadData();
                 }
             });
-
+            //项目
+              $("select[name=selProject]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                }
+              });
+             form.render();
+             form.on('select(selProject)',
+                function(data1) {
+                    var value = data1.value;                  
+                    $("select[name=selDevice]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            
+                            //if ($("select[name=sel2]").val() != "") {
+                            //    $("#divsel2").show();
+                            //}
+                        }
+                    });
+                });
+            //物资分类
             $("select[name=sel1]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                 }
@@ -159,7 +180,7 @@
             form.render();
             form.on('select(sel1)',
                 function(data1) {
-                    var value = data1.value;
+                    var value = data1.value;                   
                     $("select[name=sel2]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                             

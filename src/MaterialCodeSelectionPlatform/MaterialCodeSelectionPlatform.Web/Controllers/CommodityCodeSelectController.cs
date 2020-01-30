@@ -40,10 +40,16 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 case 1://项目
                     var list1 = await projectService.GetListAsync();
-                    var result1 = list1.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
+                    var projectList = list1.ToList();
+                    if (projectList.Count > 0)
+                        projectList.Insert(0, new Project() { Name = "全部", Id = "-1" });
+                    var result1 = projectList.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
                     return Json(result1);
                 case 2://装置
                     var list2 = await deviceService.GetByParentId("ProjectId", parentId);
+                    var deviceList = list2.ToList();
+                    if (deviceList.Count > 0)
+                        deviceList.Insert(0, new Device() { Name = "全部", Id = "-1" });
                     var result2 = list2.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
                     return Json(result2);
                 case 3://物资类型
@@ -105,6 +111,24 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             return null;
         }
+        /// <summary>
+        /// 物资编码查询
+        /// </summary>
+        /// <param name="code">物资编码</param>
+        /// <param name="page">第几页</param>
+        /// <param name="limit">每页显示的记录数</param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = page;
+            dataPage.PageSize = limit;
 
+            CommodityCodeSerachCondition condition = new CommodityCodeSerachCondition();
+            condition.Page = dataPage;
+            condition.Code = code;          
+            var list = await this.Service.GetCommodityCodeDataList(condition);
+            return ConvertListResult(list, dataPage);
+        }
     }
 }
