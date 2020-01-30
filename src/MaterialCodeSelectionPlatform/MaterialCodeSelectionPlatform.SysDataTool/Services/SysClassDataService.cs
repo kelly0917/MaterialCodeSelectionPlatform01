@@ -43,9 +43,12 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
         private void realSysData(SysConfigModel configModel)
         {
-            var sql = $"select  CLASS_NO,CLASS_ID,CATALOG_NO,SEQ_NO,DESCR,PARENT_CLASS_NO,CAN_INSTANTIATE,UNIT_ID,DRAW_DISCIPLINE_NO from class where catalog_no = {configModel.Code} and approval_status_no =2  and cat_entity_type_no =3 ";
+            //and approval_status_no =2
+            var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no =3 ";
             DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
             var tempTableName = "Temp_ComponentType";
+
+            //递归排除掉 审批状态不为2,
 
             string deleteSql = $"delete from Temp_ComponentType where CATALOG_NO={configModel.Code}";
             CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);

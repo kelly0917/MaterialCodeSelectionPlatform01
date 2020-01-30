@@ -40,6 +40,8 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string UNIT_ID { get; set; }
 		
 		public virtual string DRAW_DISCIPLINE_NO { get; set; }
+		
+		public virtual int? APPROVAL_STATUS_NO { get; set; }
 		}
 
     /// <summary>
@@ -415,7 +417,7 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string Code { get; set; }
 		
-		public virtual string Name { get; set; }
+		public virtual string Desc { get; set; }
 		
 		public virtual int? CanInstantiate { get; set; }
 		
