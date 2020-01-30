@@ -8,7 +8,7 @@ namespace MaterialCodeSelectionPlatform.Utilities
     public class Config
     {
         /// <summary>
-        /// 数据库连接类型
+        /// 数据库连接类型 
         /// </summary>
         public static string DBProviderName;
 
