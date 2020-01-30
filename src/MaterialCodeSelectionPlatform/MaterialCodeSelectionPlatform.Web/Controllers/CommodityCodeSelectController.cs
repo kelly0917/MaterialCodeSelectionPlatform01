@@ -40,10 +40,16 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 case 1://项目
                     var list1 = await projectService.GetListAsync();
-                    var result1 = list1.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
+                    var projectList = list1.ToList();
+                    if (projectList.Count > 0)
+                        projectList.Insert(0, new Project() { Name = "全部", Id = "-1" });
+                    var result1 = projectList.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
                     return Json(result1);
                 case 2://装置
                     var list2 = await deviceService.GetByParentId("ProjectId", parentId);
+                    var deviceList = list2.ToList();
+                    if (deviceList.Count > 0)
+                        deviceList.Insert(0, new Device() { Name = "全部", Id = "-1" });
                     var result2 = list2.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
                     return Json(result2);
                 case 3://物资类型
@@ -105,6 +111,19 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             return null;
         }
+        //public async Task<IActionResult> GetCommodityCodeDataList(string name, string code, int status, int page, int limit)
+        //{
+        //    DataPage dataPage = new DataPage();
+        //    dataPage.PageNo = page;
+        //    dataPage.PageSize = limit;
 
+        //    ProjectSearchCondition projectSearchCondition = new ProjectSearchCondition();
+        //    projectSearchCondition.Page = dataPage;
+        //    projectSearchCondition.Code = code;
+        //    projectSearchCondition.Name = name;
+        //    projectSearchCondition.Status = status;
+        //    var list = await componentTypeService.GetDataList(projectSearchCondition);
+        //    return ConvertListResult(list, dataPage);
+        //}
     }
 }
