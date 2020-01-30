@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using Common.Logging;
+using MaterialCodeSelectionPlatform.SysDataTool.Utilities;
 using Quartz;
 using Quartz.Impl;
 

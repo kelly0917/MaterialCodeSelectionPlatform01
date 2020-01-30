@@ -34,6 +34,14 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string DESCR { get; set; }
 		
 		public virtual int? PARENT_CLASS_NO { get; set; }
+		
+		public virtual string CAN_INSTANTIATE { get; set; }
+		
+		public virtual string UNIT_ID { get; set; }
+		
+		public virtual string DRAW_DISCIPLINE_NO { get; set; }
+		
+		public virtual int? APPROVAL_STATUS_NO { get; set; }
 		}
 
     /// <summary>
@@ -145,28 +153,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 								}
 
     /// <summary>
-    /// A class which represents the ComponentType table.
-    /// </summary>
-	[SugarTable("ComponentType")]
-	public partial class ComponentType : IDataEntity
-	{
-		
-		public virtual int CatalogId { get; set; }
-		
-		public virtual string CatalogCode { get; set; }
-		
-		public virtual string ParentId { get; set; }
-		
-		public virtual string Code { get; set; }
-		
-		public virtual string Name { get; set; }
-		
-		public virtual int? CanInstantiate { get; set; }
-		
-		public virtual string Discipline { get; set; }
-								}
-
-    /// <summary>
     /// A class which represents the Device table.
     /// </summary>
 	[SugarTable("Device")]
@@ -194,56 +180,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string ProjectId { get; set; }
 		
 		public virtual string DeviceId { get; set; }
-								}
-
-    /// <summary>
-    /// A class which represents the MaterialTakeOffDetail table.
-    /// </summary>
-	[SugarTable("MaterialTakeOffDetail")]
-	public partial class MaterialTakeOffDetail : IDataEntity
-	{
-		
-		public virtual string MaterialTakeOffId { get; set; }
-		
-		public virtual string CommodityCodeId { get; set; }
-		
-		public virtual string PartNumberId { get; set; }
-		
-		public virtual string CN_CommodityShortDesc { get; set; }
-		
-		public virtual string EN_CommodityShortDesc { get; set; }
-		
-		public virtual string RU_CommodityShortDesc { get; set; }
-		
-		public virtual string CN_CommodityLongDesc { get; set; }
-		
-		public virtual string EN_CommodityLongDesc { get; set; }
-		
-		public virtual string RU_CommodityLongDesc { get; set; }
-		
-		public virtual string CN_PartNumberShortDesc { get; set; }
-		
-		public virtual string EN_PartNumberShortDesc { get; set; }
-		
-		public virtual string RU_PartNumberShortDesc { get; set; }
-		
-		public virtual string CN_PartNumberLongDesc { get; set; }
-		
-		public virtual string EN_PartNumberLongDesc { get; set; }
-		
-		public virtual string RU_PartNumberLongDesc { get; set; }
-		
-		public virtual string CN_SizeDesc { get; set; }
-		
-		public virtual string EN_SizeDesc { get; set; }
-		
-		public virtual string RU_SizeDesc { get; set; }
-		
-		public virtual string ProjectId { get; set; }
-		
-		public virtual string DeviceId { get; set; }
-		
-		public virtual int Count { get; set; }
 								}
 
     /// <summary>
@@ -371,6 +307,56 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 								}
 
     /// <summary>
+    /// A class which represents the MaterialTakeOffDetail table.
+    /// </summary>
+	[SugarTable("MaterialTakeOffDetail")]
+	public partial class MaterialTakeOffDetail : IDataEntity
+	{
+		
+		public virtual string MaterialTakeOffId { get; set; }
+		
+		public virtual string CommodityCodeId { get; set; }
+		
+		public virtual string PartNumberId { get; set; }
+		
+		public virtual string CN_CommodityShortDesc { get; set; }
+		
+		public virtual string EN_CommodityShortDesc { get; set; }
+		
+		public virtual string RU_CommodityShortDesc { get; set; }
+		
+		public virtual string CN_CommodityLongDesc { get; set; }
+		
+		public virtual string EN_CommodityLongDesc { get; set; }
+		
+		public virtual string RU_CommodityLongDesc { get; set; }
+		
+		public virtual string CN_PartNumberShortDesc { get; set; }
+		
+		public virtual string EN_PartNumberShortDesc { get; set; }
+		
+		public virtual string RU_PartNumberShortDesc { get; set; }
+		
+		public virtual string CN_PartNumberLongDesc { get; set; }
+		
+		public virtual string EN_PartNumberLongDesc { get; set; }
+		
+		public virtual string RU_PartNumberLongDesc { get; set; }
+		
+		public virtual string CN_SizeDesc { get; set; }
+		
+		public virtual string EN_SizeDesc { get; set; }
+		
+		public virtual string RU_SizeDesc { get; set; }
+		
+		public virtual string ProjectId { get; set; }
+		
+		public virtual string DeviceId { get; set; }
+		
+		public virtual double DesignQty { get; set; }
+								}
+
+    /// <summary>
     /// A class which represents the Catalog table.
     /// </summary>
 	[SugarTable("Catalog")]
@@ -381,7 +367,7 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string Name { get; set; }
 		
-		public virtual string Conn { get; set; }
+		public virtual string ConnectionString { get; set; }
 		
 		public virtual string CN_COMM_DESC_SHORT { get; set; }
 		
@@ -414,6 +400,30 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string RU_SIZE_DESC { get; set; }
 		
 		public virtual string COMM_REPRESENT_TYPE { get; set; }
+								}
+
+    /// <summary>
+    /// A class which represents the ComponentType table.
+    /// </summary>
+	[SugarTable("ComponentType")]
+	public partial class ComponentType : IDataEntity
+	{
+		
+		public virtual string CatalogId { get; set; }
+		
+		public virtual string CatalogName { get; set; }
+		
+		public virtual string ParentId { get; set; }
+		
+		public virtual string Code { get; set; }
+		
+		public virtual string Desc { get; set; }
+		
+		public virtual int? CanInstantiate { get; set; }
+		
+		public virtual string Unit { get; set; }
+		
+		public virtual string Discipline { get; set; }
 								}
 
 }

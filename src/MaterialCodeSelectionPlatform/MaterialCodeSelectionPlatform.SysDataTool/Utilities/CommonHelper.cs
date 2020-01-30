@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
 using Common.Logging;
+using Oracle.ManagedDataAccess.Client;
 
 namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
 {
@@ -13,7 +13,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
     {
         private static ILog log = LogManager.GetLogger<Object>();
         /// <summary>
-        /// 从oracle数据库抽取数据
+        /// 从Oracle数据库抽取数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sql"></param>
@@ -24,11 +24,11 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
             try
             {
                 conn.Open();
-                OracleCommand oracleCommand = new OracleCommand(sql,conn);
+                OracleCommand OracleCommand = new OracleCommand(sql,conn);
                 DataSet ds = new DataSet();
-                
-                OracleDataAdapter oracleDataAdapter = new OracleDataAdapter(oracleCommand);
-                oracleDataAdapter.Fill(ds);
+
+                OracleDataAdapter OracleDataAdapter = new OracleDataAdapter(OracleCommand);
+                OracleDataAdapter.Fill(ds);
 
                 DataTable table = ds.Tables[0];
 
@@ -81,8 +81,8 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
                 SqlCommand command = new SqlCommand(sql, conn);
                 DataSet ds = new DataSet();
 
-                SqlDataAdapter oracleDataAdapter = new SqlDataAdapter(command);
-                oracleDataAdapter.Fill(ds);
+                SqlDataAdapter OracleDataAdapter = new SqlDataAdapter(command);
+                OracleDataAdapter.Fill(ds);
 
                 DataTable table = ds.Tables[0];
 
@@ -118,7 +118,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
         }
 
         /// <summary>
-        /// 从oracle数据库抽取数据
+        /// 从Oracle数据库抽取数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sql"></param>
@@ -129,11 +129,11 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
             try
             {
                 conn.Open();
-                OracleCommand oracleCommand = new OracleCommand(sql, conn);
+                OracleCommand OracleCommand = new OracleCommand(sql, conn);
                 DataSet ds = new DataSet();
 
-                OracleDataAdapter oracleDataAdapter = new OracleDataAdapter(oracleCommand);
-                oracleDataAdapter.Fill(ds);
+                OracleDataAdapter OracleDataAdapter = new OracleDataAdapter(OracleCommand);
+                OracleDataAdapter.Fill(ds);
 
                 DataTable table = ds.Tables[0];
                 return table;
@@ -178,7 +178,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
         /// </summary>
         /// <param name="sp"></param>
         /// <param name="connStrign"></param>
-        public static void ExcuteSP(string sp, string connString)
+        public static void ExcuteSP(string sp, string connString,List<SqlParameter> parameters = null)
         {
             SqlConnection con = new SqlConnection(connString);
             try
@@ -186,6 +186,36 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
                 con.Open();
                 SqlCommand com = new SqlCommand(sp, con);
                 com.CommandType = CommandType.StoredProcedure;
+                if(parameters != null)
+                    com.Parameters.AddRange(parameters.ToArray());
+                com.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                log.Error(e);
+            }
+            finally
+            {
+                con.Close();
+            }
+        }
+
+     
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="connString"></param>
+        /// <param name="parameters"></param>
+        public static void ExcuteSql(string sql, string connString, List<SqlParameter> parameters = null)
+        {
+            SqlConnection con = new SqlConnection(connString);
+            try
+            {
+                con.Open();
+                SqlCommand com = new SqlCommand(sql, con);
+                if (parameters != null)
+                    com.Parameters.AddRange(parameters.ToArray());
                 com.ExecuteNonQuery();
             }
             catch (Exception e)

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
 using MaterialCodeSelectionPlatform.SysDataTool.IServices;
+using MaterialCodeSelectionPlatform.SysDataTool.Services;
 using Quartz;
 
 namespace MaterialCodeSelectionPlatform.SysDataTool
@@ -19,12 +20,12 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
         /// </summary>
         private ILog log = LogManager.GetLogger<SysDataJob>();
 
-        private ISysDataService sysDataService;
+        private ISysDataService sysClassDataService;
+        private ISysDataService sysMaterialCodeService;
         public SysDataJob()
         {
-            
-
-
+            sysClassDataService = new SysClassDataService();
+            sysMaterialCodeService = new SysClassDataService();
         }
 
         public Task Execute(IJobExecutionContext context)
@@ -35,7 +36,8 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
 
             return Task.Factory.StartNew(() =>
             {
-                Console.WriteLine(DateTime.Now);
+                sysClassDataService.SysData();
+                sysMaterialCodeService.SysData();
             });
 
             log.Debug($"任务执行耗时：{stopwatch.ElapsedMilliseconds}mm");
