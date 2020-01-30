@@ -25,7 +25,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
         public SysDataJob()
         {
             sysClassDataService = new SysClassDataService();
-            sysMaterialCodeService = new SysClassDataService();
+            sysMaterialCodeService = new SysCommodityCodeService();
         }
 
         public Task Execute(IJobExecutionContext context)
@@ -34,13 +34,13 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            return Task.Factory.StartNew(() =>
-            {
+            //return Task.Factory.StartNew(() =>
+            //{
                 sysClassDataService.SysData();
                 sysMaterialCodeService.SysData();
-            });
-
+            //});
             log.Debug($"任务执行耗时：{stopwatch.ElapsedMilliseconds}mm");
+            return null;
         }
 
 
