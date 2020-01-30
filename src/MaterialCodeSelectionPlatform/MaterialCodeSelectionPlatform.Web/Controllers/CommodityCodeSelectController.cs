@@ -111,19 +111,24 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             return null;
         }
-        //public async Task<IActionResult> GetCommodityCodeDataList(string name, string code, int status, int page, int limit)
-        //{
-        //    DataPage dataPage = new DataPage();
-        //    dataPage.PageNo = page;
-        //    dataPage.PageSize = limit;
+        /// <summary>
+        /// 物资编码查询
+        /// </summary>
+        /// <param name="code">物资编码</param>
+        /// <param name="page">第几页</param>
+        /// <param name="limit">每页显示的记录数</param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = page;
+            dataPage.PageSize = limit;
 
-        //    ProjectSearchCondition projectSearchCondition = new ProjectSearchCondition();
-        //    projectSearchCondition.Page = dataPage;
-        //    projectSearchCondition.Code = code;
-        //    projectSearchCondition.Name = name;
-        //    projectSearchCondition.Status = status;
-        //    var list = await componentTypeService.GetDataList(projectSearchCondition);
-        //    return ConvertListResult(list, dataPage);
-        //}
+            CommodityCodeSerachCondition condition = new CommodityCodeSerachCondition();
+            condition.Page = dataPage;
+            condition.Code = code;          
+            var list = await this.Service.GetCommodityCodeDataList(condition);
+            return ConvertListResult(list, dataPage);
+        }
     }
 }

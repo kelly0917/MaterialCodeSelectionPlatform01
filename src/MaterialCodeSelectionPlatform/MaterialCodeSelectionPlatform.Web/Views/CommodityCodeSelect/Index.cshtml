@@ -85,14 +85,17 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    elem: '#test',
+                    height: 'full-80',
+                   // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random()//数据接口
                     , page: true //开启分页
-                    , limit: 20
-                    , limits: [20, 50, 100]
+                    , limit: 10
+                    , limits: [10, 20,50, 100]
                     , cols: [[ //表头
-                        { field: '物资类型', title: '物资类型' },
-                        { field: 'Name', title: '物资编码' }
-                        , { field: 'Code', title: '描述' }
+                        { field: 'Desc', title: '物资类型' },
+                        { field: 'Code', title: '物资编码' }
+                        , { field: 'CN_ShortDesc', title: '描述' }
                         , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
