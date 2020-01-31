@@ -10,20 +10,28 @@
 </style>
 <div class="layui-form" action="" id="searchForm">
     <div class="layui-form-item search">
-        <div class="layui-inline">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
-        </div>
-        <div class="layui-inline layui-float-right">
+
+
+        <div class="layui-inline layui-float-left">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
                 <select lay-search name="selProject" lay-filter="selProject"></select>
             </div>
         </div>
-        <div class="layui-inline layui-float-right">
+        <div class="layui-inline layui-float-left">
             <label class="layui-form-label">装置：</label>
             <div class="layui-input-inline">
-                <select lay-search  id="selDevice" name="selDevice" lay-filter="selDevice"></select>
+                <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
             </div>
+        </div>
+        <div class="layui-inline layui-float-left">
+            <label class="layui-form-label" style="width: auto;">物资编码</label>
+            <div class="layui-input-inline">
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" />
+            </div>
+        </div>
+        <div class="layui-inline ">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
     </div>
     <div class="layui-form-item search">
@@ -36,7 +44,7 @@
                 <select lay-search name="sel2" lay-filter="sel2"></select>
             </div>
             <div class="layui-input-inline selType" id="divsel3">
-                <select lay-search name="sel3"  lay-filter="sel3"></select>
+                <select lay-search name="sel3" lay-filter="sel3"></select>
             </div>
             <div class="layui-input-inline selType" id="divsel4">
                 <select lay-search name="sel4" lay-filter="sel4"></select>
@@ -57,14 +65,15 @@
                 <select lay-search name="sel9" lay-filter="sel9"></select>
             </div>
             <div class="layui-input-inline selType" id="divsel10">
-                <select lay-search name="sel10"  lay-filter="sel10"></select>
+                <select lay-search name="sel10" lay-filter="sel10"></select>
             </div>
         </div>
     </div>
     <div class="layui-form-item search">
     </div>
+    <input type="hidden"  id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 </div>
-<table class="layui-hide" id="test" lay-filter="useruv"></table>
+<table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80" id="tbCommodityCodeList" lay-filter="useruv"></table>
 
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
@@ -85,7 +94,7 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test',
+                    elem: '#tbCommodityCodeList',
                     height: 'full-80',
                    // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
                     url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random()//数据接口
@@ -105,13 +114,14 @@
                 //监听工具条
                 table.on('tool(useruv)', function (obj) {
                     var data = obj.data;
-                    if (obj.event === 'detail') {
+                    var userId = $("#txtUserId").val();
+                    if (obj.event === 'attr') {
 
                         layer.open({
                             type: 2,
-                            content: '/Device/Detail?id=' + data.Id + "&" + Math.random(),
-                            title: '查看装置信息',
-                            area: ["540px;", "340px;"]
+                            content: '/CommodityCodeSelect/AttrList?id=' + data.Id + "&" + Math.random(),
+                            title: '查看属性',
+                            area: ["600px;", "500px;"]
                         });
 
                     } else if (obj.event === 'delete') {
@@ -129,12 +139,12 @@
                                 }
                             });
                         });
-                    } else if (obj.event === 'edit') {
+                    } else if (obj.event === 'select') {
                         layer.open({
                             type: 2,
-                            content: '/Device/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
-                            title: '编辑装置信息',
-                            area: ["540px;", "380px;"]//宽 高
+                            content: '/CommodityCodeSelect/CommodityCodePartNumberList?commodityCodeId=' + data.Id + "&userId="+userId+"&" + Math.random(),
+                            title: '选择采购码',
+                            area: ["800px;", "500px;"]//宽 高
                         });
                     }
 

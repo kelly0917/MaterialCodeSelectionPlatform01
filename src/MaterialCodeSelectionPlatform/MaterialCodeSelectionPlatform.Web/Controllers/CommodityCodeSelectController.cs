@@ -27,6 +27,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 
         public IActionResult Index()
         {
+            ViewData["UserId"] = this.UserId;
             return View();
         }
 
@@ -130,5 +131,31 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var list = await this.Service.GetCommodityCodeDataList(condition);
             return ConvertListResult(list, dataPage);
         }
+        /// <summary>
+        /// 物资编码属性
+        /// </summary>
+        /// <param name="id">物资编码Id</param>
+        /// <returns></returns>
+        public async Task<ActionResult> AttrList(string id)
+        {           
+            var list = await this.Service.GetAttributeList(id);
+            return View(list);
+        }
+        /// <summary>
+        /// 选择【物资编码】的采购码
+        /// </summary>
+        /// <param name="commodityCodeId">物资编码Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <returns></returns>
+        public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId)
+        {
+            var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
+            return View(list);
+        }
+        //public async Task<ActionResult> Save(List<PartNumberDto> list)
+        //{
+        //   // var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
+        //    return ConvertSuccessResult(null);
+        //}
     }
 }
