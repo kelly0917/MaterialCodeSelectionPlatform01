@@ -27,5 +27,33 @@ namespace MaterialCodeSelectionPlatform.Service
         {
             return await _CommodityCodeDao.GetCommodityCodeDataList(condition);
         }
+        /// <summary>
+        /// 获取物资编码属性
+        /// </summary>
+        /// <param name="id">物资编码Id</param>
+        /// <returns></returns>
+        public async Task<List<CommodityCodeAttribute>> GetAttributeList(string id)
+        {
+            return await _CommodityCodeDao.GetAttributeList(id);
+        }
+        /// <summary>
+        /// 选择【物资编码】的采购码
+        /// </summary>
+        /// <param name="commodityCodeId">物资编码Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <returns></returns>
+        public async Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId, string userId)
+        {
+            return await _CommodityCodeDao.GetCommodityCodePartNumberList(commodityCodeId, userId);
+        }
+        /// <summary>
+        /// 保存【物资汇总明细表】
+        /// </summary>
+        /// <param name="list">采购码列表</param>
+        /// <returns></returns>
+        public async Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(List<PartNumberDto> list)
+        {
+            return await _CommodityCodeDao.SaveMaterialTakeOffDetail(list);
+        }
     }
 }
