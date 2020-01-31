@@ -31,6 +31,18 @@
         <div class="layui-inline layui-float-right">
             <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">新增</button>
         </div>
+        
+        <div class="layui-inline layui-float-right">
+            <button type="button" class="layui-btn permission" action="268435456" id="btnUpload">
+                <i class="layui-icon">&#xe67c;</i>导入数据
+            </button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <button type="button" class="layui-btn permission" action="536870912" onclick="downloadTemp()">
+                <i class="layui-icon">&#xe601;</i>模板下载
+            </button>
+        </div>
+
     </div>
 </div>
 <table class="layui-hide" id="test" lay-filter="useruv"></table>
@@ -44,14 +56,41 @@
 
 <script type="text/javascript">
 
-    layui.use(['form', 'table', 'layer', 'jquery'],
+    layui.use(['form', 'table', 'layer', 'jquery', 'upload'],
         function () {
             var form = layui.form;
             var layer = layui.layer;
             var table = layui.table;
             var $ = layui.jquery;
+            var upload = layui.upload; 
             form.render();
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#btnUpload' //绑定元素
+                , url: '/Device/ImportData' //上传接口
+                , accept: 'file' //允许上传的文件类型
+                , done: function (res) {
+                    debugger;
+                    //上传完毕回调
+                    if (res.success) {
+                        layer.msg(res.message);
+                        flush();
+                    } else {
+                        if (res.message == "haveError") {
+                            layer.msg("导入完成，部分出错！");
+                            window.location.href = "/Device/DownloadErrorFile";
+                            flush();
+                        } else {
+                            layer.msg(res.message);
+                        }
 
+                       
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
@@ -128,6 +167,10 @@
                     loadData();
                 }
             });    
+
+            window.downloadTemp = function() {
+                window.location.href = "/Device/DownloadTemplateFile";
+            }
         });
   
 </script>
