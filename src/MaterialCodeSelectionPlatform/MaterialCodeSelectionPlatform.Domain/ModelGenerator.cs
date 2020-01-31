@@ -137,7 +137,9 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual int? CheckStatus { get; set; }
 			
 		public virtual string ProjectId { get; set; }
-		
+
+		public virtual int Version { get; set; }
+
 		public virtual string DeviceId { get; set; }
 								}
 

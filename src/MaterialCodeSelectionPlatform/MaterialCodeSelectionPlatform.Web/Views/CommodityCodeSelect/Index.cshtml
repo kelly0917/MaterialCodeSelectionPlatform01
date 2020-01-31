@@ -15,7 +15,7 @@
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
-                <select lay-search name="selProject" lay-filter="selProject"></select>
+                <select lay-search  id="selProject"name="selProject" lay-filter="selProject"></select>
             </div>
         </div>
         <div class="layui-inline layui-float-left">
@@ -140,9 +140,17 @@
                             });
                         });
                     } else if (obj.event === 'select') {
+                        if ($("#selProject").val() == null || $("#selProject").val() == "-1") {
+                            layer.msg('请选择项目！');
+                            return;
+                        }
+                         if ($("#selDevice").val() == null || $("#selDevice").val() == "-1") {
+                            layer.msg('请选择装置！');
+                            return;
+                        }
                         layer.open({
                             type: 2,
-                            content: '/CommodityCodeSelect/CommodityCodePartNumberList?commodityCodeId=' + data.Id + "&userId="+userId+"&" + Math.random(),
+                            content: '/CommodityCodeSelect/CommodityCodePartNumberList?commodityCodeId=' + data.Id + "&userId=" + userId + "&projectId=" + $("#selProject").val() + "&deviceId=" + $("#selDevice").val() + "&" + Math.random(),
                             title: '选择采购码',
                             area: ["800px;", "500px;"]//宽 高
                         });
