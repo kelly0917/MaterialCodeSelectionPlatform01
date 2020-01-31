@@ -1,0 +1,232 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<div class="layui-form">
+    <div class="layui-container">
+        <div class="layui-row">
+            <div class="layui-col-xs5">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>待分配编码库</legend>
+                </fieldset>
+                <div class="layui-row">
+                    <div class="layui-col-xs3">
+                        <label>编码库名称:</label>
+                    </div>
+                    <div class="layui-col-xs7">
+                        <input type="text" class="layui-input-row" id="txtLeftSearch" />
+                    </div>
+                    <div class="layui-col-xs2">
+                        <button class="layui-btn layui-btn-xs" lay-filter="searchLeft" onclick="searchLeft()"><i class="layui-icon">&#xe615;</i></button>
+                    </div>
+                </div>
+                <div class="layui-row" style="height: 10px;">
+                </div>
+                <div class="layui-row" style="border: 1px solid #9A9B9F; height: 300px;" id="leftContain">
+                    <div id="xtreeLeft" class="xtree_contianer"></div>
+                </div>
+            </div>
+
+            <div class="layui-col-xs2">
+                <div class="layui-row" style="height: 170px;">
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-xs12 layui-align-center">
+                        <button class="layui-btn" onclick="toRight()"><i class="layui-icon" lay-filter="toRight">&#xe602;</i></button>
+                    </div>
+                </div>
+                <div class="layui-row" style="height: 80px;">
+                </div>
+                <div class="layui-row">
+                    <div class="layui-col-xs12 layui-align-center">
+                        <button class="layui-btn" onclick="toLeft()"><i class="layui-icon" lay-filter="toLeft">&#xe603;</i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-xs5">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>已分配编码库</legend>
+                </fieldset>
+                <div class="layui-row">
+                    <div class="layui-col-xs3">
+                        <label>编码库名称:</label>
+                    </div>
+                    <div class="layui-col-xs7">
+                        <input type="text" class="layui-input-row" id="txtRightSearch" />
+                    </div>
+                    <div class="layui-col-xs2">
+                        <button class="layui-btn layui-btn-xs" lay-fiter="searchRight" onclick="searchRight()"><i class="layui-icon">&#xe615;</i></button>
+                    </div>
+                </div>
+                <div class="layui-row" style="height: 10px;">
+                </div>
+                <div class="layui-row" style="border: 1px solid #9A9B9F; height: 300px;">
+                    <div id="xtreeRight" class="xtree_contianer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-row" style="height: 20px;">
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block layui-align-right">
+                <button class="layui-btn" lay-submit="" lay-filter="save" onclick="save()">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="~/lib/layui/layui-xtree.js?@DateTime.Now"></script>
+<script type="text/javascript">
+    var Id = '@ViewData["Id"]';
+    layui.use(['form','jquery'],
+        function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            //3、最完整的参数用法
+            var xtreeLeft = new layuiXtree({
+                elem: 'xtreeLeft'                  //必填三兄弟之老大
+                , form: form                    //必填三兄弟之这才是真老大
+                , data: "/Project/GetLeftDatas?Id=" + Id + "&pt=" + Math.random() //必填三兄弟之这也算是老大
+                , isopen: true  //加载完毕后的展开状态，默认值：true
+                , ckall: true    //启用全选功能，默认值：false
+                , ckallback: function () { } //全选框状态改变后执行的回调函数
+                , icon: {        //三种图标样式，更改几个都可以，用的是layui的图标
+                    open: "&#xe7a0;"       //节点打开的图标
+                    , close: "&#xe622;"    //节点关闭的图标
+                    , end: "&#xe612;"      //末尾节点的图标
+                }
+                , color: {       //三种图标颜色，独立配色，更改几个都可以
+                    open: "#EE9A00"        //节点图标打开的颜色
+                    , close: "#EEC591"     //节点图标关闭的颜色
+                    , end: "#828282"       //末级节点图标的颜色
+                }
+                , click: function (data) {  //节点选中状态改变事件监听，全选框有自己的监听事件
+                    console.log(data.elem); //得到checkbox原始DOM对象
+                    console.log(data.elem.checked); //开关是否开启，true或者false
+                    console.log(data.value); //开关value值，也可以通过data.elem.value得到
+                    console.log(data.othis); //得到美化后的DOM对象
+                }
+            });
+            var xtreeRight = new layuiXtree({
+                elem: 'xtreeRight'                  //必填三兄弟之老大
+                , form: form                    //必填三兄弟之这才是真老大
+                , data: "/Project/GetRightDatas?Id=" + Id + "&pt=" + Math.random() //必填三兄弟之这也算是老大
+                , isopen: false  //加载完毕后的展开状态，默认值：true
+                , ckall: true    //启用全选功能，默认值：false
+                , ckallback: function () { } //全选框状态改变后执行的回调函数
+                , icon: {        //三种图标样式，更改几个都可以，用的是layui的图标
+                    open: "&#xe7a0;"       //节点打开的图标
+                    , close: "&#xe622;"    //节点关闭的图标
+                    , end: "&#xe612;"      //末尾节点的图标
+                }
+                , color: {       //三种图标颜色，独立配色，更改几个都可以
+                    open: "#EE9A00"        //节点图标打开的颜色
+                    , close: "#EEC591"     //节点图标关闭的颜色
+                    , end: "#828282"       //末级节点图标的颜色
+                }
+                , click: function (data) {  //节点选中状态改变事件监听，全选框有自己的监听事件
+                    console.log(data.elem); //得到checkbox原始DOM对象
+                    console.log(data.elem.checked); //开关是否开启，true或者false
+                    console.log(data.value); //开关value值，也可以通过data.elem.value得到
+                    console.log(data.othis); //得到美化后的DOM对象
+                }
+            });
+            var toNormal =function(div) {
+                div.find("span").removeClass("xtree_searchText");
+            }
+
+            //左边搜索 待选择用户
+            window.searchLeft = function () {
+                var container = $('#xtreeLeft');
+                toNormal(container);
+                var firstSpan = null;
+                var spans = $("#xtreeLeft").find("span");
+                var searchText = $("#txtLeftSearch").val().toLowerCase();
+                //选中变红
+                for (var i = 0; i < spans.length; i++) {
+                    if ($(spans[i]).html().toLowerCase().indexOf(searchText) > -1) {
+                        $(spans[i]).addClass("xtree_searchText");
+                        if (!firstSpan) {
+                            firstSpan = spans[i];
+                        }
+                    }
+                }
+                //滚动条滚动
+                if (firstSpan) {
+                    $("#xtreeLeft").scrollTop($(firstSpan).parent().parent().offset().top - container.offset().top + container.scrollTop());
+                }
+            }
+
+            //右边搜索 已选择用户
+            window.searchRight =function() {
+                var container = $('#xtreeRight');
+                toNormal(container);
+                var firstSpan = null;
+                var spans = $("#xtreeRight").find("span");
+                var searchText = $("#txtRightSearch").val().toLowerCase();
+                //选中变红
+                for (var i = 0; i < spans.length; i++) {
+                    if ($(spans[i]).html().toLowerCase().indexOf(searchText) > -1) {
+                        $(spans[i]).addClass("xtree_searchText");
+                        if (!firstSpan) {
+                            firstSpan = spans[i];
+                        }
+                    }
+                }
+                //滚动条滚动
+                if (firstSpan) {
+                    $("#xtreeRight").scrollTop($(firstSpan).parent().parent().offset().top - container.offset().top + container.scrollTop());
+                }
+            }
+
+            //分配用户
+            window.toRight = function () {
+                var oCks = xtreeLeft.GetChecked(); //这是方法
+
+                for (var i = 0; i < oCks.length; i++) {
+                    toNormal($(oCks[i]).parent());
+                    $("#xtreeRight").append($(oCks[i]).parent());
+                }
+
+            }
+
+            //移除用户
+            window.toLeft = function () {
+                var oCks = xtreeRight.GetChecked(); //这是方法
+                for (var i = 0; i < oCks.length; i++) {
+                    toNormal($(oCks[i]).parent());
+                    $("#xtreeLeft").append($(oCks[i]).parent());
+                }
+            }
+
+            window.save=function() {
+                var AppResourId = new Array();
+                var oCks = $("#xtreeRight").find(":checkbox");
+                //去掉第一个全选checkbox
+                for (var i = 1; i < oCks.length; i++) {
+                    AppResourId.push(oCks[i].value);
+                }
+                $.ajax({
+                    url: "/Project/SaveProjectCatlog",
+                    type: "post",
+                    data: { catalogs: AppResourId, id: Id},
+                    dataType: 'json',
+                    success: function (result) {
+                        if (dealResult(result)) {
+                            parent.closeiframe("保存成功！");
+                        }
+                    }
+                });
+
+
+            }
+
+
+
+        });
+</script>

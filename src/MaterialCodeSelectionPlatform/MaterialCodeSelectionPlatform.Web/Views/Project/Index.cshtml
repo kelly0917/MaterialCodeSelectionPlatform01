@@ -45,6 +45,7 @@
     {{# if(d.Status==0){ }}
     <a class="layui-btn layui-btn-danger layui-btn-sm permission" action="4" lay-event="stop">停用</a>
     <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="device">装置</a>
+    <a class="layui-btn  layui-btn-sm layui-btn-radius permission" action="8" lay-event="setcatalog">分配编码库</a>
     {{# }else if(d.Status==1){}}
     <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="start">启用</a>
     {{# } }}
@@ -120,7 +121,14 @@
                             area: ["540px;", "340px;"]//宽 高
                         });
                     }
-                
+                    else if (obj.event === 'setcatalog') {
+                        layer.open({
+                            type: 2,
+                            content: '/Project/SetCataLogPage?id=' + data.Id + "&" + Math.random(),
+                            title: '分配编码库',
+                            area: ["700px;", "550px;"]//宽 高
+                        });
+                    }
                     else if (obj.event === 'stop') {
                         layer.confirm('确定停用吗', function (index) {
                             $.ajax({

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MaterialCodeSelectionPlatform.Domain;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.Utilities;
+using SqlSugar;
 
 namespace MaterialCodeSelectionPlatform.Data
 {
@@ -11,7 +13,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
 
         /// <summary>
-        /// 搜索项目
+        /// 搜索编码库
         /// </summary>
         /// <param name="searchCondition"></param>
         /// <returns></returns>
@@ -75,5 +77,70 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             return await Task.FromResult(result);
         }
+
+
+        /// <summary>
+        /// 获取待分配的编码库
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Catalog>> GetLeftCatalogs(string id)
+        {
+            var ids = await Db.Queryable<Catalog, ProjectCatalogMap>((c, p) => new object[]
+            {
+                JoinType.Inner,c.Id ==p.CatalogId
+            }).Where((c,p) => p.ProjectId == id).Select((c,p) => c.Id).ToListAsync();
+
+            var idsStr = string.Join(",", ids);
+            var list = await Db.Queryable<Catalog>().Where(c => !SqlFunc.Contains(idsStr, c.Id)).ToListAsync();
+            return list;
+        }
+
+
+        /// <summary>
+        /// 获取已分配的编码库
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Catalog>> GetRightCatalogs(string id)
+        {
+            var query = Db.Queryable<Catalog, ProjectCatalogMap>((c, p) => new object[]
+            {
+                JoinType.Inner,c.Id ==p.CatalogId
+            }).Where((c, p) => p.ProjectId == id).Select((c,p) => c);
+
+            return await query.ToListAsync();
+        }
+
+        /// <summary>
+        /// 保存用户分配的编码库
+        /// </summary>
+        /// <param name="catalogs"></param>
+        /// <param name="projectId"></param>
+        /// <returns></returns>
+        public async Task<int> SaveProjectCatlogs(List<string> catalogs, string userId, string projectId)
+        {
+            var list = await Db.Queryable<ProjectCatalogMap>().Where(c => c.ProjectId == projectId).Select(c => c.Id).ToListAsync();
+            await Db.Deleteable<ProjectCatalogMap>().In(list).ExecuteCommandAsync();
+
+            List<ProjectCatalogMap> ProjectCatalogMaps = new List<ProjectCatalogMap>();
+            foreach (var catlogId in catalogs)
+            {
+                ProjectCatalogMap ProjectCatalogMap = new ProjectCatalogMap();
+                ProjectCatalogMap.Id = Guid.NewGuid().ToString();
+                ProjectCatalogMap.ProjectId = projectId;
+                ProjectCatalogMap.Flag = 0;
+                ProjectCatalogMap.ProjectId = projectId;
+                ProjectCatalogMap.Status = 0;
+                ProjectCatalogMap.CatalogId = catlogId;
+                ProjectCatalogMap.CreateTime = DateTime.Now;
+                ProjectCatalogMap.LastModifyTime = DateTime.Now;
+                ProjectCatalogMap.LastModifyUserId = userId;
+                ProjectCatalogMap.CreateUserId = userId;
+                ProjectCatalogMaps.Add(ProjectCatalogMap);
+            }
+            return await Db.Insertable<ProjectCatalogMap>(ProjectCatalogMaps).ExecuteCommandAsync();
+        }
+
     }
 }

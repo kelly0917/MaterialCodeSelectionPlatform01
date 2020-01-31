@@ -17,6 +17,18 @@ using SqlSugar;
 namespace MaterialCodeSelectionPlatform.Domain.Entities
 {
     /// <summary>
+    /// A class which represents the ProjectCatalogMap table.
+    /// </summary>
+	[SugarTable("ProjectCatalogMap")]
+	public partial class ProjectCatalogMap : IDataEntity
+	{
+		
+		public virtual string ProjectId { get; set; }
+		
+		public virtual string CatalogId { get; set; }
+								}
+
+    /// <summary>
     /// A class which represents the Temp_ComponentType table.
     /// </summary>
 	[SugarTable("Temp_ComponentType")]
@@ -25,6 +37,7 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 	
 		public virtual int? CLASS_NO { get; set; }
 		
+		[Key]	
 		public virtual string CLASS_ID { get; set; }
 		
 		public virtual int? CATALOG_NO { get; set; }
@@ -45,14 +58,15 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		}
 
     /// <summary>
-    /// A class which represents the Temp_MaterialCode table.
+    /// A class which represents the Temp_CommodityCode table.
     /// </summary>
-	[SugarTable("Temp_MaterialCode")]
-	public partial class TempMaterialCode : IDataEntity
+	[SugarTable("Temp_CommodityCode")]
+	public partial class TempCommodityCode : IDataEntity
 	{
 	
 		public virtual string COMMODITY_NO { get; set; }
 		
+		[Key]	
 		public virtual string COMMODITY_ID { get; set; }
 		
 		public virtual string COMMODITY_CLASS_NO { get; set; }
@@ -61,30 +75,15 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		}
 
     /// <summary>
-    /// A class which represents the Temp_PurchasingCode table.
+    /// A class which represents the Temp_PropertyValue table.
     /// </summary>
-	[SugarTable("Temp_PurchasingCode")]
-	public partial class TempPurchasingCode : IDataEntity
-	{
-	
-		public virtual string PART_NO { get; set; }
-		
-		public virtual string PART_ID { get; set; }
-		
-		public virtual string CATLOG_NO { get; set; }
-		
-		public virtual string COMMODITY_NO { get; set; }
-		}
-
-    /// <summary>
-    /// A class which represents the Temp_PurchasingCodeAttribute table.
-    /// </summary>
-	[SugarTable("Temp_PurchasingCodeAttribute")]
-	public partial class TempPurchasingCodeAttribute : IDataEntity
+	[SugarTable("Temp_PropertyValue")]
+	public partial class TempPropertyValue : IDataEntity
 	{
 	
 		public virtual int? CATALOG_NO { get; set; }
 		
+		[Key]	
 		public virtual int? INSTANCE_NO { get; set; }
 		
 		public virtual int? CLASS_NO { get; set; }
@@ -93,46 +92,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string PROPERTY_VALUE { get; set; }
 		}
-
-    /// <summary>
-    /// A class which represents the Temp_Property table.
-    /// </summary>
-	[SugarTable("Temp_Property")]
-	public partial class TempProperty : IDataEntity
-	{
-	
-		public virtual string ENTITY_PROPERTY_NO { get; set; }
-		
-		public virtual string ENTITY_PROPERTY_ID { get; set; }
-		
-		public virtual string CATALOG_NO { get; set; }
-		}
-
-    /// <summary>
-    /// A class which represents the CommodityCode table.
-    /// </summary>
-	[SugarTable("CommodityCode")]
-	public partial class CommodityCode : IDataEntity
-	{
-		
-		public virtual string ComponentTypeId { get; set; }
-		
-		public virtual string Code { get; set; }
-			
-		public virtual string CN_ShortDesc { get; set; }
-		
-		public virtual string EN_ShortDesc { get; set; }
-		
-		public virtual string RU_ShortDesc { get; set; }
-		
-		public virtual string CN_LongDesc { get; set; }
-		
-		public virtual string EN_LongDesc { get; set; }
-		
-		public virtual string RU_LongDesc { get; set; }
-		
-		public virtual long? Hits { get; set; }
-							}
 
     /// <summary>
     /// A class which represents the CommodityCodeAttribute table.
@@ -183,38 +142,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 								}
 
     /// <summary>
-    /// A class which represents the PartNumber table.
-    /// </summary>
-	[SugarTable("PartNumber")]
-	public partial class PartNumber : IDataEntity
-	{
-		
-		public virtual string Code { get; set; }
-		
-		public virtual string ComponentTypeId { get; set; }
-		
-		public virtual string MaterialCodeId { get; set; }
-		
-		public virtual string CN_ShortDesc { get; set; }
-		
-		public virtual string EN_ShortDesc { get; set; }
-		
-		public virtual string RU_ShortDesc { get; set; }
-		
-		public virtual string CN_LongDesc { get; set; }
-		
-		public virtual string EN_LongDesc { get; set; }
-		
-		public virtual string RU_LongDesc { get; set; }
-		
-		public virtual string CN_SizeDesc { get; set; }
-		
-		public virtual string EN_SizeDesc { get; set; }
-		
-		public virtual string RU_SizeDesc { get; set; }
-								}
-
-    /// <summary>
     /// A class which represents the Project table.
     /// </summary>
 	[SugarTable("Project")]
@@ -224,18 +151,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string Name { get; set; }
 		
 		public virtual string Code { get; set; }
-								}
-
-    /// <summary>
-    /// A class which represents the ProjectCatalogMap table.
-    /// </summary>
-	[SugarTable("ProjectCatalogMap")]
-	public partial class ProjectCatalogMap : IDataEntity
-	{
-		
-		public virtual string ProjectId { get; set; }
-		
-		public virtual string Catalog { get; set; }
 								}
 
     /// <summary>
@@ -425,5 +340,116 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string Discipline { get; set; }
 								}
+
+    /// <summary>
+    /// A class which represents the Temp_PartNumber table.
+    /// </summary>
+	[SugarTable("Temp_PartNumber")]
+	public partial class TempPartNumber : IDataEntity
+	{
+	
+		public virtual int? PART_NO { get; set; }
+		
+		[Key]	
+		public virtual string PART_ID { get; set; }
+		
+		public virtual int? CATALOG_NO { get; set; }
+		
+		public virtual int? COMMODITY_NO { get; set; }
+		
+		public virtual int? SIZE_REF_NO { get; set; }
+		}
+
+    /// <summary>
+    /// A class which represents the Temp_Property table.
+    /// </summary>
+	[SugarTable("Temp_Property")]
+	public partial class TempProperty : IDataEntity
+	{
+	
+		public virtual int? ENTITY_PROPERTY_NO { get; set; }
+		
+		[Key]	
+		public virtual string ENTITY_PROPERTY_ID { get; set; }
+		
+		public virtual int? CATALOG_NO { get; set; }
+		}
+
+    /// <summary>
+    /// A class which represents the CommodityCode table.
+    /// </summary>
+	[SugarTable("CommodityCode")]
+	public partial class CommodityCode : IDataEntity
+	{
+		
+		public virtual string ComponentTypeId { get; set; }
+		
+		public virtual string Code { get; set; }
+		
+		public virtual string CN_ShortDesc { get; set; }
+		
+		public virtual string EN_ShortDesc { get; set; }
+		
+		public virtual string RU_ShortDesc { get; set; }
+		
+		public virtual string CN_LongDesc { get; set; }
+		
+		public virtual string EN_LongDesc { get; set; }
+		
+		public virtual string RU_LongDesc { get; set; }
+		
+		public virtual long? Hits { get; set; }
+								}
+
+    /// <summary>
+    /// A class which represents the PartNumber table.
+    /// </summary>
+	[SugarTable("PartNumber")]
+	public partial class PartNumber : IDataEntity
+	{
+		
+		public virtual string Code { get; set; }
+		
+		public virtual string ComponentTypeId { get; set; }
+		
+		public virtual string CommodityCodeId { get; set; }
+		
+		public virtual string CN_ShortDesc { get; set; }
+		
+		public virtual string EN_ShortDesc { get; set; }
+		
+		public virtual string RU_ShortDesc { get; set; }
+		
+		public virtual string CN_LongDesc { get; set; }
+		
+		public virtual string EN_LongDesc { get; set; }
+		
+		public virtual string RU_LongDesc { get; set; }
+		
+		public virtual string CN_SizeDesc { get; set; }
+		
+		public virtual string EN_SizeDesc { get; set; }
+		
+		public virtual string RU_SizeDesc { get; set; }
+								}
+
+    /// <summary>
+    /// A class which represents the Temp_CCPropertyValue table.
+    /// </summary>
+	[SugarTable("Temp_CCPropertyValue")]
+	public partial class TempCCPropertyValue : IDataEntity
+	{
+	
+		public virtual string descr { get; set; }
+		
+		public virtual string VALUE_TEXT { get; set; }
+		
+		[Key]	
+		public virtual int? instance_no { get; set; }
+		
+		public virtual int? catalog_no { get; set; }
+		
+		public virtual int? SEQ_NO { get; set; }
+		}
 
 }

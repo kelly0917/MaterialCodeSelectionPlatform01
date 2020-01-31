@@ -27,5 +27,38 @@ namespace MaterialCodeSelectionPlatform.Service
         {
             return await _ProjectDao.VerifNameOrCodeAsync(nameCode,id);
         }
+
+
+        /// <summary>
+        /// 获取待分配的项目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Catalog>> GetLeftCatalogs(string id)
+        {
+            return await _ProjectDao.GetLeftCatalogs(id);
+        }
+
+
+        /// <summary>
+        /// 获取已分配的项目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Catalog>> GetRightCatalogs(string id)
+        {
+            return await _ProjectDao.GetRightCatalogs(id);
+        }
+
+        /// <summary>
+        /// 保存用户分配的编码库
+        /// </summary>
+        /// <param name="catalogs"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<int> SaveProjectCatlogs(List<string> catalogs, string userId, string projectId)
+        {
+            return await _ProjectDao.SaveProjectCatlogs(catalogs, userId, projectId);
+        }
     }
 }
