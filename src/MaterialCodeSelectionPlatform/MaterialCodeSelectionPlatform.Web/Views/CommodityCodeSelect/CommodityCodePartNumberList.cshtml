@@ -1,0 +1,92 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+@using MaterialCodeSelectionPlatform.Domain
+@model IEnumerable<PartNumberReport>
+
+<link href="~/css/formSelects-v4.css" rel="stylesheet" />
+<script src="~/js/jsencrypt.min.js"></script>
+<form class="layui-form layui-form-model" action="">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        <div class="layui-form">
+            <table class="layui-table">
+                <colgroup>                 
+                    <col width="500">
+                    <col width="500">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>采购码 </th>
+                        <th>尺寸 </th>
+                        <th>数量 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var report in Model)
+                        {
+                            foreach (var ent in report.PartNumberList)
+                            {
+                                var txtId = $"txt_{ent.Id}";
+                                <tr>
+                                    <td>@ent.Code</td>
+                                    <td>@ent.CN_SizeDesc</td>
+                                    <td>
+                                        <input type="text" id="@txtId" name="@txtId"  value="@ent.DesignQty" placeholder="请输入数量" autocomplete="off" class="layui-input"/>
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="layui-row">
+            <button type="button" class="layui-btn layui-btn-normal layui-float-right" onclick="updatePartNumber()">更新物料表</button>
+        </div>
+    </div>
+
+</form>
+
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+    function updatePartNumber() {
+        var txtList = $("input[type='text']");
+        var arr = new Array();
+        if (txtList != null && txtList.length > 0) {
+            for (var i = 0; i < txtList.length; i++) {
+                if (txtList[i].value != "" && parseFloat(txtList[i].value) > 0) {
+                    var obj = new Object();
+                    obj.Id = txtList[i].id.split("_")[1];
+                    obj.DesignQty = $(txtList[i]).val();
+                    arr.push(obj);
+                }
+            }
+        }
+        debugger;
+          $.ajax({
+                url: "/CommodityCodeSelect/Save",
+                type: 'post',
+                data: arr,
+                dataType: 'json',
+                success: function (result) {
+                    debugger;
+                    if (dealResult(result)) {
+                        parent.loadData();
+                        parent.closeiframe("保存成功！");
+                    }
+                },
+                error: function (errorResult) {
+                    debugger;
+                }
+            });
+    }
+    
+
+</script>
