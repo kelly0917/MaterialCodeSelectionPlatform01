@@ -30,6 +30,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 装置Id
         /// </summary>
         public string DeviceId { get; set; }
+       
         /// <summary>
         /// 物资编码类型名称
         /// </summary>

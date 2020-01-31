@@ -26,5 +26,11 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <param name="userId">用户Id</param>
         /// <returns></returns>
         Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId, string userId);
+        /// <summary>
+        /// 保存【物资汇总明细表】
+        /// </summary>
+        /// <param name="list">采购码列表</param>
+        /// <returns></returns>
+        Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(List<PartNumberDto> list);
     }
 }

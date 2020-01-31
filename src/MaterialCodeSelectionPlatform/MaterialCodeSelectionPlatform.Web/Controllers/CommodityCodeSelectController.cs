@@ -146,16 +146,45 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// </summary>
         /// <param name="commodityCodeId">物资编码Id</param>
         /// <param name="userId">用户Id</param>
+        /// <param name="projectId">项目Id</param>
+        /// <param name="deviceId">装置Id</param>
         /// <returns></returns>
-        public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId)
+        public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId,string projectId, string deviceId)
         {
+            ViewData["projectId"] = projectId;
+            ViewData["deviceId"] = deviceId;
             var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
             return View(list);
         }
-        //public async Task<ActionResult> Save(List<PartNumberDto> list)
-        //{
-        //   // var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
-        //    return ConvertSuccessResult(null);
-        //}
+        /// <summary>
+        /// 保存【物资汇总明细表】
+        /// </summary>
+        /// <param name="list">采购码列表</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> SaveMaterialTakeOffDetail(List<PartNumberDto> list)
+        {
+
+            if (list == null || list.Count == 0)
+            {
+                return ConvertFailResult(null,"更新物料失败！");
+            }
+            foreach (var ent in list)
+            {
+                ent.CreateUserId = this.UserId;
+                ent.LastModifyUserId = this.UserId;
+                ent.CreateTime = DateTime.Now;
+                ent.LastModifyTime = DateTime.Now;
+            }
+            try
+            {
+                var result = await Service.SaveMaterialTakeOffDetail(list);
+                return ConvertJsonResult("更新成功",true);
+            }
+            catch (Exception e)
+            {
+                return ConvertFailResult(null, e.ToString());
+            }
+        }
     }
 }

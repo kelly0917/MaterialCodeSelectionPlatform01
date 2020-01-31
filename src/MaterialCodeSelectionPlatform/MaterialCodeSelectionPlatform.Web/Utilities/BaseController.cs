@@ -120,8 +120,22 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
             dataResult.Success = false;
             return Json(dataResult);
         }
+        /// <summary>
+        /// DataResult转换为JsonResult的结果格式
+        /// </summary>
+        /// <param name="msg">i消息</param>
+        /// <param name="success">是否成功</param>
+        /// <param name="ex">异常信息</param>
+        /// <returns></returns>
+        protected JsonResult ConvertJsonResult(string msg,bool success, Exception ex=null)
+        {
+            DataResult dataResult = new DataResult();
+            dataResult.Exception = ex;
+            dataResult.Message = msg;
+            dataResult.Success = success;
+            return Json(dataResult);
+        }
 
-       
         protected string newId
         {
             get { return Guid.NewGuid().ToString(); }
