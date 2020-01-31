@@ -183,7 +183,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> SaveUserProject(List<string> projectIds,string id)
         {
-            var result = Service.SaveUserProjects(projectIds, id, UserId);
+            var result =await Service.SaveUserProjects(projectIds, id, UserId);
             return ConvertSuccessResult(true);
         }
 
