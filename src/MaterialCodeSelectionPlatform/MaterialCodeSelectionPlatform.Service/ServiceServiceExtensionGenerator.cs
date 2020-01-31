@@ -25,25 +25,26 @@ namespace MaterialCodeSelectionPlatform.Service.Exentions.DependencyInjection
         /// <param name="services"></param>
         public static void AddScopedService(this IServiceCollection services)
         {
+			services.AddScoped<IProjectCatalogMapService, ProjectCatalogMapServiceImpl>();
 			services.AddScoped<ITempComponentTypeService, TempComponentTypeServiceImpl>();
-			services.AddScoped<ITempMaterialCodeService, TempMaterialCodeServiceImpl>();
-			services.AddScoped<ITempPurchasingCodeService, TempPurchasingCodeServiceImpl>();
-			services.AddScoped<ITempPurchasingCodeAttributeService, TempPurchasingCodeAttributeServiceImpl>();
-			services.AddScoped<ITempPropertyService, TempPropertyServiceImpl>();
-			services.AddScoped<ICommodityCodeService, CommodityCodeServiceImpl>();
+			services.AddScoped<ITempCommodityCodeService, TempCommodityCodeServiceImpl>();
+			services.AddScoped<ITempPropertyValueService, TempPropertyValueServiceImpl>();
 			services.AddScoped<ICommodityCodeAttributeService, CommodityCodeAttributeServiceImpl>();
-			services.AddScoped<IComponentTypeService, ComponentTypeServiceImpl>();
 			services.AddScoped<IDeviceService, DeviceServiceImpl>();
 			services.AddScoped<IMaterialTakeOffService, MaterialTakeOffServiceImpl>();
-			services.AddScoped<IMaterialTakeOffDetailService, MaterialTakeOffDetailServiceImpl>();
-			services.AddScoped<IPartNumberService, PartNumberServiceImpl>();
 			services.AddScoped<IProjectService, ProjectServiceImpl>();
-			services.AddScoped<IProjectCatalogMapService, ProjectCatalogMapServiceImpl>();
 			services.AddScoped<ISynchroDetailService, SynchroDetailServiceImpl>();
 			services.AddScoped<ISynchroRecordService, SynchroRecordServiceImpl>();
 			services.AddScoped<IUserService, UserServiceImpl>();
 			services.AddScoped<IUserProjectMapService, UserProjectMapServiceImpl>();
+			services.AddScoped<IMaterialTakeOffDetailService, MaterialTakeOffDetailServiceImpl>();
 			services.AddScoped<ICatalogService, CatalogServiceImpl>();
+			services.AddScoped<IComponentTypeService, ComponentTypeServiceImpl>();
+			services.AddScoped<ITempPartNumberService, TempPartNumberServiceImpl>();
+			services.AddScoped<ITempPropertyService, TempPropertyServiceImpl>();
+			services.AddScoped<ICommodityCodeService, CommodityCodeServiceImpl>();
+			services.AddScoped<IPartNumberService, PartNumberServiceImpl>();
+			services.AddScoped<ITempCCPropertyValueService, TempCCPropertyValueServiceImpl>();
 		}
 	}
 }

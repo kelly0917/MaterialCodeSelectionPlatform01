@@ -89,6 +89,10 @@ namespace MaterialCodeSelectionPlatform.Data
             var list = await Db.Queryable<UserProjectMap>().Where(c => c.UserId == id).Select(c=>c.Id).ToListAsync();
             await Db.Deleteable<UserProjectMap>().In(list).ExecuteCommandAsync();
 
+            if (projects.Count == 0)
+            {
+                return 0;
+            }
             List<UserProjectMap> userProjectMaps = new List<UserProjectMap>();
             foreach (var projectId in projects)
             {

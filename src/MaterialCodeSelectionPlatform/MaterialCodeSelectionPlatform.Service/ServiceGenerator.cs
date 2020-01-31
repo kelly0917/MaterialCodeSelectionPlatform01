@@ -14,6 +14,13 @@ using MaterialCodeSelectionPlatform.Domain.Entities;
 namespace MaterialCodeSelectionPlatform.Service
 {
     /// <summary>
+    /// A Service interface for ProjectCatalogMap table.
+    /// </summary>
+	public partial interface IProjectCatalogMapService : IEntityService<ProjectCatalogMap>
+	{
+	}
+
+    /// <summary>
     /// A Service interface for Temp_ComponentType table.
     /// </summary>
 	public partial interface ITempComponentTypeService : IEntityService<TempComponentType>
@@ -21,37 +28,16 @@ namespace MaterialCodeSelectionPlatform.Service
 	}
 
     /// <summary>
-    /// A Service interface for Temp_MaterialCode table.
+    /// A Service interface for Temp_CommodityCode table.
     /// </summary>
-	public partial interface ITempMaterialCodeService : IEntityService<TempMaterialCode>
+	public partial interface ITempCommodityCodeService : IEntityService<TempCommodityCode>
 	{
 	}
 
     /// <summary>
-    /// A Service interface for Temp_PurchasingCode table.
+    /// A Service interface for Temp_PropertyValue table.
     /// </summary>
-	public partial interface ITempPurchasingCodeService : IEntityService<TempPurchasingCode>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for Temp_PurchasingCodeAttribute table.
-    /// </summary>
-	public partial interface ITempPurchasingCodeAttributeService : IEntityService<TempPurchasingCodeAttribute>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for Temp_Property table.
-    /// </summary>
-	public partial interface ITempPropertyService : IEntityService<TempProperty>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for CommodityCode table.
-    /// </summary>
-	public partial interface ICommodityCodeService : IEntityService<CommodityCode>
+	public partial interface ITempPropertyValueService : IEntityService<TempPropertyValue>
 	{
 	}
 
@@ -59,13 +45,6 @@ namespace MaterialCodeSelectionPlatform.Service
     /// A Service interface for CommodityCodeAttribute table.
     /// </summary>
 	public partial interface ICommodityCodeAttributeService : IEntityService<CommodityCodeAttribute>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for ComponentType table.
-    /// </summary>
-	public partial interface IComponentTypeService : IEntityService<ComponentType>
 	{
 	}
 
@@ -84,30 +63,9 @@ namespace MaterialCodeSelectionPlatform.Service
 	}
 
     /// <summary>
-    /// A Service interface for MaterialTakeOffDetail table.
-    /// </summary>
-	public partial interface IMaterialTakeOffDetailService : IEntityService<MaterialTakeOffDetail>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for PartNumber table.
-    /// </summary>
-	public partial interface IPartNumberService : IEntityService<PartNumber>
-	{
-	}
-
-    /// <summary>
     /// A Service interface for Project table.
     /// </summary>
 	public partial interface IProjectService : IEntityService<Project>
-	{
-	}
-
-    /// <summary>
-    /// A Service interface for ProjectCatalogMap table.
-    /// </summary>
-	public partial interface IProjectCatalogMapService : IEntityService<ProjectCatalogMap>
 	{
 	}
 
@@ -140,9 +98,58 @@ namespace MaterialCodeSelectionPlatform.Service
 	}
 
     /// <summary>
+    /// A Service interface for MaterialTakeOffDetail table.
+    /// </summary>
+	public partial interface IMaterialTakeOffDetailService : IEntityService<MaterialTakeOffDetail>
+	{
+	}
+
+    /// <summary>
     /// A Service interface for Catalog table.
     /// </summary>
 	public partial interface ICatalogService : IEntityService<Catalog>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for ComponentType table.
+    /// </summary>
+	public partial interface IComponentTypeService : IEntityService<ComponentType>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for Temp_PartNumber table.
+    /// </summary>
+	public partial interface ITempPartNumberService : IEntityService<TempPartNumber>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for Temp_Property table.
+    /// </summary>
+	public partial interface ITempPropertyService : IEntityService<TempProperty>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for CommodityCode table.
+    /// </summary>
+	public partial interface ICommodityCodeService : IEntityService<CommodityCode>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for PartNumber table.
+    /// </summary>
+	public partial interface IPartNumberService : IEntityService<PartNumber>
+	{
+	}
+
+    /// <summary>
+    /// A Service interface for Temp_CCPropertyValue table.
+    /// </summary>
+	public partial interface ITempCCPropertyValueService : IEntityService<TempCCPropertyValue>
 	{
 	}
 
