@@ -9,6 +9,7 @@ using log4net.Repository;
 using MaterialCodeSelectionPlatform.Data.Exentions.DependencyInjection;
 using MaterialCodeSelectionPlatform.Service.Exentions.DependencyInjection;
 using MaterialCodeSelectionPlatform.Utilities;
+using MaterialCodeSelectionPlatform.Web.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,14 +40,14 @@ namespace MaterialCodeSelectionPlatform.Web
 
             Config.DBProviderName = Configuration["connectStrings:ProviderName"];
             Config.DBConnectionString = Configuration["connectStrings:ConnectionString"];
+
+            SysConfig.Domain = Configuration["Domain"];
+            LDAPUtil.Register(Configuration);
         }
-        public IConfiguration Configuration { get; }
+        public IConfigurationRoot Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            
-
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
                 {
@@ -83,8 +84,8 @@ namespace MaterialCodeSelectionPlatform.Web
             });
             services.AddDistributedMemoryCache();
             services.AddSession();
-         
 
+            services.AddAuthorization(options => { });
 
 
         }
@@ -119,7 +120,7 @@ namespace MaterialCodeSelectionPlatform.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
+           
         }
 
 

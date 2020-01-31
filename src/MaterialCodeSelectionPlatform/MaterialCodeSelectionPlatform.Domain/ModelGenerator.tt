@@ -72,7 +72,7 @@ foreach(Table tbl in from t in tables where !t.Ignore select t){
 	{
 <#foreach(Column col in from c in tbl.Columns where !c.Ignore select c)
 {#>
-	<# if (col.PropertyName!="Id" && col.PropertyName!="Version" && col.PropertyName!="Flag" && col.PropertyName!="DataStatus" && col.PropertyName!="Status" && col.PropertyName!="CreateUserId" && col.PropertyName!="CreateTime" && col.PropertyName!="LastModifyUserId" && col.PropertyName!="LastModifyTime"){ #>
+	<# if (col.PropertyName!="Id"  && col.PropertyName!="Flag" && col.PropertyName!="DataStatus" && col.PropertyName!="Status" && col.PropertyName!="CreateUserId" && col.PropertyName!="CreateTime" && col.PropertyName!="LastModifyUserId" && col.PropertyName!="LastModifyTime"){ #>
 
 	<# if (tbl.PK!=null && tbl.PK.Name==col.PropertyName  ) { #>
 	[Key]	

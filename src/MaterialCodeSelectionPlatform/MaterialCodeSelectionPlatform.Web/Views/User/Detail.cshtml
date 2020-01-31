@@ -33,6 +33,12 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">域账户：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="DomainUserName"  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">性别：</label>
                 <div class="layui-input-block">
                     <select name="Sex" lay-search>
@@ -123,7 +129,6 @@
                 type: 'get',
                 dataType: 'json',
                 success: function (result) {
-                    debugger;
                     $("#fmAddOrEdit").fillData(result.Data);
                     editPwd = result.Data.Password;
                     $("[name=CommitPassword]").val(editPwd);
