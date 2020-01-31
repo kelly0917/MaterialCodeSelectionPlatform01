@@ -33,6 +33,12 @@
                 </div>
             </div>
             <div class="layui-form-item">
+                <label class="layui-form-label">域账户：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="DomainUserName"  lay-verify="" placeholder="请输入域账户" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
                 <label class="layui-form-label">性别：</label>
                 <div class="layui-input-block">
                     <select name="Sex" lay-search>
@@ -175,6 +181,7 @@
                 + "&Sex=" + $('[name=Sex]').val()
                 + "&Role=" + $('[name=Role]').val()
                 + "&Logo=" + $('[name=Logo]').val()
+                + "&DomainUserName=" + $('[name=DomainUserName]').val()
                 + "&Password=" + encodeURIComponent(pwd);
 
             $.ajax({

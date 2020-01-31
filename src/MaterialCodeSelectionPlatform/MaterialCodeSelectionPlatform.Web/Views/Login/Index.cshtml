@@ -63,7 +63,7 @@
         $.ajax({
                 url: "/Login/LoginUserName",
             type: "post",
-            data: { userName: $username.val(), password: hex_md5(pwd) },
+            data: { userName: $username.val(), password: pwd },
             success: function (data) {
                 $errorMsg.html("");
 

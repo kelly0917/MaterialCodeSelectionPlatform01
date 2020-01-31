@@ -135,10 +135,11 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 	{
 		
 		public virtual int? CheckStatus { get; set; }
-			
+		
+		[Timestamp]
+		public virtual int? Version { get; set; }
+		
 		public virtual string ProjectId { get; set; }
-
-		public virtual int Version { get; set; }
 
 		public virtual string DeviceId { get; set; }
 								}
@@ -209,7 +210,9 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string Ico { get; set; }
 		
 		public virtual int? Sex { get; set; }
-								}
+								
+		public virtual string DomainUserName { get; set; }
+		}
 
     /// <summary>
     /// A class which represents the UserProjectMap table.

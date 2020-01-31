@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using MaterialCodeSelectionPlatform.Web.Utilities;
 
 namespace Top.WizEasc.ManagerWeb.Controllers
 {
@@ -36,11 +36,33 @@ namespace Top.WizEasc.ManagerWeb.Controllers
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public async Task<IActionResult> LoginUserName( string userName, string password)
+        public async Task<IActionResult> LoginUserName(string userName, string password)
         {
-            var user = await userService.GetByUserNamePwd(userName, password);
+
+            var user = await userService.GetByUserNamePwd(userName, CommonHelper.ToMD5(password));
             if (user == null)
             {
+                //判断是否为域账户登录
+                if (LDAPUtil.Validate(userName, password))
+                {
+                    var list = await userService.GetByParentId("DomainUserName", userName);
+                    if (list.Count > 0)
+                    {
+                        user = list.FirstOrDefault();
+                        var claimsIdentity = new ClaimsIdentity(new[] {new Claim(ClaimTypes.Name, user.Id),
+                            new Claim("LoginName", user.LoginName),
+                            new Claim("UserName", user.Name),
+                        }, "Basic");
+
+                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
+                        HttpContext.Session.SetString("LoginName", user.LoginName ?? Guid.Empty.ToString());
+                        HttpContext.Session.SetString("UserName", user.Name ?? Guid.Empty.ToString());
+                        HttpContext.Session.SetString("UserId", user.Id ?? Guid.Empty.ToString());
+                        return Content("success");
+                    }
+                }
                 return Content("用户名或密码错误");
             }
             else
@@ -75,7 +97,7 @@ namespace Top.WizEasc.ManagerWeb.Controllers
 
             return Content("success");
         }
-      
+
 
 
     }
