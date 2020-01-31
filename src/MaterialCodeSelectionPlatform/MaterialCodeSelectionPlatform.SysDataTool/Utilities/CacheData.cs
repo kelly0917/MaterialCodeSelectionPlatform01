@@ -12,6 +12,29 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
     {
         public static List<SysConfigModel> ConfigCache { get; set; }
 
+        /// <summary>
+        /// 当前处理的Key  DicCacheSysData和DicDealProgressRate 的key
+        /// </summary>
+        public static string CurrentDealKey { get; set; }
+
+        public static double CurrentProgress { get; set; }
+        /// <summary>
+        /// 全局同步记录
+        /// </summary>
+        public static Dictionary<string,DateTime> DicCacheSysData { get; set; } = new Dictionary<string, DateTime>();
+
+
+
+        /// <summary>
+        /// 同步总共几步
+        /// </summary>
+        public static int SumDealProgress = 15;
+
+        /// <summary>
+        /// 处理进度百分比
+        /// </summary>
+        public static Dictionary<string,int> DicDealProgressRate { get; set; } = new Dictionary<string, int>();
+
         public static string AdminUserId { get; set; }
 
         public static string SqlConn { get; set; }
@@ -22,14 +45,25 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
             AdminUserId = ConfigurationManager.AppSettings["AdminUserId"];
             string sql = "select * from Catalog";
             ConfigCache = CommonHelper.GetDataFromSqlServer<SysConfigModel>(sql,SqlConn);
+        }
 
-            ////string sss =
-            ////    "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.3.12)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=VM-DEMO103)));Persist Security Info=True;User ID =ERM; Password=lmc;";
-            // string sss = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.3.12)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=ERMVM11)));User Id=DEMO103; Password=DEMO103";
-            // //(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = localhost)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = ERMVM11)))
-            //var sql1 = $"SELECT COMMODITY_NO,COMMODITY_ID,COMMODITY_CLASS_NO,CATALOG_NO FROM COMMODITY WHERE CATALOG_NO = 41 AND APPROVAL_STATUS_NO =2  ";
-            //DataTable table = CommonHelper.GetDataFromOracle(sql1, sss);
+        /// <summary>
+        /// 处理到第几步
+        /// </summary>
+        /// <param name="p"></param>
+        public static void SetDealProgress(int p)
+        {
+            DicDealProgressRate[CacheData.CurrentDealKey] = p;
+            CurrentProgress = (DicDealProgressRate[CurrentDealKey] * 100.0 / SumDealProgress);
+        }
 
+        /// <summary>
+        /// 获取当前处理进度
+        /// </summary>
+        /// <returns></returns>
+        public static string GetDealProgress()
+        {
+            return CurrentProgress.ToString("#0.00");
         }
 
 
