@@ -76,7 +76,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress(7);
                 //采购码属性
-                deleteSql = $"delete from Temp_PartNumberAttribute where CATALOG_NO={configModel.Code}";
+                deleteSql = $"delete from Temp_PropertyValue where CATALOG_NO={configModel.Code}";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
