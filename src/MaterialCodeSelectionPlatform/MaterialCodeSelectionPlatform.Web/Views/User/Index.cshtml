@@ -17,13 +17,14 @@
             <div class="layui-input-inline">
                 <select name="role" lay-filter="appSelect" id="selFlag">
                     <option value="-1" selected="selected">全部</option>
-                    <option value="0">正常</option>
-                    <option value="1">停用</option>
+                    <option value="0">超级管理员</option>
+                    <option value="1">应用管理员</option>
+                    <option value="2">普通用户</option>
                 </select>
             </div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label">绑定状态：</label>
+            <label class="layui-form-label">状态：</label>
             <div class="layui-input-inline">
                 <select name="flag" lay-filter="appSelect" id="selFlag">
                     <option value="-1" selected="selected">全部</option>
@@ -217,5 +218,11 @@
 
         });
 
-
+    //回车响应
+    $(".layui-form").keydown(
+        function (e) {
+            if (e.keyCode == 13) {
+                loadData();
+            }
+        });
 </script>
