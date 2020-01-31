@@ -208,7 +208,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     else
                     {
                         // 物资汇总表                   
-                        mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version+1);
+                        mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version.Value+1);
                         //新增明细
                         addMaterialTakeOffDetail(list, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                     }
