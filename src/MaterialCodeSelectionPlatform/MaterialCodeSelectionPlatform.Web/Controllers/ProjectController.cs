@@ -41,6 +41,12 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return View();
         }
 
+        public IActionResult SetUserPage(string id)
+        {
+            ViewData["id"] = id;
+            return View();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -140,5 +146,61 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return ConvertSuccessResult(true);
         }
 
+
+
+
+        /// <summary>
+        /// 获取分配资源待分配树的数据
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetLeftUserDatas(string Id)
+        {
+            var list = await Service.GetLeftUsers(Id);
+            List<TreeItemModel> result = new List<TreeItemModel>();
+            foreach (var top in list)
+            {
+                TreeItemModel treeItemModel = new TreeItemModel();
+                treeItemModel.title = top.Name;
+                treeItemModel.value = top.Id;
+                treeItemModel.disabled = false;
+                treeItemModel.parentId = Guid.Empty.ToString();
+                result.Add(treeItemModel);
+            }
+            return Json(result);
+        }
+
+        /// <summary>
+        /// 获取分配资源已分配树的数据
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetRightUserDatas(string Id)
+        {
+            var list = await Service.GetRightUsers(Id);
+            List<TreeItemModel> result = new List<TreeItemModel>();
+            foreach (var top in list)
+            {
+                TreeItemModel treeItemModel = new TreeItemModel();
+                treeItemModel.title = top.Name;
+                treeItemModel.value = top.Id;
+                treeItemModel.disabled = false;
+                treeItemModel.parentId = Guid.Empty.ToString();
+                result.Add(treeItemModel);
+            }
+            return Json(result);
+        }
+
+        /// <summary>
+        /// 保存已经分配的用户
+        /// </summary>
+        /// <param name="userids"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> SaveUserProject(List<string> userids, string id)
+        {
+            var result = await Service.SaveUserProjects(userids, UserId, id);
+            return ConvertSuccessResult(true);
+        }
     }
 }

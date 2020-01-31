@@ -123,6 +123,10 @@ namespace MaterialCodeSelectionPlatform.Data
             var list = await Db.Queryable<ProjectCatalogMap>().Where(c => c.ProjectId == projectId).Select(c => c.Id).ToListAsync();
             await Db.Deleteable<ProjectCatalogMap>().In(list).ExecuteCommandAsync();
 
+            if (catalogs.Count == 0)
+            {
+                return 0;
+            }
             List<ProjectCatalogMap> ProjectCatalogMaps = new List<ProjectCatalogMap>();
             foreach (var catlogId in catalogs)
             {
@@ -140,6 +144,77 @@ namespace MaterialCodeSelectionPlatform.Data
                 ProjectCatalogMaps.Add(ProjectCatalogMap);
             }
             return await Db.Insertable<ProjectCatalogMap>(ProjectCatalogMaps).ExecuteCommandAsync();
+        }
+
+
+
+
+        /// <summary>
+        /// 获取待分配的用户
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<User>> GetLeftUsers(string id)
+        {
+            var ids = await Db.Queryable<User, UserProjectMap>((u, p) => new object[]
+            {
+                JoinType.Inner,u.Id ==p.UserId
+            }).Where((u, p) => p.ProjectId == id).Select((u, p) => u.Id).ToListAsync();
+
+            var idsStr = string.Join(",", ids);
+            var list = await Db.Queryable<User>().Where(c => !SqlFunc.Contains(idsStr, c.Id)).ToListAsync();
+            return list;
+        }
+
+
+        /// <summary>
+        /// 获取已分配的编码库
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<User>> GetRightUsers(string id)
+        {
+            var query = Db.Queryable<User, UserProjectMap>((u, p) => new object[]
+            {
+                JoinType.Inner,u.Id ==p.UserId
+            }).Where((u, p) => p.ProjectId == id).Select((u, p) => u);
+
+            return await query.ToListAsync();
+        }
+
+
+        /// <summary>
+        /// 保存用户分配的编码库
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<int> SaveUserProjects(List<string> userIds, string userId, string projectId)
+        {
+            var list = await Db.Queryable<UserProjectMap>().Where(c => c.ProjectId == projectId).Select(c => c.Id).ToListAsync();
+            await Db.Deleteable<ProjectCatalogMap>().In(list).ExecuteCommandAsync();
+
+            if (userIds.Count == 0)
+            {
+                return 0;
+            }
+            List<UserProjectMap> userProjectMaps = new List<UserProjectMap>();
+            foreach (var users in userIds)
+            {
+                UserProjectMap userProjectMap = new UserProjectMap();
+                userProjectMap.Id = Guid.NewGuid().ToString();
+                userProjectMap.ProjectId = projectId;
+                userProjectMap.Flag = 0;
+                userProjectMap.ProjectId = projectId;
+                userProjectMap.Status = 0;
+                userProjectMap.UserId = users;
+                userProjectMap.CreateTime = DateTime.Now;
+                userProjectMap.LastModifyTime = DateTime.Now;
+                userProjectMap.LastModifyUserId = userId;
+                userProjectMap.CreateUserId = userId;
+                userProjectMaps.Add(userProjectMap);
+            }
+            return await Db.Insertable<UserProjectMap>(userProjectMaps).ExecuteCommandAsync();
         }
 
     }
