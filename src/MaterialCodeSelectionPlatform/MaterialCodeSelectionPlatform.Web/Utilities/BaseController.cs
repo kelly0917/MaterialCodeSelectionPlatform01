@@ -27,7 +27,7 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
     where S:IEntityService<T>
     {
         private ILog log = LogHelper.GetLogger<Object>();
-
+        
         protected S Service { get; set; }
 
         protected T Entity { get; set; }
@@ -35,6 +35,11 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme).Result.Succeeded)
+            {
+                context.HttpContext.Response.Redirect("/Login/Index");
+            }
+
+            if (string.IsNullOrEmpty(UserId))
             {
                 context.HttpContext.Response.Redirect("/Login/Index");
             }
@@ -143,17 +148,17 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
 
         protected string UserId
         {
-            get { return HttpContext.Session.GetString("UserId")??Guid.NewGuid().ToString(); }
+            get { return HttpContext.Session.GetString("UserId"); }
         }
 
         protected string UserName
         {
-            get { return HttpContext.Session.GetString("UserName") ?? string.Empty; ; }
+            get { return HttpContext.Session.GetString("UserName"); }
         }
 
         protected string UserTrueName
         {
-            get { return HttpContext.Session.GetString("LoginName") ?? string.Empty; ; }
+            get { return HttpContext.Session.GetString("LoginName"); }
         }
 
         /// <summary>
