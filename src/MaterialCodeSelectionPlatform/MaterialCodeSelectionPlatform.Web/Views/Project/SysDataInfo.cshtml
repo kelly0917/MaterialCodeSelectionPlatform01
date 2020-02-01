@@ -1,0 +1,25 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<div class="layui-form layui-form-model" >
+    <div class="layui-form-item">
+        <div class="layui-progress layui-progress-big" lay-showPercent="yes">
+            <div class="layui-progress-bar layui-bg-green" lay-percent="50%"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'layer','element'],
+        function() {
+            var form = layui.form;
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var element = layui.element;
+         
+            form.render();
+           
+        });
+
+</script>

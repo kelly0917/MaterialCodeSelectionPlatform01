@@ -202,5 +202,14 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var result = await Service.SaveUserProjects(userids, UserId, id);
             return ConvertSuccessResult(true);
         }
+
+        /// <summary>
+        /// 同步进度
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult SysDataInfo()
+        {
+            return View();
+        }
     }
 }

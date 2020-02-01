@@ -52,14 +52,14 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Start();
                 log.Debug($"开始同步物资编码类别！编码库为:{configModel.Name}");
                 //and approval_status_no =2
-                var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no =3 ";
+                var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO,c.CATALOG_ID  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO inner join CATALOG c on a.CATALOG_NO = c.CATALOG_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no = 3 ";
                 DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 var tempTableName = "Temp_ComponentType";
                 log.Debug($"从Oracle获取数据完成，返回数据量为：{table.Rows.Count},耗时：{stopwatch.ElapsedMilliseconds}mm");
                 stopwatch.Restart();
                 //递归排除掉 审批状态不为2,
                 CacheData.SetDealProgress(1);
-                string deleteSql = $"delete from Temp_ComponentType where CATALOG_NO={configModel.Code}";
+                string deleteSql = $"delete from Temp_ComponentType";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
               
                 CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
@@ -76,9 +76,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 });
                 parameters.Add(new SqlParameter()
                 {
-                    ParameterName = "@CatalogNo",
-                    Value = configModel.Code,
-                    DbType = DbType.Int32
+                    ParameterName = "@CatalogName",
+                    Value = configModel.Name,
+                    DbType = DbType.String
                 });
                 CommonHelper.ExcuteSP(SP_Name, CacheData.SqlConn, parameters);
                 log.Debug($"同步数据完成，存储过程执行耗时：{stopwatch.ElapsedMilliseconds}mm");

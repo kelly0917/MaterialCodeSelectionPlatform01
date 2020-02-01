@@ -43,7 +43,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                string deleteSql = $"delete from Temp_CommodityCode where CATALOG_NO={configModel.Code}";
+                string deleteSql = $"delete from Temp_CommodityCode ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
                 //物资编码
                 var sql =
@@ -59,7 +59,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress(5);
                 //采购码
-                deleteSql = $"delete from Temp_PartNumber where CATALOG_NO={configModel.Code}";
+                deleteSql = $"delete from Temp_PartNumber ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -76,7 +76,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress(7);
                 //采购码属性
-                deleteSql = $"delete from Temp_PropertyValue where CATALOG_NO={configModel.Code}";
+                deleteSql = $"delete from Temp_PropertyValue ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -93,7 +93,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress(9);
                 //同步字典属性
-                deleteSql = $"delete from Temp_Property where CATALOG_NO={configModel.Code}";
+                deleteSql = $"delete from Temp_Property ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -134,7 +134,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                     order by   ca.SEQ_NO", configModel.Code, configModel.COMM_REPRESENT_TYPE);
 
 
-                deleteSql = $"delete from Temp_CCPropertyValue where CATALOG_NO={configModel.Code}";
+                deleteSql = $"delete from Temp_CCPropertyValue ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 log.Debug($"临时表删除属性值数据完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
@@ -162,9 +162,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 });
                 parameters.Add(new SqlParameter()
                 {
-                    ParameterName = "@CatalogNo",
-                    Value = configModel.Code,
-                    DbType = DbType.Int32
+                    ParameterName = "@CatalogName",
+                    Value = configModel.Name,
+                    DbType = DbType.String
                 });
 
                 CommonHelper.ExcuteSP("SP_SysCommodityCode", CacheData.SqlConn, parameters.ToList());
@@ -180,9 +180,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 });
                 parameters.Add(new SqlParameter()
                 {
-                    ParameterName = "@CatalogNo",
-                    Value = configModel.Code,
-                    DbType = DbType.Int32
+                    ParameterName = "@CatalogName",
+                    Value = configModel.Name,
+                    DbType = DbType.String
                 });
                 CommonHelper.ExcuteSP("SP_SysPartNumber", CacheData.SqlConn, parameters.ToList());
                 log.Debug($"采购编码存储过程执行完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
