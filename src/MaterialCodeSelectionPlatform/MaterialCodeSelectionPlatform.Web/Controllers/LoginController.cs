@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MaterialCodeSelectionPlatform.Web.Utilities;
 
-namespace Top.WizEasc.ManagerWeb.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class LoginController : Controller
     {
