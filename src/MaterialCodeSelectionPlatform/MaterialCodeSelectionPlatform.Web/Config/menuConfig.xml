@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Menus>
-  <Menu_P Name="用户管理" Url="/User/Index" FeatureId="用户管理"  Roles="0"></Menu_P>
+  <Menu_P Name="用户管理" Url="/User/Index" FeatureId="用户管理"  Roles="0,1"></Menu_P>
   <Menu_P Name="项目管理" Url="/Project/Index" FeatureId="项目管理" Roles="0,1"></Menu_P>
   <Menu_P Name="装置管理" Url="/Device/Index" FeatureId="装置管理" Roles="0,1" ></Menu_P>
   <Menu_P Name="物资选码" Url="/CommodityCodeSelect/Index" FeatureId="物资选码" Roles="0,1,2"></Menu_P>

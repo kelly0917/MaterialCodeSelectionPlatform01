@@ -23,6 +23,17 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 
         public IActionResult Index()
         {
+            //应用管理员，只能创建普通用户
+
+            if (RoleId == 0)
+            {
+                ViewData["IsSuperAdmin"] = true;
+            }
+            else
+            {
+                ViewData["IsSuperAdmin"] = false;
+            }
+
             return View();
         }
 
@@ -35,6 +46,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         public IActionResult AddOrEditPage(string id)
         {
             ViewData["id"] = id;
+            if (RoleId == 0)
+            {
+                ViewData["IsSuperAdmin"] = true;
+            }
+            else
+            {
+                ViewData["IsSuperAdmin"] = false;
+            }
+
             return View();
         }
 
