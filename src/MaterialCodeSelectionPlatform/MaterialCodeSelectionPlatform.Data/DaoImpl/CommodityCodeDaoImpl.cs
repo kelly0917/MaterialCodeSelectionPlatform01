@@ -101,7 +101,7 @@ namespace MaterialCodeSelectionPlatform.Data
             var query = Db.Queryable<CommodityCodeAttribute>();
             if (id.IsNotNullAndNotEmpty())
             {
-                query = query.Where(a => a.CommodityCodeId==id && a.Status==0).OrderBy(a=>a.AttributeName);
+                query = query.Where(a => a.CommodityCodeId==id && a.Status==0).OrderBy(a=>a.SeqNo);
                 // 更新点击的次数
                 var value = Db.Updateable<CommodityCode>().UpdateColumns(it => new { it.Hits }).ReSetValue(it => it.Hits == (it.Hits + 1)).Where(it=>it.Id==id).ExecuteCommand();
 
@@ -150,7 +150,7 @@ namespace MaterialCodeSelectionPlatform.Data
 			                                             AND CreateUserId = @CreateUserId
 			                                         ORDER BY Version DESC)
              ) b ON a.id = b.PartNumberId
-            WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by b.DesignQty desc";
+            WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by a.CN_SizeDesc asc";
            var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId });
             //if (partNumberList != null && partNumberList.Count > 0)
             //{
@@ -199,7 +199,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 var mto = await getOnwerTopMaterialTakeOff(userId, projectId, deviceId);
                 if (mto != null)
                 {
-                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id).ExecuteCommand();//暂进不留历史记录
+                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id&&c.CommodityCodeId== commodityCodeId).ExecuteCommand();//暂进不留历史记录
                     if (mto.CheckStatus == 1)//审批状态【1：working 】【2：approved】
                     {                     
                         //新增明细

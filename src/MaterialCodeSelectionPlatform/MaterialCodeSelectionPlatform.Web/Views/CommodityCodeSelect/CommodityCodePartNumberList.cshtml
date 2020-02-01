@@ -12,40 +12,43 @@
     <input type="hidden" name="Id" value="@ViewData["id"]" />
     <div class="layui-row">
         <div class="layui-form">
-            <table class="layui-table">
-                <colgroup>                 
-                    <col width="500">
-                    <col width="500">
-                    <col width="200">
-                    <col>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>采购码 </th>
-                        <th>尺寸 </th>
-                        <th>数量 </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        foreach (var report in Model)
-                        {
-                            foreach (var ent in report.PartNumberList)
-                            {
-                                var txtId = $"txt_{ent.Id}";
-                                <tr>
-                                    <td>@ent.Code</td>
-                                    <td>@ent.CN_SizeDesc</td>
-                                    <td>
-                                        <input type="text" id="@txtId" name="@txtId"  value="@ent.DesignQty" commoditycodeid="@ent.CommodityCodeId" placeholder="请输入数量" autocomplete="off" class="layui-input"/>
-                                    </td>
+            @{ 
+                foreach (var report in Model)
+                {
+                   
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="500">
+                                <col width="500">
+                                <col width="200">
+                            </colgroup>
+                            <thead>
+                                <tr style="background-color:deepskyblue;color:white">
+                                    <th colspan="3">@report.ComponentTypeName </th>                                   
                                 </tr>
-                            }
-
-                        }
-                    }
-                </tbody>
-            </table>
+                                <tr>
+                                    <th>采购码 </th>
+                                    <th>尺寸 </th>
+                                    <th>数量 </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ent in report.PartNumberList)
+                                {
+                                    var txtId = $"txt_{ent.Id}";
+                                    <tr>
+                                        <td>@ent.Code</td>
+                                        <td>@ent.CN_SizeDesc</td>
+                                        <td>
+                                            <input type="text" id="@txtId" name="@txtId" value="@ent.DesignQty" commoditycodeid="@ent.CommodityCodeId" placeholder="请输入数量" autocomplete="off" class="layui-input" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                }
+            }
+         
         </div>
         <div class="layui-row">
             <button type="button" id="btnUpdate" class="layui-btn layui-btn-normal layui-float-right" >更新物料表</button>
@@ -55,50 +58,7 @@
 </form>
 
 <script src="~/js/jsencrypt.min.js"></script>
-<script type="text/javascript">
-    function updatePartNumber() {
-         debugger;
-        var txtList = $("input[type='text']");
-        var list = new Array();
-        if (txtList != null && txtList.length > 0) {
-            for (var i = 0; i < txtList.length; i++) {
-                if (txtList[i].value != "" && parseFloat(txtList[i].value) > 0) {
-                    var obj = new Object();
-                    obj.Id = txtList[i].id.split("_")[1];
-                    obj.DesignQty = $(txtList[i]).val();
-                    obj.ProjectId = "@ViewData["projectId"]";
-                    obj.DeviceId="@ViewData["deviceId"]";
-                    obj.CommoditycodeId= $(txtList[i]).attr("commoditycodeid");
-                    list.push(obj);
-                }
-            }
-        }
-        alert(JSON.stringify(list));
-        $.post("/CommodityCodeSelect/SaveMaterialTakeOffDetail", { list : list }, function (arr) {
-    alert(arr);  //结果为true
-});
-          //$.ajax({
-          //      url: "/CommodityCodeSelect/SaveMaterialTakeOffDetail",
-          //      type: 'POST',
-          //    contentType: "application/json",
-          //    data: JSON.stringify(list),
-          //     // data: JSON.stringify(list),
-          //    dataType: 'json',           
-          //      success: function (result) {
-          //          debugger;
-          //          if (result.success) {
-          //              parent.loadData();
-          //              parent.closeiframe("保存成功！");
-          //          }
-          //          else {
-          //               parent.closeiframe(result.message);
-          //          }
-          //      },
-          //      error: function (errorResult) {
-          //          debugger;
-          //      }
-          //  });
-    }
+<script type="text/javascript">   
     
       layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
@@ -125,7 +85,7 @@
                 //alert(JSON.stringify(list));
                 $.post("/CommodityCodeSelect/SaveMaterialTakeOffDetail", { list: list }, function (data) {                
                     layer.msg(data.message);
-                    window.location.reload();
+                  //  window.location.reload();
                 });    
             });
         });
