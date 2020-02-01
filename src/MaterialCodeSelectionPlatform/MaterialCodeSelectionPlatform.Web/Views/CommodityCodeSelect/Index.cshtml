@@ -198,11 +198,11 @@
             form.render();
             form.on('select(sel1)',
                 function(data1) {
-                    var value = data1.value;                   
+                    var value = data1.value;                    
+                    hidDropdownlist(1);
                     $("select[name=sel2]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel2]").val() != "") {
+                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {                           
+                            if ($("select[name=sel2]").val() != ""&&$("select[name=sel2]").find("option").length>0) {
                                 $("#divsel2").show();
                             }
                         }
@@ -211,10 +211,10 @@
             form.on('select(sel2)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(2);
                     $("select[name=sel3]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel3]").val() != "") {
+                            if ($("select[name=sel3]").val() != ""&&$("select[name=sel3]").find("option").length>0) {
                                 $("#divsel3").show();
                             }
                         }
@@ -223,10 +223,11 @@
             form.on('select(sel3)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(3);
                     $("select[name=sel4]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel4]").val() != "") {
+                             debugger;
+                            if ($("select[name=sel4]").val() != ""&&$("select[name=sel4]").find("option").length>0) {
                                 $("#divsel4").show();
                             }
                         }
@@ -235,10 +236,11 @@
             form.on('select(sel4)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(4);
                     $("select[name=sel5]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                             
-                            if ($("select[name=sel5]").val() != "") {
+                            if ($("select[name=sel5]").val() != ""&&$("select[name=sel5]").find("option").length>0) {
                                 $("#divsel5").show();
                             }
                         }
@@ -247,10 +249,11 @@
             form.on('select(sel5)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(5);
                     $("select[name=sel6]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                             
-                            if ($("select[name=sel6]").val() != "") {
+                            if ($("select[name=sel6]").val() != ""&&$("select[name=sel6]").find("option").length>0) {
                                 $("#divsel6").show();
                             }
                         }
@@ -259,10 +262,11 @@
             form.on('select(sel6)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(6);
                     $("select[name=sel7]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                             
-                            if ($("select[name=sel7]").val() != "") {
+                            if ($("select[name=sel7]").val() != ""&&$("select[name=sel7]").find("option").length>0) {
                                 $("#divsel7").show();
                             }
                         }
@@ -271,10 +275,11 @@
             form.on('select(sel7)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(7);
                     $("select[name=sel8]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                             
-                            if ($("select[name=sel8]").val() != "") {
+                            if ($("select[name=sel8]").val() != ""&&$("select[name=sel8]").find("option").length>0) {
                                 $("#divsel8").show();
                             }
                         }
@@ -284,5 +289,14 @@
 
 
         });
-
+    function hidDropdownlist(currInt) {
+        currInt = currInt + 1;      
+        for (var i = currInt; i < 10; i++) {//假设预留10个
+            if ($("select[name=sel" + i + "]").length > 0) {
+                 $("select[name=sel" + i + "]").find("option:selected").text("");
+                 $("#divsel"+i+"").hide();
+            }           
+        }
+      
+    }
 </script>
