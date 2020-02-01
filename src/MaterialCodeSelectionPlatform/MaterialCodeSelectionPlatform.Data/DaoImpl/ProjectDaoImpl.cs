@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MaterialCodeSelectionPlatform.Domain;
 using MaterialCodeSelectionPlatform.Domain.Entities;
@@ -191,8 +192,9 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         public async Task<int> SaveUserProjects(List<string> userIds, string userId, string projectId)
         {
+            userIds = userIds.Distinct().ToList();
             var list = await Db.Queryable<UserProjectMap>().Where(c => c.ProjectId == projectId).Select(c => c.Id).ToListAsync();
-            await Db.Deleteable<ProjectCatalogMap>().In(list).ExecuteCommandAsync();
+            await Db.Deleteable<UserProjectMap>().In(list).ExecuteCommandAsync();
 
             if (userIds.Count == 0)
             {

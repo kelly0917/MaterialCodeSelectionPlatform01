@@ -190,10 +190,10 @@
                     layer.confirm('确定退出吗', function (index) {
                   
                         $.ajax({
-                            url: "/EascLogin/LoginOut?pt=" + Math.random(),
+                            url: "/Login/LoginOut?pt=" + Math.random(),
                             success: function (data) {
                                 if (data == "success") {
-                                    window.location.href = "/EascLogin/Index";
+                                    window.location.href = "/Login/Index";
                                 }
                             },
                             error: function (errorData) {
@@ -214,7 +214,7 @@
                     var li = $(this).parent().parent().parent();
                     var dd = $(this).parent();
                     if ($.cookie('historyUrl') != "" && $.cookie('historyUrl') != null && $.cookie('historyUrl') != 'null') {
-                        if ($.cookie('historyUrl').indexOf('EascLogin/Index') > 0) { //刚登录默认首页
+                        if ($.cookie('historyUrl').indexOf('Login/Index') > 0) { //刚登录默认首页
                             if (url.indexOf('SystemHome/Index') > 0) {
                                 li.addClass("layui-nav-itemed")
                                 dd.addClass("layui-this")

@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MaterialCodeSelectionPlatform.Web.Utilities;
 
-namespace Top.WizEasc.ManagerWeb.Controllers
+namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class LoginController : Controller
     {
@@ -83,6 +83,7 @@ namespace Top.WizEasc.ManagerWeb.Controllers
                     var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
+                   
                     HttpContext.Session.SetString("LoginName", user.LoginName ?? Guid.Empty.ToString());
                     HttpContext.Session.SetString("UserName", user.Name ?? Guid.Empty.ToString());
                     HttpContext.Session.SetString("UserId", user.Id ?? Guid.Empty.ToString());
