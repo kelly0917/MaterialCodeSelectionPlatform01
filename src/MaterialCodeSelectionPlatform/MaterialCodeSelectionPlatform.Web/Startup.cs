@@ -85,7 +85,7 @@ namespace MaterialCodeSelectionPlatform.Web
             services.AddDistributedMemoryCache();
             services.AddSession();
 
-            services.AddAuthorization(options => { });
+            //services.AddAuthorization(options => { });
 
 
         }
