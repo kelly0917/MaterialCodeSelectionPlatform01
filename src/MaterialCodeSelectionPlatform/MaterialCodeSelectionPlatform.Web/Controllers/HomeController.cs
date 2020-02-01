@@ -14,20 +14,25 @@ using Microsoft.Extensions.Configuration;
 using MaterialCodeSelectionPlatform.ManagerWeb;
 using MaterialCodeSelectionPlatform.Web.Utilities;
 using Microsoft.AspNetCore.Http;
+using NPOI.OpenXmlFormats.Spreadsheet;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class HomeController : BaseController<IUserService,User>
     {
         public IConfiguration Configuration { get; }
-        public HomeController(IConfiguration configuration)
+
+        private IUserService userService;
+        public HomeController(IConfiguration configuration,IUserService userService)
         {
             this.Configuration = configuration;
+            this.userService = userService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            ViewData["Name"] = HttpContext.Session.GetString("UserName");
+             return View();
         }
         /// <summary>
         /// 获取菜单数据
@@ -37,6 +42,49 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             var menus = getMenudataList();
             return Json(menus);
+        }
+
+        public IActionResult ChangePwd()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> ValidateOldPwd(string pwd)
+        {
+            var user = await userService.GetAsync(UserId);
+            if (user != null)
+            {
+                if (user.Password.Equals(pwd,StringComparison.OrdinalIgnoreCase))
+                {
+                    return ConvertSuccessResult("true");
+                }
+                else
+                {
+                    return ConvertFailResult(null,"false");
+                }
+            }
+            else
+            {
+                return ConvertFailResult(null, "当前用户已经被删除！");
+            }
+        }
+
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="pwd"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> SavePwd(string pwd)
+        {
+            var model = await userService.GetAsync(UserId);
+            model.Password = pwd;
+            var result = await userService.UpdateAsync(model);
+            return ConvertSuccessResult(result);
         }
 
         /// <summary>
