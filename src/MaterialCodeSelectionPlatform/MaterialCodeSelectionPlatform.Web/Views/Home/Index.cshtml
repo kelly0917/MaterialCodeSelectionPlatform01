@@ -25,11 +25,10 @@
                 <li class="layui-nav-item">
                     <a href="javascript:;">
                         <img src="~/images/home/DefaultUser.png" class="layui-nav-img">
-                        @ViewData["TrueName"]
+                        @ViewData["Name"]
                     </a>
                     <dl class="layui-nav-child">
-                        <dd><a href="">基本资料</a></dd>
-                        <dd><a href="">安全设置</a></dd>
+                        <dd style="cursor:pointer"><a onclick="changePwd()">修改密码</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item"><a href="javascript:logout()">退出</a></li>
@@ -179,16 +178,21 @@
                 element.init();
 
             });
+    }
+
+        function closeiframe(msg) {
+            layer.closeAll('iframe');
+            if (msg) {
+                layer.msg(msg);
+            }
         }
-
         layui.use(['layer', 'jquery'],
-
             function () {
                 var layer = layui.layer;
                 var $ = layui.jquery;
                 window.logout = function () {
                     layer.confirm('确定退出吗', function (index) {
-                  
+
                         $.ajax({
                             url: "/Login/LoginOut?pt=" + Math.random(),
                             success: function (data) {
@@ -205,8 +209,20 @@
                 }
 
 
+                window.changePwd = function () {
+                    layer.open({
+                        type: 2,
+                        content: '/Home/ChangePwd?' + Math.random(),
+                        title: '修改密码',
+                        area: ["400px;", "280px;"]//宽 高
+                    });
+
+                }
+
+
+
                 //根据保存的地址F5只刷新当前页面
-           
+
                 var menus = $("[url]");
                 //var storage = window.sessionStorage;
                 menus.each(function () {
