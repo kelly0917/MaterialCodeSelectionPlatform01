@@ -40,7 +40,7 @@
                     <legend>已分配编码库</legend>
                 </fieldset>
               
-                <div class="layui-row" style="height: 10px;">
+                <div class="layui-row" style="height: 10px; display: none;">
                 </div>
                 <div class="layui-row" style="border: 1px solid #9A9B9F; height: 300px;">
                     <div id="xtreeRight" class="xtree_contianer"></div>
@@ -168,9 +168,20 @@
             window.toRight = function () {
                 var oCks = xtreeLeft.GetChecked(); //这是方法
 
+                var oCks1 = $("#xtreeRight").find(":checkbox");
+                
+                var rightCount =oCks1.length-1;
+
                 for (var i = 0; i < oCks.length; i++) {
-                    toNormal($(oCks[i]).parent());
-                    $("#xtreeRight").append($(oCks[i]).parent());
+                    if (rightCount >= 2) {
+                        layer.msg("一个项目最多可以分配2个编码库！");
+                        break;
+                    } else {
+                        rightCount++;
+                        toNormal($(oCks[i]).parent());
+                        $("#xtreeRight").append($(oCks[i]).parent());
+                    }
+                   
                 }
 
             }
