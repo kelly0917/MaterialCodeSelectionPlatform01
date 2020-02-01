@@ -96,9 +96,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var result = await Service.UpdateAsync(model);
             return ConvertSuccessResult(result);
         }
-
+        //权限先做到页面级别就好。
+        //系统管理员 所有模块
+        //应用管理员 除去用户管理
+        //普通用户 只能物资选码
         /// <summary>
         /// 修改角色
+        /// 角色的需求是
+        /// 系统管理员 可以 指派应用管理员。
+        /// 应用管理员不能把其他人设置成应用管理员。或者超级管理员。。
         /// </summary>
         /// <param name="id"></param>
         /// <param name="role"></param>

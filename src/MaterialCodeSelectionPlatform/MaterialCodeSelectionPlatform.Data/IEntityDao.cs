@@ -91,9 +91,9 @@ namespace MaterialCodeSelectionPlatform.Data
     /// </summary>
     public interface ILogable
     {
-        /// <summary>
-        /// 日志记录器
-        /// </summary>
-        ILogger Logger { get; }
+        ///// <summary>
+        ///// 日志记录器
+        ///// </summary>
+        //ILogger Logger { get; }
     }
 }
