@@ -68,7 +68,8 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
                 log.Debug($"任务执行耗时：{stopwatch.ElapsedMilliseconds}mm");
                 stopwatch.Stop();
             }
-            return null;
+
+            return Task.Factory.StartNew(() => { });
         }
 
 
