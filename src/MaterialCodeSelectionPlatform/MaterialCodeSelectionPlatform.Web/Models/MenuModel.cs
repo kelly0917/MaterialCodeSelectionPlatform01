@@ -29,6 +29,9 @@ namespace MaterialCodeSelectionPlatform.Models
         public List<MenuModel> ChildrenMenus { get; set; }
 
 
+        public List<string> Roles { get; set; }
+
+
 
     }
 }

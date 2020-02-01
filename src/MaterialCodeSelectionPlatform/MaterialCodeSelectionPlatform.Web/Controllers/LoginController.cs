@@ -60,6 +60,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                         HttpContext.Session.SetString("LoginName", user.LoginName ?? Guid.Empty.ToString());
                         HttpContext.Session.SetString("UserName", user.Name ?? Guid.Empty.ToString());
                         HttpContext.Session.SetString("UserId", user.Id ?? Guid.Empty.ToString());
+                        if (user.Role.HasValue)
+                            HttpContext.Session.SetString("Role", user.Role.Value.ToString() ?? "");
                         return Content("success");
                     }
                 }
@@ -87,6 +89,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     HttpContext.Session.SetString("LoginName", user.LoginName ?? Guid.Empty.ToString());
                     HttpContext.Session.SetString("UserName", user.Name ?? Guid.Empty.ToString());
                     HttpContext.Session.SetString("UserId", user.Id ?? Guid.Empty.ToString());
+                    if(user.Role.HasValue)
+                        HttpContext.Session.SetString("Role", user.Role.Value.ToString()??"");
+
                     return Content("success");
                 }
             }

@@ -172,5 +172,11 @@
                 window.location.href = "/Device/DownloadTemplateFile";
             }
         });
-  
+    //回车响应
+    $("body").keydown(
+        function (e) {
+            if (e.keyCode == 13) {
+                loadData();
+            }
+        });
 </script>

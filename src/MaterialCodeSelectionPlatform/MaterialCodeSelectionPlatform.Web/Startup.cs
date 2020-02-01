@@ -35,12 +35,16 @@ namespace MaterialCodeSelectionPlatform.Web
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
             repository = LogManager.CreateRepository("NETCoreRepository");
+            LogHelper.RepositoryName = repository.Name;
             XmlConfigurator.Configure(repository, new FileInfo("log4net.config"));
 
 
             Config.DBProviderName = Configuration["connectStrings:ProviderName"];
             Config.DBConnectionString = Configuration["connectStrings:ConnectionString"];
 
+            var isPermission = true;
+            bool.TryParse(Configuration["IsNeedPermission"],out isPermission);
+            SysConfig.IsNeedPermission = isPermission;
             SysConfig.Domain = Configuration["Domain"];
             LDAPUtil.Register(Configuration);
         }

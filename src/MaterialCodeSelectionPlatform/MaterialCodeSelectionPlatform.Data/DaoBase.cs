@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using log4net;
 using Microsoft.Extensions.Logging;
 using SqlSugar;
 using MaterialCodeSelectionPlatform.Data;
@@ -15,27 +16,16 @@ using MaterialCodeSelectionPlatform.Utilities;
 namespace MaterialCodeSelectionPlatform.Data
 {
     public partial class EntityDaoBase<TEntity> :  IEntityDao<TEntity>, ILogable where TEntity :IDataEntity,new()
-    { 
-        private ILogger _logger;
-        protected ILoggerFactory loggerFactory;
-        public ILogger Logger
-        {
-            get
-            {
-                if (_logger == null)
-                {
-                    _logger= loggerFactory.CreateLogger(this.GetType());
-                }
-                return _logger;
-            }
-        }
+    {
 
+        private ILog log = LogHelper.GetLogger<Object>();
+        
         protected string EmptyGuid = Guid.Empty.ToString();
         public SqlSugarClient Db;//用来处理事务多表查询和复杂的操作
         public SimpleClient<TEntity> DbContext { get { return new SimpleClient<TEntity>(Db); } }//用来处理T表的常用操作
         public EntityDaoBase(ILoggerFactory loggerFactory)
         {
-            this.loggerFactory = loggerFactory;
+           
             Db = new SqlSugarClient(new ConnectionConfig()
             {
                 ConnectionString = Config.DBConnectionString,
@@ -45,17 +35,17 @@ namespace MaterialCodeSelectionPlatform.Data
             });
             Db.Aop.OnLogExecuting = (sql, pars) =>
             {
-                Logger.LogDebug("sql=" + sql + @"\r\n参数为：" +
+                log.Debug("sql=" + sql + @"\r\n参数为：" +
                                 Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName,
                                     it => it.Value)));
             };
             Db.Aop.OnLogExecuted = (sql, pars) =>
                 {
-                    Logger.LogDebug("执行话费时间：" + Db.Ado.SqlExecutionTime.TotalMilliseconds + "mm");
+                    log.Debug("执行花费时间：" + Db.Ado.SqlExecutionTime.TotalMilliseconds + "mm");
                     //
-                    if (Db.Ado.SqlExecutionTime.TotalMilliseconds > 1000)
+                    if (Db.Ado.SqlExecutionTime.TotalMilliseconds > 5000)
                     {
-
+                        log.Error("执行花费时间>5秒，SQL="+ sql);
                     }
                 };
         }

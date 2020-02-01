@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using MaterialCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.Web.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
@@ -59,6 +61,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             //        ids = list.ToList().Select(c => c.Resouce.ToLower()).ToList();
             //    }
             //}
+            var currentUserRole = HttpContext.Session.GetString("Role");
+           
 
             foreach (var xElement in menuPs)
             {
@@ -66,6 +70,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 menuModelP.Name = xElement.Attribute("Name").Value;
                 menuModelP.FeatureId = xElement.Attribute("FeatureId").Value.ToLower();
                 menuModelP.Url = xElement.Attribute("Url").Value;
+                menuModelP.Roles = xElement.Attribute("Roles").Value
+                    .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
                 menuModelP.ChildrenMenus = new List<MenuModel>();
                 //if (isNeedPemission) //控制顶级模块
                 //{
@@ -75,14 +81,24 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 //    }
                 //}
 
+                if (SysConfig.IsNeedPermission)
+                {
+                    if (menuModelP.Roles.Contains(currentUserRole)==false)
+                    {
+                        continue;
+                    }
+                }
+
                 var menuCs = from d in xElement.Descendants("Menu_C")
-                             select d;
+                    select d;
                 foreach (var element in menuCs)
                 {
                     MenuModel menuModelC = new MenuModel();
                     menuModelC.Name = element.Attribute("Name").Value;
                     //menuModelC.FeatureId = element.Attribute("FeatureId").Value;
                     menuModelC.Url = element.Attribute("Url").Value;
+                    menuModelP.Roles = xElement.Attribute("Roles").Value
+                        .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
                     //if (isNeedPemission) //控制子模块
                     //{
                     //    if (!ids.Contains(menuModelC.FeatureId))
@@ -90,12 +106,18 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     //        continue;
                     //    }
                     //}
+                    if (SysConfig.IsNeedPermission)
+                    {
+                        if (menuModelP.Roles.Contains(currentUserRole) == false)
+                        {
+                            continue;
+                        }
+                    }
 
                     menuModelP.ChildrenMenus.Add(menuModelC);
                 }
                 result.Add(menuModelP);
             }
-
             return result;
 
         }
