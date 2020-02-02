@@ -160,7 +160,7 @@
                     }
                     else if (obj.event === 'start') {
                         $.ajax({
-                            url: '/Project/SaveStatus?id=' + data.Id + "&status=0" + Math.random(),
+                            url: '/Project/SaveStatus?id=' + data.Id + "&status=0&" + Math.random(),
                             dataType: "json",
                             success: function (data) {
                                 if (data.Success) {
@@ -201,12 +201,23 @@
 
             window.sysData = function()
             {
-                layer.open({
-                    type: 2,
-                    content: '/Project/SysDataInfo',
-                    title: '同步进度',
-                    area: ["300px;", "120px;"]//宽 高
+                $.ajax({
+                    url: '/Project/StartDealProgress?' + Math.random(),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Success) {
+                            layer.open({
+                                type: 2,
+                                content: '/Project/SysDataInfo',
+                                title: '同步进度',
+                                area: ["300px;", "100px;"]//宽 高
+                            });
+                        } else {
+                            layer.msg("同步启动失败", { icon: 5 });
+                        }
+                    }
                 });
+               
             }
 
         });
