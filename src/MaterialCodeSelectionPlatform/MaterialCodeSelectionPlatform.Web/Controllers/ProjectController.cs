@@ -208,45 +208,6 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         }
 
 
-        /// <summary>
-        /// 同步进度
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult SysDataInfo()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// 获取处理进度
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult GetDealProgress()
-        {
-            var url = SysConfig.SysServiceUrl + "?opType=progress";
-            var result = WebHelper.RequestUrl(url);
-            return Content(result);
-        }
-
-
-        /// <summary>
-        /// 获取处理进度
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult StartDealProgress()
-        {
-            try
-            {
-                var url = SysConfig.SysServiceUrl + "?opType=start&sysId=" + Guid.NewGuid().ToString();
-                var result =(WebHelper.RequestUrl(url));
-                return ConvertSuccessResult(result);
-            }
-            catch (Exception e)
-            {
-                log.Error(e);
-                return ConvertErrorResult(null, e);
-            }
-
-        }
+     
     }
 }

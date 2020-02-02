@@ -22,13 +22,15 @@
             form.render();
           
 
-            setInterval(function() {
+           var tt = setInterval(function() {
                 $.ajax({
-                    url: "/Project/GetDealProgress?t="+new Date(),
+                    url: "/Home/GetDealProgress?t="+new Date(),
                     type: 'get',
                     success: function (data) {
-                        debugger;
-                        element.progress('demo', data +'%');
+                        element.progress('demo', data + '%');
+                        if (data * 1 == 100) {
+                            clearInterval(tt);
+                        }
                     }
                 });
 

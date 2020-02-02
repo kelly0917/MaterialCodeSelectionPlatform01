@@ -35,9 +35,7 @@
             <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">新增</button>
         </div>
 
-        <div class="layui-inline layui-float-right">
-            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnSys" onclick="sysData()">同步编码库</button>
-        </div>
+        
     </div>
 </div>
 <table class="layui-hide" id="test" lay-filter="useruv"></table>
@@ -199,26 +197,7 @@
                 });
             }
 
-            window.sysData = function()
-            {
-                $.ajax({
-                    url: '/Project/StartDealProgress?' + Math.random(),
-                    dataType: "json",
-                    success: function (data) {
-                        if (data.Success) {
-                            layer.open({
-                                type: 2,
-                                content: '/Project/SysDataInfo',
-                                title: '同步进度',
-                                area: ["300px;", "100px;"]//宽 高
-                            });
-                        } else {
-                            layer.msg("同步启动失败", { icon: 5 });
-                        }
-                    }
-                });
-               
-            }
+            
 
         });
     //回车响应
