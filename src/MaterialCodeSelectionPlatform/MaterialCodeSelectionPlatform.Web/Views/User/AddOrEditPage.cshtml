@@ -1,4 +1,5 @@
-﻿
+﻿@using MaterialCodeSelectionPlatform.Utilities
+
 @{
     Layout = "~/Views/Shared/_Layout_Body.cshtml";
 }
@@ -35,7 +36,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">域账户：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="DomainUserName"  lay-verify="" placeholder="请输入域账户" autocomplete="off" class="layui-input">
+                    <input type="text" name="DomainUserName" lay-verify="" placeholder="请输入域账户" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -48,19 +49,59 @@
                 </div>
             </div>
         </div>
-    
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">角色：</label>
-        <div class="layui-input-block">
-            <select name="Role" lay-search>
-                <option value="2">普通用户</option>
-                <option value="1">应用管理员</option>
-                <option value="0">超级管理员</option>
 
-            </select>
+    @if (ViewData["id"] == null || ViewData["id"].ToString().IsNullOrEmpty())//新增
+    {
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色：</label>
+            <div class="layui-input-block">
+                <select name="Role" lay-search>
+                    @if (bool.Parse(ViewData["IsSuperAdmin"].ToString()))
+                    {
+                        <option value="0">超级管理员</option>
+                        <option value="1">应用管理员</option>
+                    }
+                    <option value="2">普通用户</option>
+                </select>
+            </div>
         </div>
-    </div>
+    }
+    else//修改
+    {
+        @if (bool.Parse(ViewData["IsSuperAdmin"].ToString()))
+        {
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色：</label>
+                <div class="layui-input-block">
+                    <select name="Role" lay-search>
+                        <option value="0">超级管理员</option>
+                        <option value="1">应用管理员</option>
+                        <option value="2">普通用户</option>
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="layui-form-item" style="display: none;">
+                <label class="layui-form-label">角色：</label>
+                <div class="layui-input-block">
+                    <select name="Role" lay-search>
+
+                        <option value="0">超级管理员</option>
+                        <option value="1">应用管理员</option>
+
+                        <option value="2">普通用户</option>
+                    </select>
+                </div>
+            </div>
+        }
+
+       
+    }
+
+
 
     <div class="layui-form-item" id="Password">
         <label class="layui-form-label">密码：</label>
@@ -144,7 +185,7 @@
 
         var editPwd;
         var getdata = function () {
-       
+
             $.ajax({
                 url: "/User/GetById?Id=" + '@ViewData["Id"]' + "&pt=" + Math.random(),
                 type: 'get',

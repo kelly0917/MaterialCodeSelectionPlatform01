@@ -52,7 +52,10 @@
 
     <a class="layui-btn  layui-btn-sm layui-btn-radius permission" action="8" lay-event="setproject">分配项目</a>
     <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="changepwd">修改密码</a>
-    <a class="layui-btn  layui-btn-sm layui-btn-normal permission" action="8" lay-event="changerole">修改角色</a>
+    @if (bool.Parse(ViewData["IsSuperAdmin"].ToString()))
+    {
+        <a class="layui-btn  layui-btn-sm layui-btn-normal permission" action="8" lay-event="changerole">修改角色</a>
+    }
     {{# }else if(d.Status==1){}}
     <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="start">启用</a>
     {{# } }}

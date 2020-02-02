@@ -161,6 +161,25 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
             }
         }
 
+        /// <summary>
+        /// 0超级管理员1应用管理员2普通用户
+        /// </summary>
+        protected int RoleId
+        {
+            get
+            {
+                var role = HttpContext.Session.GetString("Role");
+                if (role.IsNotNullAndNotEmpty())
+                {
+                    return int.Parse(role);
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+
 
         protected string UserId
         {
