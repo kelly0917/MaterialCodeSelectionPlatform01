@@ -9,8 +9,9 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css" />
+<script type="text/javascript" src="~/lib/usteel-search/search.js"></script>
 <div class="layui-form" action="" id="searchForm">
-    <div class="layui-form-item search" >
+    <div class="layui-form-item search">
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
@@ -26,9 +27,9 @@
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label" style="width: auto;">物资编码</label>
             <div class="layui-input-inline">
-                <input type="text" name="txtCode" class="layui-input" id="txtCode" />                
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" />
             </div>
-           
+
         </div>
         <div class="layui-inline ">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
@@ -179,13 +180,13 @@
 
             </div>
         </div>
-      
+
     </div>
 </div>
 <input type="hidden" id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80}" id="tbCommodityCodeList" lay-filter="useruv"></table>
-<div  class="layui-form" action="" id="openShow" style="display:none">
-    <table class="layui-table" id="projectDevice" >
+<div class="layui-form" action="" id="openShow" style="display:none">
+    <table class="layui-table" id="projectDevice">
         <colgroup>
             <col width="150">
             <col width="150">
@@ -201,11 +202,10 @@
                 <th>时间</th>
             </tr>
         </thead>
-        <tbody id="trody">
-        </tbody>
+        <tbody id="trody"></tbody>
     </table>
-    <div class="layui-form" action="" id="searchForm2" >
-        <div class="layui-form-item search" >
+    <div class="layui-form" action="" id="searchForm2">
+        <div class="layui-form-item search">
             <div class="layui-inline layui-float-left">
                 <label class="layui-form-label">项目：</label>
                 <div class="layui-input-inline">
@@ -223,14 +223,14 @@
             </div>
         </div>
     </div>
-    </div>
-    <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
-        <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
 
-    </script>
-    <script type="text/javascript" src="~/lib/usteel-search/search.js"></script>
-    <script type="text/javascript">
+</script>
+
+<script type="text/javascript">
 
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
@@ -543,7 +543,7 @@
                      //html += "<a href='JavaScript:;' class='sl-b-multiple'><i class='layui-icon layui-icon-add-1'></i>多选</a>";
                      //html += "</div>";
                      //html += "</div>";
-                     $(".selector").html(html);
+                     $(".selector").append(html);
                     // form.render('chapterRender');///重新渲染select#chapterId
                   layui.use('form', function() {
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
@@ -554,7 +554,7 @@
         }
             //==============获取【物资类型】属性end==================
             //==============打开【最近项目，装置】==================
-           
+
             function openProject() {
                 $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?id=&pt=" + Math.random(), function (result) {
                     if (!result.success) {
@@ -565,7 +565,7 @@
                             var tr= "";
                             for (var i = 0; i < result.data.length; i++) {
                                 var ent = result.data[i];
-                             
+
                                 tr += "<tr>";
                                 tr += "<td><a onclick=projectClick('"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
                                 tr += "<td>"+ent.deviceName+"</td>";
@@ -618,7 +618,7 @@
                  }
              }
              //==============隐藏下拉框end==================
-            
+
         });
          var winIndex = 0;
           //==============确定【项目】【装置】==================
@@ -631,14 +631,14 @@
                 $("#selProject").val(projectId);
                 $("#selDevice").val(deviceId);
                 layui.form.render('select');
-                layer.close(winIndex); 
+                layer.close(winIndex);
              }
         //==============确定【项目】【装置】end==================
          //==============选择【项目】【装置】==================
         function projectClick(projectId, deviceId) {
             $("#selProject").val(projectId);
             layui.form.render('select');
-            $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {              
+            $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
                 //<option value="-1">全部</option>
                 if (result != null && result.length > 0) {
                     var optionHtml = "";
@@ -648,10 +648,10 @@
                     $("#selDevice").html(optionHtml);
                     $("#selDevice").val(deviceId);
                       layui.form.render('select');
-                }  
-                  layer.close(winIndex); 
+                }
+                  layer.close(winIndex);
             });
-                layer.close(winIndex); 
+                layer.close(winIndex);
              }
         //==============选择【项目】【装置】end==================
           //==============打开【查看料表】==================
@@ -670,5 +670,5 @@
                         });
          }
         //==============打开【查看料表】end==================
-       
-    </script>
+
+</script>

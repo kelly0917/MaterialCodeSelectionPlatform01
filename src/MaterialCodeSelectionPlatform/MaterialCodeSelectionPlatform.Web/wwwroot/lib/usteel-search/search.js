@@ -1,4 +1,5 @@
-$(".sl-b-multiple").click(function(){
+
+$(document).on("click",".sl-b-multiple", function () {
 	$(".sl-ext").css("visibility","");
 	$(this).closest(".sl-ext").css("visibility","hidden");
 	$(".usteel-search").removeClass("multiple");
