@@ -34,6 +34,13 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             ViewData["Name"] = HttpContext.Session.GetString("UserName");
              return View();
         }
+        public IActionResult NewIndex()
+        {
+            ViewData["Role"] = HttpContext.Session.GetString("Role");
+
+            ViewData["Name"] = HttpContext.Session.GetString("UserName");
+            return View();
+        }
         /// <summary>
         /// 获取菜单数据
         /// </summary>
