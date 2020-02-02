@@ -1,0 +1,676 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>仿京东搜索索引插件</title>
+
+	<link rel="stylesheet" type="text/css" href="~/lib/layui/css/layui.css" />
+	<link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css" />
+
+</head>
+<body>
+
+<div class="usteel-content w">
+	<div class="usteel-condition" id="usteel-condition">
+		<!-- 优钢网索引插件 -->
+		<div class="selector">
+			<div class="usteel-search" data_type="area">
+				<div class="sl-key">
+					<strong>地区：</strong>
+				</div>
+				<div class="sl-value">
+					<div class="sl-v-list">
+						<ul>
+							<li data_id="110000">
+								<a href="javascript:;">
+									<i class=""></i><span>北京市</span>
+								</a>
+							</li>
+							<li data_id="120000">
+								<a href="javascript:;">
+									<i class=""></i><span>天津市</span>
+								</a>
+							</li>
+							<li data_id="150000">
+								<a href="javascript:;">
+									<i class=""></i><span>内蒙古自治区</span>
+								</a>
+							</li>
+							<li data_id="230000">
+								<a href="javascript:;">
+									<i class=""></i><span>黑龙江省</span>
+								</a>
+							</li>
+							<li data_id="410000">
+								<a href="javascript:;">
+									<i class=""></i><span>河南省</span>
+								</a>
+							</li>
+							<li data_id="440000">
+								<a href="javascript:;">
+									<i class=""></i><span>广东省</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="sl-btns">
+						<a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+						<a href="JavaScript:;" class="btn btn-default">取消</a>
+					</div>
+				</div>
+				<div class="sl-ext">
+					<a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+					<a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+				</div>
+			</div>
+			<div class="usteel-search" data_type="variety">
+				<div class="sl-key">
+					<strong>品名：</strong>
+				</div>
+				<div class="sl-value">
+					<div class="sl-v-list">
+						<ul>
+							<li data_id="1">
+								<a href="javascript:;">
+									<i class=""></i><span>管线管</span>
+								</a>
+							</li>
+							<li data_id="3">
+								<a href="javascript:;">
+									<i class=""></i><span>流体管</span>
+								</a>
+							</li>
+							<li data_id="4">
+								<a href="javascript:;">
+									<i class=""></i><span>结构管</span>
+								</a>
+							</li>
+							<li data_id="5">
+								<a href="javascript:;">
+									<i class=""></i><span>气瓶管</span>
+								</a>
+							</li>
+							<li data_id="6">
+								<a href="javascript:;">
+									<i class=""></i><span>液压管</span>
+								</a>
+							</li>
+							<li data_id="7">
+								<a href="javascript:;">
+									<i class=""></i><span>油套管</span>
+								</a>
+							</li>
+							<li data_id="8">
+								<a href="javascript:;">
+									<i class=""></i><span>低温管</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="sl-btns">
+						<a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+						<a href="JavaScript:;" class="btn btn-default">取消</a>
+					</div>
+				</div>
+				<div class="sl-ext">
+					<a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+					<a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+				</div>
+			</div>
+			<div class="usteel-search" data_type="standard">
+				<div class="sl-key">
+					<strong>标准：</strong>
+				</div>
+				<div class="sl-value">
+					<div class="sl-v-list">
+						<ul>
+							<li data_id="1">
+								<a href="javascript:;">
+									<i class=""></i><span class="">GB8163</span>
+								</a>
+							</li>
+							<li data_id="2">
+								<a href="javascript:;">
+									<i class=""></i><span class="">GB8162</span>
+								</a>
+							</li>
+							<li data_id="3">
+								<a href="javascript:;">
+									<i class=""></i><span class="">API-5L</span>
+								</a>
+							</li>
+							<li data_id="4">
+								<a href="javascript:;">
+									<i class=""></i><span class="">API-5CT</span>
+								</a>
+							</li>
+							<li data_id="5">
+								<a href="javascript:;">
+									<i class=""></i><span class="">API-SPEC-5L</span>
+								</a>
+							</li>
+							<li data_id="6">
+								<a href="javascript:;">
+									<i class=""></i><span class="">API系列</span>
+								</a>
+							</li>
+							<li data_id="7">
+								<a href="javascript:;">
+									<i class=""></i><span class="">GB18248</span>
+								</a>
+							</li>
+							<li data_id="8">
+								<a href="javascript:;">
+									<i class=""></i><span class="">GB/T17396</span>
+								</a>
+							</li>
+							<li data_id="9">
+								<a href="javascript:;">
+									<i class=""></i><span class="">ASTM A333</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="sl-btns">
+						<a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+						<a href="JavaScript:;" class="btn btn-default">取消</a>
+					</div>
+				</div>
+				<div class="sl-ext">
+					<a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+					<a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+				</div>
+			</div>
+			<div class="usteel-search" data_type="material">
+				<div class="sl-key">
+					<strong>材质：</strong>
+				</div>
+				<div class="sl-value">
+					<div class="sl-v-list">
+						<ul>
+							<li data_id="1">
+								<a href="javascript:;">
+									<i class=""></i><span class="">20#</span>
+								</a>
+							</li>
+							<li data_id="2">
+								<a href="javascript:;">
+									<i class=""></i><span class="">45#</span>
+								</a>
+							</li>
+							<li data_id="5">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q235A</span>
+								</a>
+							</li>
+							<li data_id="6">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q235B</span>
+								</a>
+							</li>
+							<li data_id="7">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q345A</span>
+								</a>
+							</li>
+							<li data_id="8">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q345B</span>
+								</a>
+							</li>
+							<li data_id="9">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q345D</span>
+								</a>
+							</li>
+							<li data_id="10">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q345C</span>
+								</a>
+							</li>
+							<li data_id="11">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q345E</span>
+								</a>
+							</li>
+							<li data_id="12">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q460ABCDE</span>
+								</a>
+							</li>
+							<li data_id="13">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q420ABCDE</span>
+								</a>
+							</li>
+							<li data_id="15">
+								<a href="javascript:;">
+									<i class=""></i><span class="">20</span>
+								</a>
+							</li>
+							<li data_id="14">
+								<a href="javascript:;">
+									<i class=""></i><span class="">10</span>
+								</a>
+							</li>
+							<li data_id="16">
+								<a href="javascript:;">
+									<i class=""></i><span class="">37Mn</span>
+								</a>
+							</li>
+							<li data_id="17">
+								<a href="javascript:;">
+									<i class=""></i><span class="">34CrMo4</span>
+								</a>
+							</li>
+							<li data_id="18">
+								<a href="javascript:;">
+									<i class=""></i><span class="">34CrMo44</span>
+								</a>
+							</li>
+							<li data_id="19">
+								<a href="javascript:;">
+									<i class=""></i><span class="">27SiMn</span>
+								</a>
+							</li>
+							<li data_id="20">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade1</span>
+								</a>
+							</li>
+							<li data_id="21">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade3</span>
+								</a>
+							</li>
+							<li data_id="22">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade4</span>
+								</a>
+							</li>
+							<li data_id="23">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade6</span>
+								</a>
+							</li>
+							<li data_id="24">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade7</span>
+								</a>
+							</li>
+							<li data_id="25">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade8</span>
+								</a>
+							</li>
+							<li data_id="26">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade9</span>
+								</a>
+							</li>
+							<li data_id="27">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade10</span>
+								</a>
+							</li>
+							<li data_id="28">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Grade11</span>
+								</a>
+							</li>
+							<li data_id="29">
+								<a href="javascript:;">
+									<i class=""></i><span class="">H40</span>
+								</a>
+							</li>
+							<li data_id="30">
+								<a href="javascript:;">
+									<i class=""></i><span class="">K55</span>
+								</a>
+							</li>
+							<li data_id="31">
+								<a href="javascript:;">
+									<i class=""></i><span class="">J55</span>
+								</a>
+							</li>
+							<li data_id="32">
+								<a href="javascript:;">
+									<i class=""></i><span class="">N80</span>
+								</a>
+							</li>
+							<li data_id="33">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L80</span>
+								</a>
+							</li>
+							<li data_id="34">
+								<a href="javascript:;">
+									<i class=""></i><span class="">C95</span>
+								</a>
+							</li>
+							<li data_id="35">
+								<a href="javascript:;">
+									<i class=""></i><span class="">C90</span>
+								</a>
+							</li>
+							<li data_id="36">
+								<a href="javascript:;">
+									<i class=""></i><span class="">T95</span>
+								</a>
+							</li>
+							<li data_id="37">
+								<a href="javascript:;">
+									<i class=""></i><span class="">P110</span>
+								</a>
+							</li>
+							<li data_id="38">
+								<a href="javascript:;">
+									<i class=""></i><span class="">Q125</span>
+								</a>
+							</li>
+							<li data_id="39">
+								<a href="javascript:;">
+									<i class=""></i><span class="">M65</span>
+								</a>
+							</li>
+							<li data_id="45">
+								<a href="javascript:;">
+									<i class=""></i><span class="">B</span>
+								</a>
+							</li>
+							<li data_id="46">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X42</span>
+								</a>
+							</li>
+							<li data_id="47">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X65</span>
+								</a>
+							</li>
+							<li data_id="48">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X46</span>
+								</a>
+							</li>
+							<li data_id="49">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X52</span>
+								</a>
+							</li>
+							<li data_id="50">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X56</span>
+								</a>
+							</li>
+							<li data_id="51">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X60</span>
+								</a>
+							</li>
+							<li data_id="52">
+								<a href="javascript:;">
+									<i class=""></i><span class="">X70</span>
+								</a>
+							</li>
+							<li data_id="53">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L245</span>
+								</a>
+							</li>
+							<li data_id="54">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L290</span>
+								</a>
+							</li>
+							<li data_id="55">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L320</span>
+								</a>
+							</li>
+							<li data_id="56">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L360</span>
+								</a>
+							</li>
+							<li data_id="57">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L390</span>
+								</a>
+							</li>
+							<li data_id="58">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L415</span>
+								</a>
+							</li>
+							<li data_id="59">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L450</span>
+								</a>
+							</li>
+							<li data_id="60">
+								<a href="javascript:;">
+									<i class=""></i><span class="">L485</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="sl-btns">
+						<a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+						<a href="JavaScript:;" class="btn btn-default">取消</a>
+					</div>
+				</div>
+				<div class="sl-ext">
+					<a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+					<a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+				</div>
+			</div>
+			<div class="usteel-search" data_type="steelmill">
+				<div class="sl-key">
+					<strong>钢厂：</strong>
+				</div>
+				<div class="sl-value">
+					<div class="sl-v-list">
+						<ul>
+							<li data_id="1">
+								<a href="javascript:;">
+									<i class=""></i><span class="">天津大无缝</span>
+								</a>
+							</li>
+							<li data_id="2">
+								<a href="javascript:;">
+									<i class=""></i><span class="">黑龙江建龙</span>
+								</a>
+							</li>
+							<li data_id="3">
+								<a href="javascript:;">
+									<i class=""></i><span class="">山东墨龙</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="sl-btns">
+						<a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+						<a href="JavaScript:;" class="btn btn-default">取消</a>
+					</div>
+				</div>
+				<div class="sl-ext">
+					<a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+					<a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+				</div>
+			</div>
+			<div class="search-bottom display-flex">
+				<p>
+					<span>外径</span>
+					<input type="number" name="start_diameter" id="start_diameter" value=""> ——
+					<input type="number" name="end_diameter" id="end_diameter" value="">
+					<span>mm</span>
+				</p>
+
+				<p>
+					<span>厚度</span>
+					<input type="number" name="start_thickness" id="start_thickness" value=""> ——
+					<input type="number" name="end_thickness" id="end_thickness" value="">
+					<span>mm</span>
+				</p>
+
+				<p>
+					<span>长度</span>
+					<input type="number" name="start_length" id="start_length" value=""> ——
+					<input type="number" name="end_length" id="end_length" value="">
+					<span>mm</span>
+				</p>
+
+				<p class="display-flex">
+					<a href="JavaScript:;" class="_reset">重置</a>
+					<a href="JavaScript:;" class="_search">搜索</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="usteel-table">
+		<p class="title">
+			<span>全部结果&gt;</span>
+			<strong data_val="material=9">Q345D<i class="layui-icon layui-icon-close"></i></strong>
+			<strong data_val="standard=7">GB18248<i class="layui-icon layui-icon-close"></i></strong>
+
+		</p>
+
+		<section>
+			<p class="t_th">
+				<span>地区</span>
+				<span>品种</span>
+				<span>标准</span>
+				<span>材质</span>
+				<span>规格(mm 外径*厚度*长度)</span>
+				<span>生产商</span>
+				<span>供应商</span>
+				<span>库存(吨)</span>
+				<span>价格(元/吨)</span>
+			</p>
+			<a class="t_tr" href="?id=11">
+				<span class="w-1">河南省</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">460.00*54.00*12.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">7000.00 </span>
+				<span class="w-1"><i>29999.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=10">
+				<span class="w-1">广东省</span>
+				<span class="w-1">流体管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">219.00*8.80*12.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">1500.00 </span>
+				<span class="w-1"><i>2199.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=9">
+				<span class="w-1">天津市</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">219.00*7.70*12.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">100.00 </span>
+				<span class="w-1"><i>5555.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=6">
+				<span class="w-1">黑龙江省</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">399.00*15.00*10.00</span>
+
+				<span class="w-1">黑龙江建龙</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">498.00 </span>
+				<span class="w-1"><i>5555.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=5">
+				<span class="w-1">天津市</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">273.00*12.00*12.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">TEST</span>
+				<span class="w-1">-43.00 </span>
+				<span class="w-1"><i>4700.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=3">
+				<span class="w-1">天津市</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">406.00*12.00*12.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">147.00 </span>
+				<span class="w-1"><i>5700.00</i> </span>
+			</a>
+			<a class="t_tr" href="?id=2">
+				<span class="w-1">北京市</span>
+				<span class="w-1">管线管</span>
+				<span class="w-1">GB8163</span>
+				<span class="w-1">20#</span>
+				<span class="w-1">10.00*10.00*10.00</span>
+
+				<span class="w-1">天津大无缝</span>
+				<span class="w-1">福建某某某有限公司</span>
+				<span class="w-1">8.00 </span>
+				<span class="w-1"><i>200.00</i> </span>
+			</a>
+
+		</section>
+		<center id="page" class="page"></center>
+	</div>
+</div>
+</body>
+
+<script type="text/javascript"  src="~/js/jquery.min.js"></script>
+<script type="text/javascript" src="~/lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="~/lib/usteel-search/search.js"></script>
+<script type="text/javascript">
+layui.use(['form', 'layedit', 'laydate', 'carousel', 'element', 'laypage'], function() {
+	var layer = layui.layer,
+		laypage = layui.laypage,
+		element = layui.element;
+
+	laypage.render({
+		elem: 'page',
+		count: 1000,
+		layout: ['page', 'limit', 'skip', 'count', ],
+		theme: '#3e88f5',
+		curr: "1" //获取起始页
+			,
+		limit: "10",
+		jump: function(obj, first) {
+			//obj包含了当前分页的所有参数，比如：
+			//		    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+			//		    console.log(obj.limit); //得到每页显示的条数
+			//首次不执行
+			if(!first) {
+				//					var load = layer.load(2, {shade: [0.1,'#000']});
+				locationHref("page=" + obj.curr + "&limit=" + obj.limit, "#usteel-condition", "page");
+			}
+		}
+	});
+});
+</script>
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+<p>适用浏览器：360、FireFox、Chrome、Opera、傲游、搜狗、世界之窗. 不支持Safari、IE8及以下浏览器。</p>
+<p>来源：<a href="http://sc.chinaz.com/" target="_blank">站长素材</a></p>
+</div>
+</html>

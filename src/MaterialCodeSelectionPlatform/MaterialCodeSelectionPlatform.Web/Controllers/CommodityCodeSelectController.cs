@@ -132,7 +132,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return ConvertListResult(list, dataPage);
         }
         /// <summary>
-        /// 物资编码属性
+        ///【 物资编码】属性
         /// </summary>
         /// <param name="id">物资编码Id</param>
         /// <returns></returns>
@@ -140,6 +140,16 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {           
             var list = await this.Service.GetAttributeList(id);
             return View(list);
+        }
+        /// <summary>
+        ///【 物资类型】属性
+        /// </summary>
+        /// <param name="id">物资编码Id</param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetTypeAttributeList(string id)
+        {
+            var list = await this.Service.GetComponentTypeAttributeList(id);
+            return Json(list);
         }
         /// <summary>
         /// 选择【物资编码】的采购码
@@ -184,6 +194,18 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             catch (Exception e)
             {
                 return ConvertFailResult(null, e.ToString());
+            }
+        }
+        public async Task<ActionResult> GetUserMaterialTakeOff()
+        {          
+            try
+            {
+                var result = await Service.GetUserMaterialTakeOff(this.UserId);
+                return ConvertJsonResult("成功", true, result);
+            }
+            catch (Exception e)
+            {
+                return ConvertJsonResult("失败", false,e.Message,e);
             }
         }
     }

@@ -8,14 +8,13 @@
         display: none;
     }
 </style>
+<link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css" />
 <div class="layui-form" action="" id="searchForm">
-    <div class="layui-form-item search">
-
-
+    <div class="layui-form-item search" >
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
-                <select lay-search  id="selProject"name="selProject" lay-filter="selProject"></select>
+                <select lay-search id="selProject" name="selProject" lay-filter="selProject"></select>
             </div>
         </div>
         <div class="layui-inline layui-float-left">
@@ -36,7 +35,7 @@
     </div>
     <div class="layui-form-item search">
         <div class="layui-inline">
-            <label class="layui-form-label">物资类型：</label>
+            <label class="layui-form-label" style="width:100px">物资类型：</label>
             <div class="layui-input-inline" id="divsel1">
                 <select lay-search name="sel1" lay-filter="sel1"></select>
             </div>
@@ -69,19 +68,164 @@
             </div>
         </div>
     </div>
-    <div class="layui-form-item search">
+    <div class="usteel-content w">
+        <div class="usteel-condition" id="usteel-condition">
+            <!-- 优钢网索引插件 -->
+            <div class="selector" lay-filter="chapterRender">
+                <div class="usteel-search" data_type="area">
+                    <div class="sl-key">
+                        <strong>地区：</strong>
+                    </div>
+                    <div class="sl-value">
+                        <div class="sl-v-list">
+                            <ul>
+                                <li data_id="110000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>北京市</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sl-btns">
+                            <a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+                            <a href="JavaScript:;" class="btn btn-default">取消</a>
+                        </div>
+                    </div>
+                    <div class="sl-ext">
+                        <a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+                        <a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+                    </div>
+                </div>
+                <div class="usteel-search" data_type="area">
+                    <div class="sl-key">
+                        <strong>地区：</strong>
+                    </div>
+                    <div class="sl-value">
+                        <div class="sl-v-list">
+                            <ul>
+                                <li data_id="110000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>北京市</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sl-btns">
+                            <a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+                            <a href="JavaScript:;" class="btn btn-default">取消</a>
+                        </div>
+                    </div>
+                    <div class="sl-ext">
+                        <a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+                        <a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+                    </div>
+                </div>
+
+                <div class="usteel-search" data_type="area">
+                    <div class="sl-key">
+                        <strong>地区：</strong>
+                    </div>
+                    <div class="sl-value">
+                        <div class="sl-v-list">
+                            <ul>
+                                <li data_id="110000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>北京市</span>
+                                    </a>
+                                </li>
+                                <li data_id="120000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>天津市</span>
+                                    </a>
+                                </li>
+                                <li data_id="150000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>内蒙古自治区</span>
+                                    </a>
+                                </li>
+                                <li data_id="230000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>黑龙江省</span>
+                                    </a>
+                                </li>
+                                <li data_id="410000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>河南省</span>
+                                    </a>
+                                </li>
+                                <li data_id="440000">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span>广东省</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sl-btns">
+                            <a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+                            <a href="JavaScript:;" class="btn btn-default">取消</a>
+                        </div>
+                    </div>
+                    <div class="sl-ext">
+                        <a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+                        <a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+      
     </div>
-    <input type="hidden"  id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 </div>
+<input type="hidden" id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80" id="tbCommodityCodeList" lay-filter="useruv"></table>
+<div  class="layui-form" action="" id="openShow" style="display:none">
+    <table class="layui-table" id="projectDevice" >
+        <colgroup>
+            <col width="150">
+            <col width="150">
+            <col width="200">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>项目</th>
+                <th>装置</th>
+                <th>版次</th>
+                <th>状态</th>
+                <th>时间</th>
+            </tr>
+        </thead>
+        <tbody id="trody">
+        </tbody>
+    </table>
+    <div class="layui-form" action="" id="searchForm2" >
+        <div class="layui-form-item search" >
+            <div class="layui-inline layui-float-left">
+                <label class="layui-form-label">项目：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selProject2" name="selProject2" lay-filter="selProject2"></select>
+                </div>
+            </div>
+            <div class="layui-inline layui-float-left">
+                <label class="layui-form-label">装置：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selDevice2" name="selDevice2" lay-filter="selDevice2"></select>
+                </div>
+            </div>
+            <div class="layui-inline ">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnOk" onclick="selectProjectDevice()">确定</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
+        <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
 
-<script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
-    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
-
-</script>
-
-<script type="text/javascript">
+    </script>
+    <script type="text/javascript" src="~/lib/usteel-search/search.js"></script>
+    <script type="text/javascript">
 
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
@@ -89,8 +233,8 @@
             var layer = layui.layer;
             var table = layui.table;
             var $ = layui.jquery;
-         
-           
+
+
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
@@ -162,9 +306,9 @@
             //刷新表格
             window.flush = function () {
                 loadData();
-            }
-         
-           
+              }
+            openProject();//打开最近【项目】【装置】
+
             var defaultValue = "@ViewData["projectId"]";
             //select 控件加载完再初始化table
             $("select[name=projectId]").dropdownlist({
@@ -177,13 +321,29 @@
                 url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                 }
               });
+              $("select[name=selProject2]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                }
+              });
              form.render();
              form.on('select(selProject)',
                 function(data1) {
-                    var value = data1.value;                  
+                    var value = data1.value;
                     $("select[name=selDevice]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
+
+                            //if ($("select[name=sel2]").val() != "") {
+                            //    $("#divsel2").show();
+                            //}
+                        }
+                    });
+                 });
+             form.on('select(selProject2)',
+                function(data1) {
+                    var value = data1.value;
+                    $("select[name=selDevice2]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+
                             //if ($("select[name=sel2]").val() != "") {
                             //    $("#divsel2").show();
                             //}
@@ -198,12 +358,16 @@
             form.render();
             form.on('select(sel1)',
                 function(data1) {
-                    var value = data1.value;                   
+                    var value = data1.value;
+                    hidDropdownlist(1);
                     $("select[name=sel2]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel2]").val() != "") {
+
+                            if ($("select[name=sel2]").val() != "" && $("select[name=sel2]").find("option").length > 0) {
                                 $("#divsel2").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -211,11 +375,14 @@
             form.on('select(sel2)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(2);
                     $("select[name=sel3]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel3]").val() != "") {
+                            if ($("select[name=sel3]").val() != ""&&$("select[name=sel3]").find("option").length>0) {
                                 $("#divsel3").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -223,11 +390,15 @@
             form.on('select(sel3)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(3);
                     $("select[name=sel4]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel4]").val() != "") {
+
+                            if ($("select[name=sel4]").val() != ""&&$("select[name=sel4]").find("option").length>0) {
                                 $("#divsel4").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -235,11 +406,15 @@
             form.on('select(sel4)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(4);
                     $("select[name=sel5]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel5]").val() != "") {
+
+                            if ($("select[name=sel5]").val() != ""&&$("select[name=sel5]").find("option").length>0) {
                                 $("#divsel5").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -247,11 +422,15 @@
             form.on('select(sel5)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(5);
                     $("select[name=sel6]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel6]").val() != "") {
+
+                            if ($("select[name=sel6]").val() != ""&&$("select[name=sel6]").find("option").length>0) {
                                 $("#divsel6").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -259,11 +438,15 @@
             form.on('select(sel6)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(6);
                     $("select[name=sel7]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel7]").val() != "") {
+
+                            if ($("select[name=sel7]").val() != ""&&$("select[name=sel7]").find("option").length>0) {
                                 $("#divsel7").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
@@ -271,18 +454,208 @@
             form.on('select(sel7)',
                 function(data1) {
                     var value = data1.value;
+                     hidDropdownlist(7);
                     $("select[name=sel8]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            
-                            if ($("select[name=sel8]").val() != "") {
+
+                            if ($("select[name=sel8]").val() != ""&&$("select[name=sel8]").find("option").length>0) {
                                 $("#divsel8").show();
+                            }
+                            else {
+                                getTypeAttr(value);
                             }
                         }
                     });
                 });
+            //==============获取【物资类型】属性==================
+            function getTypeAttr(id) {
+                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {
+                 // $(".selector").html("");
+                 if (result.length == 0) {
+                     layer.msg("获取不到属性");
+                      $(".selector").html("");
+                 }
+                 else {
+                     debugger;
+                     var html = "";
+                     for (var i = 0; i < result.length; i++) {
+                         var attributeName = result[i].attributeName;
+                         var attributeValueList = result[i].attributeValueList;
+                         html += "<div class='usteel-search' data_type='"+attributeName+"'>";
+                         html += "<div class='sl-key'>";
+                         html += "<strong>"+attributeName+"：</strong>";
+                         html += "</div>";
+                         html += "<div class='sl-value'>";
+                         html += "<div class='sl-v-list'>";
+                         html += "<ul>";
+                         if (attributeValueList != null && attributeValueList.length > 0) {
+                             for (var k = 0; k < attributeValueList.length; k++) {
+                                 var id = attributeValueList[k].id;
+                                 var value = attributeValueList[k].value;
+                                 html += "<li data_id='"+id+"'>";
+                                 html += "<a href='javascript:;'>";
+                                 html += "<i class=''></i><span>"+value+"</span>";
+                                 html += "</a>";
+                                 html += "</li>";
 
+                             }
+                         }
+                         html += "</ul>";
+                         html += "</div>";
+                         html += "<div class='sl-btns'>";
+                         html += "<a href='JavaScript:;' class='btn btn-primary disabled'>确定</a>";
+                         html += "<a href='JavaScript:;' class='btn btn-default'>取消</a>";
+                         html += "</div>";
+                         html += "</div>";
+                         html += "<div class='sl-ext'>";
+                         html += "<a href='JavaScript:;' class='sl-b-more' style='visibility: hidden;'><i class='layui-icon layui-icon-down'></i>更多</a>";
+                         html += "<a href='JavaScript:;' class='sl-b-multiple'><i class='layui-icon layui-icon-add-1'></i>多选</a>";
+                         html += "</div>";
+                         html += "</div>";
+                     }
+                     //html = "";
+                     //html += "<div class='usteel-search' data_type='area'>";
+                     //html += "<div class='sl-key'>";
+                     //html += "<strong>地区：</strong>";
+                     //html += "</div>";
+                     //html += "<div class='sl-value'>";
+                     //html += "<div class='sl-v-list'>";
+                     //html += "<ul>";
+                     //html += "<li data_id='110000'>";
+                     //html += "<a href='javascript:;'>";
+                     //html += "<i class=''></i><span>北京市</span>";
+                     //html += "</a>";
+                     //html += "</li>";
+                     //html += "</ul>";
+                     //html += "</div>";
+                     //html += "<div class='sl-btns'>";
+                     //html += "<a href='JavaScript:;' class='btn btn-primary disabled'>确定</a>";
+                     //html += "<a href='JavaScript:;' class='btn btn-default'>取消</a>";
+                     //html += "</div>";
+                     //html += "</div>";
+                     //html += "<div class='sl-ext'>";
+                     //html += "<a href='JavaScript:;' class='sl-b-more' style='visibility: hidden;'><i class='layui-icon layui-icon-down'></i>更多</a>";
+                     //html += "<a href='JavaScript:;' class='sl-b-multiple'><i class='layui-icon layui-icon-add-1'></i>多选</a>";
+                     //html += "</div>";
+                     //html += "</div>";
+                     $(".selector").html(html);
+                    // form.render('chapterRender');///重新渲染select#chapterId
+                  layui.use('form', function() {
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        form.render();
+    });
+                 }
+             });
+        }
+            //==============获取【物资类型】属性end==================
+            //==============打开【最近项目，装置】==================
+           
+            function openProject() {
+                $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?id=&pt=" + Math.random(), function (result) {
+                    if (!result.success) {
+                        layer.msg(result.message);
+                    }
+                    else {
+                        if (result.data.length > 0) {
+                            var tr= "";
+                            for (var i = 0; i < result.data.length; i++) {
+                                var ent = result.data[i];
+                             
+                                tr += "<tr>";
+                                tr += "<td><a onclick=projectClick('"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
+                                tr += "<td>"+ent.deviceName+"</td>";
+                                tr += "<td>"+ent.version+"</td>";
+                                tr += "<td>"+ent.checkStatusName+"</td>";
+                                tr += "<td>"+ent.timeString+"</td>";
+                                tr += " </tr>";
+                            }
+                            $("#trody").append(tr);
+                            winIndex= layer.open({
+                                      type: 1,
+                                      title: '最近',
+                                      area: ['800px', '600px'],
+                                      minHeight:'200px',
+                                      content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                      //,btn: ['按钮一', '按钮二', '按钮三']
+                                      //,yes: function(index, layero){
+                                      //  //按钮【按钮一】的回调
+                                      //}
+                                      //,btn2: function(index, layero){
+                                      //  //按钮【按钮二】的回调
 
+                                      //    return false; 开启该代码可禁止点击该按钮关闭
+                                      //}
+                                      //,btn3: function(index, layero){
+                                      //  //按钮【按钮三】的回调
 
+                                      //  //return false 开启该代码可禁止点击该按钮关闭
+                                      //}
+                                      //,cancel: function(){
+                                      //  //右上角关闭回调
+
+                                      //  //return false 开启该代码可禁止点击该按钮关闭
+                                      //}
+                                   });
+                        }
+                    }
+                  });
+
+            }
+             //==============打开【最近项目，装置】end==================
+             //==============隐藏下拉框==================
+            function hidDropdownlist(currInt) {
+                currInt = currInt + 1;
+                for (var i = currInt; i < 10; i++) {//假设预留10个
+                    if ($("select[name=sel" + i + "]").length > 0) {
+                         $("select[name=sel" + i + "]").find("option:selected").text("");
+                         $("#divsel"+i+"").hide();
+                    }
+                 }
+             }
+             //==============隐藏下拉框end==================
+            
         });
+         var winIndex = 0;
+          //==============确定【项目】【装置】==================
+            function selectProjectDevice() {
+                var projectId = $("#selProject2").val();
+                var deviceId = $("#selDevice2").val();
+                $("#selProject").html($("#selProject2").html());
+                $("#selDevice").html($("#selDevice2").html());
 
-</script>
+                $("#selProject").val(projectId);
+                $("#selDevice").val(deviceId);
+                layui.form.render('select');
+                layer.close(winIndex); 
+             }
+        //==============确定【项目】【装置】end==================
+         //==============选择【项目】【装置】==================
+        function projectClick(projectId, deviceId) {
+            $("#selProject").val(projectId);
+            layui.form.render('select');
+            $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
+                debugger;
+                //<option value="-1">全部</option>
+                if (result != null && result.length > 0) {
+                    var optionHtml = "";
+                    for (var i = 0; i < result.length; i++) {
+                        optionHtml += "<option value="+result[i].value+">"+result[i].text+"</option>";
+                    }
+                    $("#selDevice").html(optionHtml);
+                    $("#selDevice").val(deviceId);
+                      layui.form.render('select');
+                }  
+                  layer.close(winIndex); 
+            });
+
+              //  $("select[name=selProject]").dropdownlist({
+
+              //  url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId="+projectId+"&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+              //  }
+              //});
+               
+                layer.close(winIndex); 
+             }
+        //==============选择【项目】【装置】end==================
+       
+    </script>
