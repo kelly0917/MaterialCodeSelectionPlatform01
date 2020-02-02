@@ -130,13 +130,15 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
         /// </summary>
         /// <param name="msg">i消息</param>
         /// <param name="success">是否成功</param>
+        /// <param name="data">对象数据</param>
         /// <param name="ex">异常信息</param>
         /// <returns></returns>
-        protected JsonResult ConvertJsonResult(string msg,bool success, Exception ex=null)
+        protected JsonResult ConvertJsonResult(string msg,bool success,object data=null, Exception ex=null)
         {
             DataResult dataResult = new DataResult();
             dataResult.Exception = ex;
             dataResult.Message = msg;
+            dataResult.Data = data;
             dataResult.Success = success;
             return Json(dataResult);
         }
