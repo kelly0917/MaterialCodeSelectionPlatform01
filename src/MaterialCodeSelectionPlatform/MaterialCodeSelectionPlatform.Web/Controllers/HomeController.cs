@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using log4net;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.Models;
 using MaterialCodeSelectionPlatform.Service;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using MaterialCodeSelectionPlatform.ManagerWeb;
+using MaterialCodeSelectionPlatform.Web.Common;
 using MaterialCodeSelectionPlatform.Web.Utilities;
 using Microsoft.AspNetCore.Http;
 using NPOI.OpenXmlFormats.Spreadsheet;
@@ -20,6 +22,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class HomeController : BaseController<IUserService,User>
     {
+        private ILog log = LogHelper.GetLogger<HomeController>();
         public IConfiguration Configuration { get; }
 
         private IUserService userService;
@@ -174,6 +177,50 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 result.Add(menuModelP);
             }
             return result;
+
+        }
+
+
+
+
+        /// <summary>
+        /// 同步进度
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult SysDataInfo()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 获取处理进度
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetDealProgress()
+        {
+            var url = SysConfig.SysServiceUrl + "?opType=progress";
+            var result = WebHelper.RequestUrl(url);
+            return Content(result);
+        }
+
+
+        /// <summary>
+        /// 获取处理进度
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult StartDealProgress()
+        {
+            try
+            {
+                var url = SysConfig.SysServiceUrl + "?opType=start&sysId=" + Guid.NewGuid().ToString();
+                var result = (WebHelper.RequestUrl(url));
+                return ConvertSuccessResult(result);
+            }
+            catch (Exception e)
+            {
+                log.Error(e);
+                return ConvertErrorResult(null, e);
+            }
 
         }
 

@@ -44,17 +44,17 @@
                 </ul>
                 <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
-                    
+                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                        <a href="javascript:;" layadmin-event="template-1" onclick="sysData()">
+                            <i class="layui-icon layui-icon-template-1"></i>
+                        </a>
+                    </li>
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
                         <a href="javascript:;" layadmin-event="theme">
                             <i class="layui-icon layui-icon-theme"></i>
                         </a>
                     </li>
-                    @*<li class="layui-nav-item layui-hide-xs" lay-unselect>
-                        <a href="javascript:;" layadmin-event="note">
-                            <i class="layui-icon layui-icon-note"></i>
-                        </a>
-                    </li>*@
+                   
                     <li class="layui-nav-item layui-hide-xs" lay-unselect>
                         <a href="javascript:;" layadmin-event="fullscreen">
                             <i class="layui-icon layui-icon-screen-full"></i>
@@ -202,7 +202,26 @@
 
                 }
 
-
+                window.sysData = function()
+                {
+                    $.ajax({
+                        url: '/Home/StartDealProgress?' + Math.random(),
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.Success) {
+                                layer.open({
+                                    type: 2,
+                                    content: '/Home/SysDataInfo',
+                                    title: '同步进度',
+                                    area: ["300px;", "100px;"]//宽 高
+                                });
+                            } else {
+                                layer.msg("同步启动失败", { icon: 5 });
+                            }
+                        }
+                    });
+               
+                }
 
                 //根据保存的地址F5只刷新当前页面
 
