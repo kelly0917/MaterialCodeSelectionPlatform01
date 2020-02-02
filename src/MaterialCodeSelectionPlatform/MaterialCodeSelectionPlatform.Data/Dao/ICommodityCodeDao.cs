@@ -39,14 +39,22 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 保存【物资汇总明细表】
         /// </summary>
-        /// <param name="list">采购码列表</param>
+        /// <param name="condtion">条件</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(List<PartNumberDto> list);
+        Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(PartNumberCondition condtion);
         /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
         Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid);
+        /// <summary>
+        /// 获取用户的物料表
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="projectid">项目Id</param>
+        /// <param name="deviceid">装置Id</param>
+        /// <returns></returns>
+        Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid);
     }
 }

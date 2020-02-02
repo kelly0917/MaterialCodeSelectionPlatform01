@@ -23,6 +23,10 @@ namespace MaterialCodeSelectionPlatform.Domain
     public class PartNumberDto : PartNumber
     {
         /// <summary>
+        /// 采购码中文长描述(表：MaterialTakeOffDetail)
+        /// </summary>
+        public string CN_PartNumberLongDesc { get; set; }
+        /// <summary>
         /// 项目Id
         /// </summary>
         public string ProjectId { get; set; }
