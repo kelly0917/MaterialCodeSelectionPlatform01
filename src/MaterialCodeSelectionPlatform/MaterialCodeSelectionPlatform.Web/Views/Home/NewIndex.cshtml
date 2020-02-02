@@ -84,11 +84,15 @@
             <div class="layui-side layui-side-menu">
                 <div class="layui-side-scroll">
                     <div class="layui-logo" lay-href="/User/Index">
-                        <span>材料选码平台</span>
+                        <div style="float: left;">
+                            <img src="/icon.png" style="width: 30px;"/>
+                            <span>材料选码平台</span>
+                        </div>
+                       
                     </div>
 
                     <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-                        @if (ViewData["Role"].ToString() == "0" || ViewData["Role"].ToString() == "1")
+                        @if (ViewData["Role"]!=null && (ViewData["Role"].ToString() == "0" || ViewData["Role"].ToString() == "1"))
                         {
                             <li data-name="get" class="layui-nav-item">
                                 <a href="javascript:;" lay-href="/User/Index" lay-tips="用户管理" lay-direction="2">
