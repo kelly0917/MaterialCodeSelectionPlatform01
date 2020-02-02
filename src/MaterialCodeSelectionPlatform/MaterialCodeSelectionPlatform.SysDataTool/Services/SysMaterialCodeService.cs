@@ -49,7 +49,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 var sql =
                     $"SELECT COMMODITY_NO,COMMODITY_ID,COMMODITY_CLASS_NO,CATALOG_NO FROM COMMODITY WHERE CATALOG_NO = {configModel.Code} AND APPROVAL_STATUS_NO =2  ";
                 DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-                CacheData.SetDealProgress(4);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"物资编码从Oracle数据库读取完成，数据量为：{table.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm，编码库为：{configModel.Name}");
                 stopwatch.Restart();
@@ -57,7 +57,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
                 log.Debug($"物资编码插入临时表完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
-                CacheData.SetDealProgress(5);
+                CacheData.SetDealProgress();
                 //采购码
                 deleteSql = $"delete from Temp_PartNumber ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
@@ -65,7 +65,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 sql =
                     $"select PART_NO,PART_ID,CATALOG_NO,COMMODITY_NO,SIZE_REF_NO from part where CATALOG_NO = {configModel.Code} ";
                 DataTable table1 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-                CacheData.SetDealProgress(6);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"采购码从Oracle数据库读取完成，数据量为：{table1.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm,编码库为：{configModel.Name}");
                 stopwatch.Restart();
@@ -74,7 +74,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.SqlBulkCopyInsert(table1, CacheData.SqlConn, tempTableName1);
                 log.Debug($"采购码插入临时表完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
-                CacheData.SetDealProgress(7);
+                CacheData.SetDealProgress();
                 //采购码属性
                 deleteSql = $"delete from Temp_PropertyValue ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
@@ -82,7 +82,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 sql =
                     $"select CATALOG_NO,INSTANCE_NO,CLASS_NO,ENTITY_PROPERTY_NO,PROPERTY_VALUE from instance_property_value where CATALOG_NO  = {configModel.Code} ";
                 DataTable table2 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-                CacheData.SetDealProgress(8);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"采购码属性从Oracle数据库读取完成，数据量为：{table2.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm,编码库为：{configModel.Name}");
                 stopwatch.Restart();
@@ -91,7 +91,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.SqlBulkCopyInsert(table2, CacheData.SqlConn, tempTableName2);
                 log.Debug($"采购码属性插入临时表完成，耗时：{stopwatch.ElapsedMilliseconds}mm,编码库为：{configModel.Name}");
                 stopwatch.Restart();
-                CacheData.SetDealProgress(9);
+                CacheData.SetDealProgress();
                 //同步字典属性
                 deleteSql = $"delete from Temp_Property ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
@@ -99,7 +99,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 sql =
                     $"SELECT ENTITY_PROPERTY_NO,ENTITY_PROPERTY_ID,CATALOG_NO FROM ENTITY_PROPERTY WHERE CATALOG_NO ={configModel.Code} ";
                 DataTable table3 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-                CacheData.SetDealProgress(10);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"同步字典属性从Oracle数据库读取完成，数据量为：{table3.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm,编码库为：{configModel.Name}");
                 stopwatch.Restart();
@@ -109,7 +109,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.SqlBulkCopyInsert(table3, CacheData.SqlConn, tempTableName3);
                 log.Debug($"同步字典属性插入临时表完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
-                CacheData.SetDealProgress(11);
+                CacheData.SetDealProgress();
                 //同步物资编码属性值
 
                 sql =
@@ -141,14 +141,14 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
 
                 DataTable table4 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
-                CacheData.SetDealProgress(12);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"同步物资编码属性值从Oracle数据库读取完成，数据量为：{table4.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
 
                 var tempTableName4 = "Temp_CCPropertyValue";
                 CommonHelper.SqlBulkCopyInsert(table4, CacheData.SqlConn, tempTableName4);
-                CacheData.SetDealProgress(13);
+                CacheData.SetDealProgress();
                 log.Debug(
                     $"同步物资编码属性值从Oracle数据库读取完成，数据量为：{table4.Rows.Count}，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
@@ -168,7 +168,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 });
 
                 CommonHelper.ExcuteSP("SP_SysCommodityCode", CacheData.SqlConn, parameters.ToList());
-                CacheData.SetDealProgress(14);
+                CacheData.SetDealProgress();
                 log.Debug($"物资编码存储过程执行完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
                 parameters = new List<SqlParameter>();
@@ -187,7 +187,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.ExcuteSP("SP_SysPartNumber", CacheData.SqlConn, parameters.ToList());
                 log.Debug($"采购编码存储过程执行完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");
                 stopwatch.Restart();
-                CacheData.SetDealProgress(15);
+                CacheData.SetDealProgress();
             }
             catch (Exception e)
             {
@@ -196,8 +196,8 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
             finally
             {
                 //同步完成，清空缓存
-                CacheData.DicCacheSysData.Clear();
-                CacheData.DicDealProgressRate.Clear();
+                //CacheData.DicCacheSysData.Clear();
+                //CacheData.DicDealProgressRate.Clear();
             }
         }
     }

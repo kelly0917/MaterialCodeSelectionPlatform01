@@ -12,5 +12,9 @@
         /// </summary>
         public static bool IsNeedPermission { get; set; } = true;
 
+        /// <summary>
+        /// 同步服务地址
+        /// </summary>
+        public static string SysServiceUrl { get; set; }
     }
 }

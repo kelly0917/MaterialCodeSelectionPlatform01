@@ -31,16 +31,18 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
             if (string.IsNullOrEmpty(catlog))//同步所有编码库
             {
                var  catlogs = CacheData.ConfigCache.ToList();
-
-               foreach (var catlog1 in catlogs)
+        
+                foreach (var catlog1 in catlogs)
                {
                    realSysData(catlog1);
                }
             }
             else
             {
+         
                 realSysData(CacheData.ConfigCache
                     .Where(c => c.Name.Equals(catlog, StringComparison.OrdinalIgnoreCase)).FirstOrDefault());
+            
             }
         }
 
@@ -58,7 +60,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 log.Debug($"从Oracle获取数据完成，返回数据量为：{table.Rows.Count},耗时：{stopwatch.ElapsedMilliseconds}mm");
                 stopwatch.Restart();
                 //递归排除掉 审批状态不为2,
-                CacheData.SetDealProgress(1);
+                CacheData.SetDealProgress();
                 string deleteSql = $"delete from Temp_ComponentType";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
               
@@ -66,7 +68,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 log.Debug($"批量插入临时表完成,耗时：{stopwatch.ElapsedMilliseconds}mm");
                 stopwatch.Restart();
                 var SP_Name = "SP_SysComponentType";
-                CacheData.SetDealProgress(2);
+                CacheData.SetDealProgress();
                 List<SqlParameter> parameters = new List<SqlParameter>();
                 parameters.Add(new SqlParameter()
                 {
@@ -83,7 +85,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.ExcuteSP(SP_Name, CacheData.SqlConn, parameters);
                 log.Debug($"同步数据完成，存储过程执行耗时：{stopwatch.ElapsedMilliseconds}mm");
                 stopwatch.Stop();
-                CacheData.SetDealProgress(3);
+                CacheData.SetDealProgress();
             }
             catch (Exception e)
             {

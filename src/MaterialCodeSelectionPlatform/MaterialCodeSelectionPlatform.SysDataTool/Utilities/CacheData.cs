@@ -12,28 +12,38 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
     {
         public static List<SysConfigModel> ConfigCache { get; set; }
 
-        /// <summary>
-        /// 当前处理的Key  DicCacheSysData和DicDealProgressRate 的key
-        /// </summary>
-        public static string CurrentDealKey { get; set; }
+        ///// <summary>
+        ///// 当前处理的Key  DicCacheSysData和DicDealProgressRate 的key
+        ///// </summary>
+        //public static string CurrentDealKey { get; set; }
 
         public static double CurrentProgress { get; set; }
+
+        public static double CurrentIntPro { get; set; } = 0;
+        ///// <summary>
+        ///// 全局同步记录
+        ///// </summary>
+        //public static Dictionary<string,DateTime> DicCacheSysData { get; set; } = new Dictionary<string, DateTime>();
+
         /// <summary>
-        /// 全局同步记录
+        /// 是否在进行同步中
         /// </summary>
-        public static Dictionary<string,DateTime> DicCacheSysData { get; set; } = new Dictionary<string, DateTime>();
+        public static bool IsSysDataing { get; set; }
 
-
+        /// <summary>
+        /// 单个编码库完成 的步骤
+        /// </summary>
+        public static int BaseProgress = 15;
 
         /// <summary>
         /// 同步总共几步
         /// </summary>
         public static int SumDealProgress = 15;
 
-        /// <summary>
-        /// 处理进度百分比
-        /// </summary>
-        public static Dictionary<string,int> DicDealProgressRate { get; set; } = new Dictionary<string, int>();
+        ///// <summary>
+        ///// 处理进度百分比
+        ///// </summary>
+        //public static Dictionary<string,int> DicDealProgressRate { get; set; } = new Dictionary<string, int>();
 
         public static string AdminUserId { get; set; }
 
@@ -50,11 +60,13 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
         /// <summary>
         /// 处理到第几步
         /// </summary>
-        /// <param name="p"></param>
-        public static void SetDealProgress(int p)
+        public static void SetDealProgress()
         {
-            DicDealProgressRate[CacheData.CurrentDealKey] = p;
-            CurrentProgress = (DicDealProgressRate[CurrentDealKey] * 100.0 / SumDealProgress);
+            //DicDealProgressRate[CacheData.CurrentDealKey] = p;
+            CurrentIntPro = CurrentIntPro + 1;
+            Console.WriteLine("CurrentIntPro="+ CurrentIntPro);
+            Console.WriteLine("SumDealProgress=" + SumDealProgress);
+            CurrentProgress = CurrentIntPro * 100.0 / SumDealProgress;
         }
 
         /// <summary>

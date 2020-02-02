@@ -1,12 +1,13 @@
-﻿
+﻿@using MaterialCodeSelectionPlatform.Web.Utilities
+
 @{
     Layout = "~/Views/Shared/_Layout_Body.cshtml";
 }
 
 <div class="layui-form layui-form-model" >
-    <div class="layui-form-item">
-        <div class="layui-progress layui-progress-big" lay-showPercent="yes">
-            <div class="layui-progress-bar layui-bg-green" lay-percent="50%"></div>
+    <div class="layui-form-item" style="padding:5px">
+        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="demo" >
+            <div class="layui-progress-bar layui-bg-green"   lay-percent="0%"></div>
         </div>
     </div>
 </div>
@@ -19,7 +20,23 @@
             var element = layui.element;
          
             form.render();
+          
+
+            setInterval(function() {
+                $.ajax({
+                    url: "/Project/GetDealProgress?t="+new Date(),
+                    type: 'get',
+                    success: function (data) {
+                        debugger;
+                        element.progress('demo', data +'%');
+                    }
+                });
+
+
+            },1000);
+
            
+
         });
 
 </script>
