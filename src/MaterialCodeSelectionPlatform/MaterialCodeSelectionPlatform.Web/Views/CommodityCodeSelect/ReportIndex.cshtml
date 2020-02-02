@@ -1,0 +1,79 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+@using MaterialCodeSelectionPlatform.Domain
+@model IEnumerable<PartNumberReport>
+
+<link href="~/css/formSelects-v4.css" rel="stylesheet" />
+<script src="~/js/jsencrypt.min.js"></script>
+<form class="layui-form layui-form-model" action="">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        <div class="layui-form" style="padding-bottom:50px">
+            @{
+                foreach (var report in Model)
+                {
+
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="200">
+                            <col>
+                            <col width="80">
+                        </colgroup>
+                        <thead>
+                            <tr style="background-color:deepskyblue;color:white">
+                                <th colspan="3">@report.ComponentTypeName </th>
+                            </tr>
+                            <tr>
+                                <th>采购码 </th>
+                                <th>采购码中文长描述 </th>
+                                <th style="text-align:center">数量 </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ent in report.PartNumberList)
+                            {
+                                var txtId = $"txt_{ent.Id}";
+                                <tr>
+                                    <td>@ent.Code</td>
+                                    <td>@ent.CN_PartNumberLongDesc</td>
+                                    <td class="layui-align-center">
+                                        @ent.DesignQty
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+
+        </div>
+        <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
+            <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">生成物料表</button>
+        </div>
+    </div>
+
+</form>
+
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+
+
+      layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            $('#btnReport').on('click', function () {
+                var projectid = "@ViewData["projectid"]";
+                var deviceid = "@ViewData["deviceid"]";
+                $.get("/CommodityCodeSelect/DownloadExcelReport?projectid="+projectid +"&deviceid="+deviceid+"&pt=" + Math.random() , function (data) {
+                    layer.msg(data.message);
+                  //  window.location.reload();
+                });
+            });
+        });
+</script>

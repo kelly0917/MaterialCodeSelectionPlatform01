@@ -161,6 +161,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId,string projectId, string deviceId)
         {
+            ViewData["commodityCodeId"] = commodityCodeId;
             ViewData["projectId"] = projectId;
             ViewData["deviceId"] = deviceId;
             var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
@@ -169,26 +170,33 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <summary>
         /// 保存【物资汇总明细表】
         /// </summary>
-        /// <param name="list">采购码列表</param>
+        /// <param name="list">采购码</param>
+        /// <param name="commodityCodeId">物资编码Id</param>
+        /// <param name="projectId">项目ID</param>
+        /// <param name="deviceId">装置ID</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> SaveMaterialTakeOffDetail(List<PartNumberDto> list)
+        public async Task<IActionResult> SaveMaterialTakeOffDetail(List<PartNumberDto> list,string commodityCodeId,string projectId, string deviceId)
         {
-
-            if (list == null || list.Count == 0)
+            PartNumberCondition condition = new PartNumberCondition();
+            condition.UserId = this.UserId;
+            condition.ProjectId = projectId;
+            condition.DeviceId = deviceId;
+            condition.CommodityCodeId = commodityCodeId;
+            condition.PartNumberDtoList = list;
+            if (condition.PartNumberDtoList != null && condition.PartNumberDtoList.Count > 0)
             {
-                return ConvertFailResult(null,"更新物料失败！");
-            }
-            foreach (var ent in list)
-            {
-                ent.CreateUserId = this.UserId;
-                ent.LastModifyUserId = this.UserId;
-                ent.CreateTime = DateTime.Now;
-                ent.LastModifyTime = DateTime.Now;
+                foreach (var ent in condition.PartNumberDtoList)
+                {
+                    ent.CreateUserId = this.UserId;
+                    ent.LastModifyUserId = this.UserId;
+                    ent.CreateTime = DateTime.Now;
+                    ent.LastModifyTime = DateTime.Now;
+                }
             }
             try
             {
-                var result = await Service.SaveMaterialTakeOffDetail(list);
+                var result = await Service.SaveMaterialTakeOffDetail(condition);
                 return ConvertJsonResult("更新成功",true);
             }
             catch (Exception e)
@@ -196,6 +204,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return ConvertFailResult(null, e.ToString());
             }
         }
+        /// <summary>
+        /// 获取用户的【物资汇总表】
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> GetUserMaterialTakeOff()
         {          
             try
@@ -206,6 +218,39 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             catch (Exception e)
             {
                 return ConvertJsonResult("失败", false,e.Message,e);
+            }
+        }
+        /// <summary>
+        /// 获取用户的物料表
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="projectid">项目Id</param>
+        /// <param name="deviceid">装置Id</param>
+        /// <returns></returns>
+        public async Task<ActionResult> ReportIndex(string projectid, string deviceid)
+        {
+            try
+            {
+                ViewData["projectid"] = projectid;
+                ViewData["deviceid"] = deviceid;
+                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
+                return View(result);
+            }
+            catch (Exception e)
+            {
+                return View();
+            }
+        }
+        public async Task<ActionResult> DownloadExcelReport(string projectid, string deviceid)
+        {
+            try
+            {            
+                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
+                return Json(result);
+            }
+            catch (Exception e)
+            {
+                return View();
             }
         }
     }

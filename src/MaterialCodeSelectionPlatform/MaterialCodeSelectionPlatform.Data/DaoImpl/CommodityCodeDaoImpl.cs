@@ -179,20 +179,7 @@ namespace MaterialCodeSelectionPlatform.Data
 			                                         ORDER BY Version DESC)
              ) b ON a.id = b.PartNumberId
             WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by a.CN_SizeDesc asc";
-           var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId });
-            //if (partNumberList != null && partNumberList.Count > 0)
-            //{
-            //   // var groupList = partNumberList.GroupBy(c => c.ComponentTypeId).Select(c=>new List<PartNumberReport> { ComponentTypeName=c.Key,PartNumberList=c)})
-            
-            //    foreach (var row in partNumberList.GroupBy(c => c.ComponentTypeName))
-            //    {
-            //      var ent=  list.Where(c => c.ComponentTypeName == row.Key).FirstOrDefault();
-            //        if (ent == null)
-            //        {
-            //           // ent.PartNumberList.Add(row.)
-            //        }
-            //    }
-            //}
+           var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId });           
             var resut =  from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
@@ -206,49 +193,51 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 保存【物资汇总明细表】
         /// </summary>
-        /// <param name="list">采购码列表</param>
+        /// <param name="condtion">条件</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(List<PartNumberDto> list)
+        public async Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(PartNumberCondition condtion)
         {
             List<MaterialTakeOffDetail> listDetail = new List<MaterialTakeOffDetail>();
-            if (list != null && list.Count > 0)
+            var projectId = condtion.ProjectId;
+            var deviceId = condtion.DeviceId;
+            var userId = condtion.UserId;
+            var commodityCodeId = condtion.CommodityCodeId;
+            var commodityCode = Db.Queryable<CommodityCode>().Where(c => c.Id == commodityCodeId && c.Status == 0).Single();
+            var mto = await getOnwerTopMaterialTakeOff(userId, projectId, deviceId);
+            if (condtion.PartNumberDtoList != null && condtion.PartNumberDtoList.Count > 0)
             {
-                var partIds = list.Select(c => c.Id).ToList();
-                var tempEntity = list[0];
-                var projectId = tempEntity.ProjectId;
-                var deviceId = tempEntity.DeviceId;
-                var userId = tempEntity.CreateUserId;
-                var commodityCodeId = tempEntity.CommodityCodeId;//物资编码ID
-                var commodityCode = Db.Queryable<CommodityCode>().Where(c => c.Id == commodityCodeId && c.Status == 0).Single();
-                if (commodityCode == null)
-                {
-                    throw new Exception($"找不到物资编码：{commodityCodeId}");
-                }
-                var mto = await getOnwerTopMaterialTakeOff(userId, projectId, deviceId);
+                var partIds = condtion.PartNumberDtoList.Select(c => c.Id).ToList();
                 if (mto != null)
                 {
-                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id&&c.CommodityCodeId== commodityCodeId).ExecuteCommand();//暂进不留历史记录
+                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
                     if (mto.CheckStatus == 1)//审批状态【1：working 】【2：approved】
-                    {                     
+                    {
                         //新增明细
-                        addMaterialTakeOffDetail(list, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                     }
                     else
                     {
                         // 物资汇总表                   
-                        mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version.Value+1);
+                        mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version.Value + 1);
                         //新增明细
-                        addMaterialTakeOffDetail(list, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                     }
                 }
                 else
                 {
                     // 物资汇总表                   
-                    mto= addMaterialTakeOff(projectId, deviceId, userId,1,0);
+                    mto = addMaterialTakeOff(projectId, deviceId, userId, 1, 0);
                     //新增明细
-                    addMaterialTakeOffDetail(list, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                    addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                 }
-            }           
+            }
+            else
+            {
+                if (mto != null)
+                {
+                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
+                }
+            }
             return listDetail;
         }
         /// <summary>
@@ -359,6 +348,48 @@ namespace MaterialCodeSelectionPlatform.Data
             var list = await Db.Queryable<MaterialTakeOff, Project, Device>((a,b,c)=>new object[] { JoinType.Inner,a.ProjectId==b.Id,JoinType.Inner,a.DeviceId==c.Id}).Where((a,b,c) => a.Status == 0&&b.Status==0&&c.Status==0 && a.CreateUserId == userid).OrderBy((a)=>a.LastModifyTime,OrderByType.Desc)
                .Select((a, b, c) => new MaterialTakeOffDto { ProjectName=b.Name, DeviceName=c.Name,Id = a.Id,ProjectId=a.ProjectId,DeviceId=a.DeviceId,CreateTime=a.CreateTime,LastModifyTime=a.LastModifyTime,CheckStatus=a.CheckStatus,Version=a.Version}).ToListAsync();
             return list;
+        }
+        /// <summary>
+        /// 获取用户的物料表
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="projectid">项目Id</param>
+        /// <param name="deviceid">装置Id</param>
+        /// <returns></returns>
+        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid)
+        {
+            #region SQL 
+            /*
+          
+            SELECT d.[Desc] ComponentTypeName,c.Code,a.CN_PartNumberLongDesc, a.id from MaterialTakeOffDetail a
+            INNER JOIN PartNumber c ON c.Id=a.PartNumberId
+            INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
+            INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
+            WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=
+            (
+            SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId='B86AE930-3A1B-46BB-B0EF-2BBF3C81BD05' AND b.DeviceId='947386BB-68CD-4B2D-B7ED-96D281E7DB2E' AND b.CreateUserId='24271a95-c37e-4fd2-bde5-4c41cab7fb74' ORDER BY b.LastModifyTime desc
+            ) ORDER BY e.code,c.code
+
+           */
+            #endregion
+            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.CN_PartNumberLongDesc, a.id,a.DesignQty from MaterialTakeOffDetail a
+            INNER JOIN PartNumber c ON c.Id=a.PartNumberId
+            INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
+            INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
+            WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=
+            (
+            SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId=@ProjectId AND b.DeviceId=@DeviceId AND b.CreateUserId=@CreateUserId ORDER BY b.LastModifyTime desc
+            )  ORDER BY e.code,c.code ";
+            var partNumberList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId = userId, DeviceId = deviceid, ProjectId = projectid });
+            var resut = from p in partNumberList
+                        group p by p.ComponentTypeName into g
+                        orderby g.Key
+                        select new PartNumberReport()
+                        {
+                            ComponentTypeName = g.Key,
+                            PartNumberList = g.ToList()
+                        };
+            return await Task.Run(() => { return resut.ToList(); });
         }
     }
 }
