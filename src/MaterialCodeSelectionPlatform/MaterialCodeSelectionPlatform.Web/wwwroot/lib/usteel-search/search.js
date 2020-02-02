@@ -21,7 +21,7 @@ $(document).on("click",".sl-b-multiple", function () {
 	
 });
 	/*******组合索引跳转*********/
-$(".usteel-search .sl-value .sl-btns a[class*='btn-primary']").on("click",function(){
+$(document).on("click", ".usteel - search.sl - value.sl - btns a[class*= 'btn-primary']", function () {
 	
 	var $_thisClass = $(this).attr("class");
 	var $_thisParents = $(this).parents(".usteel-search.multiple").attr("data_type");
@@ -136,7 +136,7 @@ function locationHref(goUrlParameter,domId,page){
 	return false;
 }
 
-$(".sl-value .sl-v-list ul li a").click(function (){
+$(document).on("click", ".sl-value .sl-v-list ul li a", function () {
 	let sel_size = 0;
 	let liArray = $(this).parents(".usteel-search.multiple").find("li");
 	let btnPrimary = $(this).parents(".usteel-search.multiple").find(".btn-primary");
@@ -161,8 +161,7 @@ $(".sl-value .sl-v-list ul li a").click(function (){
 	}
 });
 
-
-$(".sl-btns .btn-default").click(function (){
+$(document).on("click", ".sl-btns .btn-default", function () {
 	$(this).closest(".usteel-search").find(".sl-ext").css("visibility","");
 	$(this).closest(".usteel-search").find("li").removeClass("selected");
 	$(this).closest(".usteel-search").removeClass("multiple");
