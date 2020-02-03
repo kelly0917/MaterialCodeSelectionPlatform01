@@ -6,7 +6,7 @@
 
 <div class="layui-form layui-form-model" >
     <div class="layui-form-item" style="padding:5px">
-        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="demo" >
+        <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="progressDemo" >
             <div class="layui-progress-bar layui-bg-green"   lay-percent="0%"></div>
         </div>
     </div>
@@ -22,15 +22,23 @@
             form.render();
           
 
-           var tt = setInterval(function() {
+            var tt = setInterval(function () {
+        
                 $.ajax({
-                    url: "/Home/GetDealProgress?t="+new Date(),
-                    type: 'get',
+                    url: '/Home/GetDealProgress?' + Math.random(),
+                    dataType: "json",
                     success: function (data) {
-                        element.progress('demo', data + '%');
-                        if (data * 1 == 100) {
-                            clearInterval(tt);
+                        if (data.Success) {
+                            element.progress('progressDemo', data.Data + '%');
+                            if (data * 1 == 100) {
+                                clearInterval(tt);
+                            }
+                        } else {
+                            
                         }
+                    },
+                    error: function(errorData) {
+                        debugger;
                     }
                 });
 

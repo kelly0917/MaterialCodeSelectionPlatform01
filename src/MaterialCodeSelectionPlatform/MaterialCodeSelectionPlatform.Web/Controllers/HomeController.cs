@@ -198,9 +198,18 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public IActionResult GetDealProgress()
         {
-            var url = SysConfig.SysServiceUrl + "?opType=progress";
-            var result = WebHelper.RequestUrl(url);
-            return Content(result);
+            try
+            {
+                var url = SysConfig.SysServiceUrl + "?opType=progress";
+                var result = WebHelper.RequestUrl(url);
+                return ConvertSuccessResult(result);
+            }
+            catch (Exception e)
+            {
+                log.Error(e);
+                return ConvertErrorResult(null, e);
+            }
+            
         }
 
 

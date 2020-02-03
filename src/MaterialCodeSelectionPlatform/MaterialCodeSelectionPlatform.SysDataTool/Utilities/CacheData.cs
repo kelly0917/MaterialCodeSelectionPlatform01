@@ -75,7 +75,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
         /// <returns></returns>
         public static string GetDealProgress()
         {
-            return CurrentProgress.ToString("#0.00");
+            return CurrentProgress.ToString("#0");
         }
 
 

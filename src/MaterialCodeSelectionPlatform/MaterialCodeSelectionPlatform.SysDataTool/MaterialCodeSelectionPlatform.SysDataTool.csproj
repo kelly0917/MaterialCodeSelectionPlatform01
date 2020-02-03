@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\SysConfigModel.cs" />
+    <Compile Include="Services\SysCommandService.cs" />
     <Compile Include="Services\SysContext.cs" />
     <Compile Include="Services\SysMaterialCodeService.cs" />
     <Compile Include="Utilities\CacheData.cs" />
