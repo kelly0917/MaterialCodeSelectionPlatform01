@@ -8,9 +8,13 @@ namespace MaterialCodeSelectionPlatform.Domain
     public class CommodityCodeSerachCondition : SConditionBase
     {
         /// <summary>
-        /// 物资编码Id
+        /// 物资类型ID
         /// </summary>
-        public List<string> CommodityCodeId { get; set; }
+        public string ComponentTypeId { get; set; }
+        ///// <summary>
+        ///// 物资编码Id
+        ///// </summary>
+        //public List<string> CommodityCodeId { get; set; }
         /// <summary>
         /// 编码
         /// </summary>
