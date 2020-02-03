@@ -69,9 +69,23 @@ namespace MaterialCodeSelectionPlatform.Data
             AND a.Id IN('62F59486-6CF8-42D9-8622-37C3090CEE0A')
             */
             #endregion
-
+            List<string> commodityCodeIdList = new List<string>();
+            if (condition.AttrValue != null && condition.AttrValue.Count > 0)
+            {
+                // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
+               // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
+                var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c => c.Status == 0 && c.AttributeName == condition.AttrName && condition.AttrValue.Contains(c.AttributeValue)).ToList();
+                if (tempList != null && tempList.Count > 0)
+                {
+                    commodityCodeIdList = tempList.Select(c => c.CommodityCodeId).Distinct().ToList();
+                }
+            }
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             query = query.Where((a, b) => a.Status == 0);
+            if (commodityCodeIdList.Count > 0)
+            {
+                query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
+            }
             if (condition.Code.IsNotNullAndNotEmpty())
             {
                 query = query.Where((a, b) => a.Code.Contains(condition.Code));
@@ -131,8 +145,8 @@ namespace MaterialCodeSelectionPlatform.Data
                             select new ComponentTypeAttribute()
                             {
                                 AttributeName = g.Key,
-                                AttributeValueList = g.ToList().Select(c => new AttriValue() { Id = c.Id, Value = c.AttributeValue }).ToList()
-                            };
+                                ValueList = g.Select(c => c.AttributeValue).Distinct().ToList()
+                            };              
                 attrList = resut.ToList();
             }         
             return attrList;

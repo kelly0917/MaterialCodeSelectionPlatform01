@@ -20,28 +20,35 @@ $(document).on("click",".sl-b-multiple", function () {
 	$(".usteel-search").find("li.selected").removeClass("selected");
 	
 });
-	/*******组合索引跳转*********/
-$(document).on("click", ".usteel - search.sl - value.sl - btns a[class*= 'btn-primary']", function () {
-	
+	/*******组合索引跳转【确定】多选*********/
+$(document).on("click", ".sl-btns .btn-primary", function () {
+	debugger;
 	var $_thisClass = $(this).attr("class");
 	var $_thisParents = $(this).parents(".usteel-search.multiple").attr("data_type");
 	var $_thisParentsFindSelected = $(this).parents(".usteel-search.multiple").find("li.selected");
 	var urlData = "";
+	var dataKey = "";
+	var dataVal = "";
 	if($_thisClass.indexOf("disabled") >= 0){
 		layer.msg("请先选择类别");
 		return false;
 	}else {
 //			console.log("********************************");
 //			console.log("父级数据类型："+$_thisParents);
-		urlData += $_thisParents+"=";
+		urlData += $_thisParents + "=";
+		dataKey = $_thisParents;
 		$_thisParentsFindSelected.each(function(i,e){
 //				console.log("下标"+i+"\tdomID："+$(e).attr("data_id"));
-			urlData += $(e).attr("data_id")+",";
+			urlData += $(e).attr("data_id") + ",";
+			dataVal += $(e).attr("data_id") + ",";
 		});
-		urlData = urlData.substring(0,urlData.length-1);
+		urlData = urlData.substring(0, urlData.length - 1);
+		dataVal = dataVal.substring(0, dataVal.length - 1);
 	}
-//		console.log("传值:"+urlData);
-	locationHref(urlData);
+	var params = "&attrName=" + encodeURIComponent(dataKey) + "&attrValue=" + encodeURIComponent(dataVal);
+	layer.msg(params);
+	loadData(params);
+	//locationHref(urlData);
 });
 
 function locationHref(goUrlParameter,domId,page){
@@ -130,13 +137,14 @@ function locationHref(goUrlParameter,domId,page){
 	}
 //	console.log(locationDomId);
 	urlHref += (domId != undefined)?domId:(locationDomId != ""?locationDomId:"#usteel-condition");
-	layer.msg("跳转到当前界面下:"+urlHref);
+	layer.msg("B跳转到当前界面下:"+urlHref);
 	console.log("跳转到当前界面下:"+urlHref);
 //	window.location.href = urlHref;
 	return false;
 }
 
 $(document).on("click", ".sl-value .sl-v-list ul li a", function () {
+	
 	let sel_size = 0;
 	let liArray = $(this).parents(".usteel-search.multiple").find("li");
 	let btnPrimary = $(this).parents(".usteel-search.multiple").find(".btn-primary");
@@ -156,11 +164,13 @@ $(document).on("click", ".sl-value .sl-v-list ul li a", function () {
 	}else {
 		var dataKey = $(this).parents("[class='usteel-search']").attr("data_type");
 		var dataVal = $(this).parents("li").attr("data_id");
-//		layer.msg("key:"+dataKey+"@"+"val:"+dataVal);
-		locationHref(dataKey+"="+dataVal);
+		var params = "&attrName=" + encodeURIComponent(dataKey) + "&attrValue=" + encodeURIComponent(dataVal);
+		layer.msg(params);
+		loadData(params);
+		//locationHref(dataKey+"="+dataVal);
 	}
 });
-
+//【取消】
 $(document).on("click", ".sl-btns .btn-default", function () {
 	$(this).closest(".usteel-search").find(".sl-ext").css("visibility","");
 	$(this).closest(".usteel-search").find("li").removeClass("selected");
@@ -203,7 +213,7 @@ $(".title strong").on("click",function(){
 		thisDataVla = "?"+thisDataVla.substring(0,thisDataVla.length-1);
 		if(windowHref != thisDataVla){
 			console.log("跳转到当前界面下:"+thisDataVla);
-			layer.msg("跳转到当前界面下:"+thisDataVla);
+			layer.msg("A跳转到当前界面下:"+thisDataVla);
 //			window.location.href = thisDataVla+window.location.hash;
 		}else {
 			layer.msg("请求错误");

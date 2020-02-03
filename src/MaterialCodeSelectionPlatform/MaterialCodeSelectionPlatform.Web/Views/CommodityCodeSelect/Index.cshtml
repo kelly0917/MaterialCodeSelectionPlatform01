@@ -8,8 +8,8 @@
         display: none;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css" />
-<script type="text/javascript" src="~/lib/usteel-search/search.js"></script>
+<link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css?t=@DateTime.Now" />
+<script type="text/javascript" src="~/lib/usteel-search/search.js?t=@DateTime.Now"></script>
 <div class="layui-form" action="" id="searchForm">
     <div class="layui-form-item search">
         <div class="layui-inline layui-float-left">
@@ -74,18 +74,19 @@
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
     </div>
-    <div class="usteel-content w">
+    <div class="usteel-content w" style="width:100%">
         <div class="usteel-condition" id="usteel-condition">
             <!-- 优钢网索引插件 -->
+
             <div class="selector" lay-filter="chapterRender">
-                <div class="usteel-search" data_type="area">
+                <div class="usteel-search" data_type="地区">
                     <div class="sl-key">
                         <strong>地区：</strong>
                     </div>
                     <div class="sl-value">
                         <div class="sl-v-list">
                             <ul>
-                                <li data_id="110000">
+                                <li data_id="北京市">
                                     <a href="javascript:;">
                                         <i class=""></i><span>北京市</span>
                                     </a>
@@ -176,9 +177,293 @@
                         <a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
                     </div>
                 </div>
-
+                <div class="usteel-search" data_type="material">
+                    <div class="sl-key">
+                        <strong>材质：</strong>
+                    </div>
+                    <div class="sl-value">
+                        <div class="sl-v-list">
+                            <ul>
+                                <li data_id="1">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">20#</span>
+                                    </a>
+                                </li>
+                                <li data_id="2">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">45#</span>
+                                    </a>
+                                </li>
+                                <li data_id="5">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q235A</span>
+                                    </a>
+                                </li>
+                                <li data_id="6">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q235B</span>
+                                    </a>
+                                </li>
+                                <li data_id="7">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q345A</span>
+                                    </a>
+                                </li>
+                                <li data_id="8">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q345B</span>
+                                    </a>
+                                </li>
+                                <li data_id="9">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q345D</span>
+                                    </a>
+                                </li>
+                                <li data_id="10">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q345C</span>
+                                    </a>
+                                </li>
+                                <li data_id="11">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q345E</span>
+                                    </a>
+                                </li>
+                                <li data_id="12">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q460ABCDE</span>
+                                    </a>
+                                </li>
+                                <li data_id="13">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q420ABCDE</span>
+                                    </a>
+                                </li>
+                                <li data_id="15">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">20</span>
+                                    </a>
+                                </li>
+                                <li data_id="14">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">10</span>
+                                    </a>
+                                </li>
+                                <li data_id="16">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">37Mn</span>
+                                    </a>
+                                </li>
+                                <li data_id="17">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">34CrMo4</span>
+                                    </a>
+                                </li>
+                                <li data_id="18">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">34CrMo44</span>
+                                    </a>
+                                </li>
+                                <li data_id="19">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">27SiMn</span>
+                                    </a>
+                                </li>
+                                <li data_id="20">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade1</span>
+                                    </a>
+                                </li>
+                                <li data_id="21">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade3</span>
+                                    </a>
+                                </li>
+                                <li data_id="22">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade4</span>
+                                    </a>
+                                </li>
+                                <li data_id="23">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade6</span>
+                                    </a>
+                                </li>
+                                <li data_id="24">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade7</span>
+                                    </a>
+                                </li>
+                                <li data_id="25">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade8</span>
+                                    </a>
+                                </li>
+                                <li data_id="26">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade9</span>
+                                    </a>
+                                </li>
+                                <li data_id="27">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade10</span>
+                                    </a>
+                                </li>
+                                <li data_id="28">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Grade11</span>
+                                    </a>
+                                </li>
+                                <li data_id="29">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">H40</span>
+                                    </a>
+                                </li>
+                                <li data_id="30">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">K55</span>
+                                    </a>
+                                </li>
+                                <li data_id="31">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">J55</span>
+                                    </a>
+                                </li>
+                                <li data_id="32">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">N80</span>
+                                    </a>
+                                </li>
+                                <li data_id="33">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L80</span>
+                                    </a>
+                                </li>
+                                <li data_id="34">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">C95</span>
+                                    </a>
+                                </li>
+                                <li data_id="35">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">C90</span>
+                                    </a>
+                                </li>
+                                <li data_id="36">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">T95</span>
+                                    </a>
+                                </li>
+                                <li data_id="37">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">P110</span>
+                                    </a>
+                                </li>
+                                <li data_id="38">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">Q125</span>
+                                    </a>
+                                </li>
+                                <li data_id="39">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">M65</span>
+                                    </a>
+                                </li>
+                                <li data_id="45">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">B</span>
+                                    </a>
+                                </li>
+                                <li data_id="46">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X42</span>
+                                    </a>
+                                </li>
+                                <li data_id="47">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X65</span>
+                                    </a>
+                                </li>
+                                <li data_id="48">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X46</span>
+                                    </a>
+                                </li>
+                                <li data_id="49">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X52</span>
+                                    </a>
+                                </li>
+                                <li data_id="50">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X56</span>
+                                    </a>
+                                </li>
+                                <li data_id="51">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X60</span>
+                                    </a>
+                                </li>
+                                <li data_id="52">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">X70</span>
+                                    </a>
+                                </li>
+                                <li data_id="53">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L245</span>
+                                    </a>
+                                </li>
+                                <li data_id="54">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L290</span>
+                                    </a>
+                                </li>
+                                <li data_id="55">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L320</span>
+                                    </a>
+                                </li>
+                                <li data_id="56">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L360</span>
+                                    </a>
+                                </li>
+                                <li data_id="57">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L390</span>
+                                    </a>
+                                </li>
+                                <li data_id="58">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L415</span>
+                                    </a>
+                                </li>
+                                <li data_id="59">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L450</span>
+                                    </a>
+                                </li>
+                                <li data_id="60">
+                                    <a href="javascript:;">
+                                        <i class=""></i><span class="">L485</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sl-btns">
+                            <a href="JavaScript:;" class="btn btn-primary disabled">确定</a>
+                            <a href="JavaScript:;" class="btn btn-default">取消</a>
+                        </div>
+                    </div>
+                    <div class="sl-ext">
+                        <a href="JavaScript:;" class="sl-b-more" style="visibility: hidden;"><i class="layui-icon layui-icon-down"></i>更多</a>
+                        <a href="JavaScript:;" class="sl-b-multiple"><i class="layui-icon layui-icon-add-1"></i>多选</a>
+                    </div>
+                </div>
 
             </div>
+            -->
         </div>
 
     </div>
@@ -240,13 +525,14 @@
             var $ = layui.jquery;
 
 
-            window.loadData = function () {
+            window.loadData = function (parms) {
+                layer.msg(parms);
                 var para = getSearchCondition("searchForm");
                 table.render({
                     elem: '#tbCommodityCodeList',
                     height: 'full-80',
-                   // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random()//数据接口
+                    // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random() + parms//数据接口
                     , page: true //开启分页
                     , limit: 15
                     , limits: [15,50, 100]
@@ -485,7 +771,7 @@
                      var html = "";
                      for (var i = 0; i < result.length; i++) {
                          var attributeName = result[i].attributeName;
-                         var attributeValueList = result[i].attributeValueList;
+                         var valuelist = result[i].valueList;
                          html += "<div class='usteel-search' data_type='"+attributeName+"'>";
                          html += "<div class='sl-key'>";
                          html += "<strong>"+attributeName+"：</strong>";
@@ -493,11 +779,11 @@
                          html += "<div class='sl-value'>";
                          html += "<div class='sl-v-list'>";
                          html += "<ul>";
-                         if (attributeValueList != null && attributeValueList.length > 0) {
-                             for (var k = 0; k < attributeValueList.length; k++) {
-                                 var id = attributeValueList[k].id;
-                                 var value = attributeValueList[k].value;
-                                 html += "<li data_id='"+id+"'>";
+                         if (valuelist != null && valuelist.length > 0) {
+                             for (var k = 0; k < valuelist.length; k++) {
+                                 //var id = valuelist[k].componenttypeid;//物资类型ID
+                                 var value = valuelist[k];
+                                 html += "<li data_id='"+value+"'>";
                                  html += "<a href='javascript:;'>";
                                  html += "<i class=''></i><span>"+value+"</span>";
                                  html += "</a>";
@@ -518,31 +804,6 @@
                          html += "</div>";
                          html += "</div>";
                      }
-                     //html = "";
-                     //html += "<div class='usteel-search' data_type='area'>";
-                     //html += "<div class='sl-key'>";
-                     //html += "<strong>地区：</strong>";
-                     //html += "</div>";
-                     //html += "<div class='sl-value'>";
-                     //html += "<div class='sl-v-list'>";
-                     //html += "<ul>";
-                     //html += "<li data_id='110000'>";
-                     //html += "<a href='javascript:;'>";
-                     //html += "<i class=''></i><span>北京市</span>";
-                     //html += "</a>";
-                     //html += "</li>";
-                     //html += "</ul>";
-                     //html += "</div>";
-                     //html += "<div class='sl-btns'>";
-                     //html += "<a href='JavaScript:;' class='btn btn-primary disabled'>确定</a>";
-                     //html += "<a href='JavaScript:;' class='btn btn-default'>取消</a>";
-                     //html += "</div>";
-                     //html += "</div>";
-                     //html += "<div class='sl-ext'>";
-                     //html += "<a href='JavaScript:;' class='sl-b-more' style='visibility: hidden;'><i class='layui-icon layui-icon-down'></i>更多</a>";
-                     //html += "<a href='JavaScript:;' class='sl-b-multiple'><i class='layui-icon layui-icon-add-1'></i>多选</a>";
-                     //html += "</div>";
-                     //html += "</div>";
                      $(".selector").html(html);
                     // form.render('chapterRender');///重新渲染select#chapterId
                   layui.use('form', function() {

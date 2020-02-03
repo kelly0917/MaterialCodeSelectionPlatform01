@@ -15,6 +15,14 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 编码
         /// </summary>
         public string Code { get; set; }
+        /// <summary>
+        /// 属性名称
+        /// </summary>
+        public string AttrName { get; set; }
+        /// <summary>
+        /// 属性值，多个值 用逗号隔开
+        /// </summary>
+        public List<string> AttrValue { get; set; }
 
     }
 }
