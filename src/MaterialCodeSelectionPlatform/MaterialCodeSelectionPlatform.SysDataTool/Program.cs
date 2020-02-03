@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MaterialCodeSelectionPlatform.SysDataTool.Services;
 using Topshelf;
 
 namespace MaterialCodeSelectionPlatform.SysDataTool
@@ -11,6 +12,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
     {
         static void Main(string[] args)
         {
+      
             HostFactory.Run(x =>
             {
                 x.Service<SysDataScheduler>(s =>
