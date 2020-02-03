@@ -46,7 +46,8 @@ $(document).on("click", ".sl-btns .btn-primary", function () {
 		dataVal = dataVal.substring(0, dataVal.length - 1);
 	}
 	var params = "&attrName=" + encodeURIComponent(dataKey) + "&attrValue=" + encodeURIComponent(dataVal);
-	layer.msg(params);
+	//layer.msg(params);
+	hidShow(this);
 	loadData(params);
 	//locationHref(urlData);
 });
@@ -165,19 +166,21 @@ $(document).on("click", ".sl-value .sl-v-list ul li a", function () {
 		var dataKey = $(this).parents("[class='usteel-search']").attr("data_type");
 		var dataVal = $(this).parents("li").attr("data_id");
 		var params = "&attrName=" + encodeURIComponent(dataKey) + "&attrValue=" + encodeURIComponent(dataVal);
-		layer.msg(params);
+		
 		loadData(params);
 		//locationHref(dataKey+"="+dataVal);
 	}
 });
 //【取消】
 $(document).on("click", ".sl-btns .btn-default", function () {
-	$(this).closest(".usteel-search").find(".sl-ext").css("visibility","");
-	$(this).closest(".usteel-search").find("li").removeClass("selected");
-	$(this).closest(".usteel-search").removeClass("multiple");
-	$(this).parents(".usteel-search").find(".btn-primary").addClass("disabled");
+	hidShow(this);
 });
-
+function hidShow(obj) {
+	$(obj).closest(".usteel-search").find(".sl-ext").css("visibility", "");
+	$(obj).closest(".usteel-search").find("li").removeClass("selected");
+	$(obj).closest(".usteel-search").removeClass("multiple");
+	$(obj).parents(".usteel-search").find(".btn-primary").addClass("disabled");
+}
 $("._search").on("click",function(){
 	var inputArray = $(this).parents(".search-bottom").find("input");
 	var searchUrl = "";
