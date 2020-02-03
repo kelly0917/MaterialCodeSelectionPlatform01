@@ -195,6 +195,12 @@
                 
                 //跳转页面
                 window.locationPage = function (featureid) {
+
+                    var deviceLi = $("li[lay-id='/Device/Index']");
+                    if (deviceLi.length > 0) {
+                        deviceLi.find("i").click();
+                    }
+                    
                     //$("li[lay-attr='/Device/Index']").remove();
                     var dom = $('a[lay-tips=' + featureid + ']');
                    
@@ -203,6 +209,9 @@
                   
 
                 }
+
+
+
 
 
                 window.changePwd = function () {
