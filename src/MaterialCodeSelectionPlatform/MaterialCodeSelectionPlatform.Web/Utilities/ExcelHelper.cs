@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -306,13 +307,13 @@ namespace MaterialCodeSelectionPlatform.Web.Common
 
         }
 
-        public static string WriteDataTable(List<Domain.PartNumberReport> dataList,string fileName, string sheetName = null, int titleRow=0)
+        public static string WriteDataTable(List<Domain.PartNumberReport> dataList,string fileName, string sheetName = null, int titleRowIndex=0)
         {
           
             //excel工作表
             ISheet sheet = null;
             //数据开始行(排除标题行)
-            int startRow = titleRow+1;
+            int startRow = 0;
             try
             {
                 if (!File.Exists(fileName))
@@ -346,31 +347,29 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 {
 
                     var referenceNameList = GeReferencetNameList(workbook, sheet.SheetName);//引用字段列表
-                    //CellRangeAddressList regions = new CellRangeAddressList(0, 65535, 0, 0);
-                    //DVConstraint constraint = DVConstraint.CreateFormulaListConstraint("dicRange");
-                    //HSSFDataValidation dataValidate = new HSSFDataValidation(regions, constraint);
-                    ////sheet.AddValidationData(dataValidate);
-                    //var range = workbook.CreateName();
-                    //range.Comment = "A_NO";
-                    //range.NameName = "次页!$A$3";
-
-
-                    // ((NPOI.XSSF.UserModel.XSSFWorkbook)workbook).namedRanges
-
-
-                    IRow firstRow = sheet.GetRow(titleRow);
+                    IRow titleRow = sheet.GetRow(titleRowIndex);
                     int rowCount = sheet.LastRowNum;//总行数
-                    int cellCount = firstRow.LastCellNum;//一行最后一个cell的编号 即总的列数
+                    int cellCount = titleRow.LastCellNum;//一行最后一个cell的编号 即总的列数
+                    var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
                     if (dataList != null && dataList.Count > 0)
                     {
                         foreach (var ent in dataList)
                         {
-                            foreach (var part in ent.PartNumberList)
-                            {
-                                IRow row = sheet.CreateRow(++startRow);
-
-                                var cell = row.CreateCell(0);
-                                cell.SetCellValue(part.Code);
+                            foreach (var item in ent.PartNumberList)
+                            {                                
+                                Type t = item.GetType();
+                                IRow row = sheet.CreateRow(startRow++);
+                                for (var i = 0; i < cellCount; i++)
+                                {
+                                    if (dict.ContainsKey(i.ToString()))
+                                    {
+                                        PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
+                                        if (propertyInfo != null)
+                                        {
+                                            row.CreateCell(i).SetCellValue(propertyInfo.GetValue(item, null)?.ToString());
+                                        }
+                                    }                                   
+                                }
                             }
                         }
                     }
@@ -379,30 +378,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     using (var ws = File.Create(newFilePath))
                     {
                         workbook.Write(ws);
-                    }
-                    //最后一列的标号
-
-                    //for (int i = startRow; i <= rowCount; ++i)
-                    //{
-                    //    IRow row = sheet.GetRow(i);
-                    //    if (row == null) continue; //没有数据的行默认是null　　　　　　　
-
-                    //    DataRow dataRow = data.NewRow();
-                    //    for (int j = row.FirstCellNum; j < cellCount; ++j)
-                    //    {
-                    //        var cell = row.GetCell(j);
-                    //        var name2 = ColumnToIndex("A");
-                    //        var name3 = IndexToColumn(j);
-                    //        if (cell != null) //同理，没有数据的单元格都默认是null
-                    //        {
-                    //            var cr = new CellReference(cell);//这里填位置
-                    //        }
-
-                    //    }
-
-                    //}
+                    }                    
                 }
-
                 return fileName;
             }
             catch (Exception ex)
@@ -410,6 +387,59 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 log.LogError(ex);
                 return null;
             }
+        }
+        public static Dictionary<string, string> GetRefColumnDic(List<IName> list, string sheetName,ref int startRow)
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();       // Dictionary<列索引, 字段>    
+            if (list != null && list.Count > 0)
+            {
+                foreach (var refName in list)
+                {
+                    if (refName.SheetName == sheetName)
+                    {
+                        if (refName.RefersToFormula.IndexOf(":") < 0)
+                        {
+                            var refstr = refName.RefersToFormula.Split('!')[1];
+                            var rowIndex = int.Parse(refstr.Split('$')[2]);
+                            var cellIndex = ColumnToIndex(refstr.Split('$')[1]);
+                            var key = $"{cellIndex}";
+                            if (!dic.ContainsKey(key))
+                            {
+                                dic.Add(key, refName.NameName.ToLower());
+                            }
+                            if (startRow < rowIndex)
+                            {
+                                startRow = rowIndex;
+                            }
+                        }
+                    }
+                }
+            }
+          //  startRow = startRow + 1;//移下一行
+            return dic;
+        }
+        /// <summary>
+        /// 获取引用字段
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="sheetName"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="cellIndex"></param>
+        /// <returns></returns>
+        public static string GetRefColumn(List<IName> list,string sheetName, int rowIndex, int cellIndex)
+        {
+            string name = string.Empty;
+            var cellName = IndexToColumn(cellIndex);
+            var formula = sheetName+"!$" + cellName + "$"+ rowIndex ;
+            if (list != null && list.Count > 0)
+            {
+               var ent= list.Where(c => c.RefersToFormula == formula).FirstOrDefault();
+                if (ent != null)
+                {
+                    name = ent.NameName;
+                }
+            }
+            return name;
         }
         /// <summary>
         /// 获取引用字段的列表
@@ -428,12 +458,18 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 {
                     if (name.SheetName == sheetName)
                     {
-                        nameList.Add(name);
+                        if (name.RefersToFormula.IndexOf(":") < 0)
+                        {
+                            nameList.Add(name);
+                        }
                     }
                 }
                 else
                 {
-                    nameList.Add(name);
+                    if (name.RefersToFormula.IndexOf(":") < 0)
+                    {
+                        nameList.Add(name);
+                    }
                 }
             }
             return nameList;

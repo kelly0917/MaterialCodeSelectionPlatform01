@@ -262,7 +262,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
                 var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
-                ExcelHelper.WriteDataTable(result,path, "次页", 4);
+                ExcelHelper.WriteDataTable(result,path, "次页", 3);
                 return Json(result);
             }
             catch (Exception e)
