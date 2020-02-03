@@ -50,7 +50,7 @@
     {{# if(d.Status==0){ }}
     <a class="layui-btn layui-btn-danger layui-btn-sm permission" action="4" lay-event="stop">停用</a>
 
-    <a class="layui-btn  layui-btn-sm layui-btn-radius permission" action="8" lay-event="setproject">分配项目</a>
+    <a class="layui-btn  layui-btn-sm layui-btn-normal permission" action="8" lay-event="setproject">分配项目</a>
     <a class="layui-btn  layui-btn-sm layui-btn-warm permission" action="8" lay-event="changepwd">修改密码</a>
     @if (bool.Parse(ViewData["IsSuperAdmin"].ToString()))
     {
