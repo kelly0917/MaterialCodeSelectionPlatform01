@@ -72,11 +72,11 @@
                 , done: function (res) {
                     debugger;
                     //上传完毕回调
-                    if (res.success) {
-                        layer.msg(res.message);
+                    if (res.Success) {
+                        layer.msg(res.Message);
                         flush();
                     } else {
-                        if (res.message == "haveError") {
+                        if (res.Message == "haveError") {
                             layer.msg("导入完成，部分出错！");
                             window.location.href = "/Device/DownloadErrorFile";
                             flush();
