@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MaterialCodeSelectionPlatform.Domain;
+﻿using MaterialCodeSelectionPlatform.Domain;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.ManagerWeb;
 using MaterialCodeSelectionPlatform.Service;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
@@ -118,14 +119,22 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="code">物资编码</param>
         /// <param name="page">第几页</param>
         /// <param name="limit">每页显示的记录数</param>
+        /// <param name="attrName">属性名称 </param>
+        /// <param name="attrValue">属性值，多个值 用逗号隔开</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit)
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string attrName,string attrValue)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
             dataPage.PageSize = limit;
-
+            attrName = HttpUtility.UrlDecode(attrName);
+            attrValue = HttpUtility.UrlDecode(attrValue);
             CommodityCodeSerachCondition condition = new CommodityCodeSerachCondition();
+            condition.AttrName = attrName;
+            if (!string.IsNullOrEmpty(attrValue))
+            {
+                condition.AttrValue = attrValue.Split(',').ToList();
+            }
             condition.Page = dataPage;
             condition.Code = code;          
             var list = await this.Service.GetCommodityCodeDataList(condition);

@@ -148,7 +148,7 @@ body, button, input, select, textarea, div, nav, section {
 }
 .sl-key {
     float: left;
-    width: 110px;
+    width: auto;
     padding-left: 10px;
     white-space: nowrap;
     
@@ -248,8 +248,8 @@ body, button, input, select, textarea, div, nav, section {
     color: #3e88f5;
 }
 .usteel-search .sl-value .sl-v-list ul li {
-    width: 130px;
-    margin-right: 3px;
+    width: auto;
+    margin-right: 30px;
 }
 .search-bottom {
 	height: 45px;
