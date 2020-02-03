@@ -101,7 +101,7 @@
                                 </a>
                             </li>
                             <li data-name="get" class="layui-nav-item">
-                                <a href="javascript:;" lay-href="/Project/Index" lay-tips="用户项目管理管理" lay-direction="2">
+                                <a href="javascript:;" lay-href="/Project/Index" lay-tips="项目管理" lay-direction="2">
                                     <i class="layui-icon layui-icon-app"></i>
                                     <cite>项目管理</cite>
                                 </a>
@@ -133,7 +133,8 @@
                     <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
                         <li class="layui-nav-item" lay-unselect>
                             <a href="javascript:;"></a>
-                            <dl class="layui-nav-child layui-anim-fadein">
+                            <dl class="layui-nav-child layui-anim-fadein">.
+
                                 <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
                                 <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
                                 <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
@@ -175,7 +176,6 @@
                 var $ = layui.jquery;
                 window.logout = function () {
                     layer.confirm('确定退出吗', function (index) {
-
                         $.ajax({
                             url: "/Login/LoginOut?pt=" + Math.random(),
                             success: function (data) {
@@ -188,6 +188,19 @@
                             }
                         })
                     });
+
+                }
+
+
+                
+                //跳转页面
+                window.locationPage = function (featureid) {
+                    //$("li[lay-attr='/Device/Index']").remove();
+                    var dom = $('a[lay-tips=' + featureid + ']');
+                   
+                    dom.trigger('click');
+                    //dom.attr("lay-href", url);
+                  
 
                 }
 

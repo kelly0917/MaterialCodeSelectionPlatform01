@@ -143,8 +143,6 @@
                             area: ["540px;", "380px;"]//宽 高
                         });
                     }
-
-                 
                 });
             }
             //刷新表格
@@ -160,7 +158,7 @@
                     area: ["540px;", "380px;"]//宽 高
                 });
             }
-            var defaultValue = "@ViewData["projectId"]";
+            var defaultValue = $.cookie('projectId');;
             //select 控件加载完再初始化table
             $("select[name=projectId]").dropdownlist({
                 url: "/Device/GetProjectList" + "?pt=" + Math.random(), defaultValue: defaultValue, complete: function () {
