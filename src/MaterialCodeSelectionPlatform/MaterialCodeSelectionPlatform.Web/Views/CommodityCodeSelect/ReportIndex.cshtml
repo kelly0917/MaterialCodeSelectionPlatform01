@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_Layout_Body.cshtml";
 }
 @using MaterialCodeSelectionPlatform.Domain
+@using System.Collections.Specialized
 @model IEnumerable<PartNumberReport>
 
 <link href="~/css/formSelects-v4.css" rel="stylesheet" />
@@ -51,6 +52,24 @@
 
         </div>
         <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
+            <div class="layui-inline layui-float-left">
+                <label class="layui-form-label" style="width:auto">材料统计表模板：</label>
+                <div class="layui-input-inline" style="width:500px">
+                    <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
+                        @{
+                            var fileList = ViewData["fileList"] as NameValueCollection;
+                            if (fileList != null && fileList.Count > 0)
+                            {
+                                foreach (string key in fileList.Keys)
+                                {
+                                   <option value="@fileList[key].ToString()">@key</option>
+                                }
+                            }
+                        }
+                       
+                    </select>
+                </div>
+            </div>
             <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">生成物料表</button>
         </div>
     </div>
@@ -70,7 +89,8 @@
             $('#btnReport').on('click', function () {
                 var projectid = "@ViewData["projectid"]";
                 var deviceid = "@ViewData["deviceid"]";
-                var url = "/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random();
+                var templatePath = encodeURIComponent($("#selTemplate").val());
+                var url = "/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
                 window.location.href =url;
                 //$.get("/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random(), function (data) {
                 //    debugger;

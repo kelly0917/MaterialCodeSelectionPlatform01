@@ -307,7 +307,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
 
         }
 
-        public static string WriteDataTable(List<Domain.PartNumberReport> dataList,string fileName, string sheetName = null, int titleRowIndex=0)
+        public static string WriteDataTable(List<Domain.PartNumberReport> dataList,string templatePath,string saveFilePath, string sheetName = null, int titleRowIndex=0)
         {
           
             //excel工作表
@@ -316,13 +316,13 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             int startRow = 0;
             try
             {
-                if (!File.Exists(fileName))
+                if (!File.Exists(templatePath))
                 {
                     return null;
                 }
 
                 //根据指定路径读取文件
-                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                FileStream fs = new FileStream(templatePath, FileMode.Open, FileAccess.Read);
                 //根据文件流创建excel数据结构
                 IWorkbook workbook = WorkbookFactory.Create(fs);
 
@@ -359,14 +359,14 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     }
                 }
                 //保存文件
-                var dirPath = Path.GetDirectoryName(fileName);
-                var name = Path.GetFileNameWithoutExtension(fileName);
-                var newFileName = Path.GetDirectoryName(fileName) +Path.DirectorySeparatorChar+ name+DateTime.Now.ToString("yyyyMMddHHmmss")+ ".xlsx";
-                using (var ws = File.Create(newFileName))
+                var dirPath = Path.GetDirectoryName(templatePath);
+                var name = Path.GetFileNameWithoutExtension(templatePath);
+                //var newFileName = Path.GetDirectoryName(templatePath) +Path.DirectorySeparatorChar+ name+DateTime.Now.ToString("yyyyMMddHHmmss")+ ".xlsx";
+                using (var ws = File.Create(saveFilePath))
                 {
                     workbook.Write(ws);
                 }
-                return newFileName;
+                return saveFilePath;
             }
             catch (Exception ex)
             {
