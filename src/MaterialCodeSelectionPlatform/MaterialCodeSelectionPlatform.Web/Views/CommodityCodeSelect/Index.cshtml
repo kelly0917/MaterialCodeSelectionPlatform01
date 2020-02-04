@@ -101,10 +101,12 @@
                 <th>版次</th>
                 <th>状态</th>
                 <th>时间</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody id="trody"></tbody>
     </table>
+    <div class="layui-layer-title" style="cursor: move;">新建工作...</div>
     <div class="layui-form" action="" id="searchForm2">
         <div class="layui-form-item search">
             <div class="layui-inline layui-float-left">
@@ -453,13 +455,14 @@
                                 tr += "<td>"+ent.deviceName+"</td>";
                                 tr += "<td>"+ent.version+"</td>";
                                 tr += "<td>"+ent.checkStatusName+"</td>";
-                                tr += "<td>"+ent.timeString+"</td>";
+                                tr += "<td>" + ent.timeString + "</td>";
+                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
                                 tr += " </tr>";
                             }
                             $("#trody").append(tr);
                             winIndex= layer.open({
                                       type: 1,
-                                      title: '最近',
+                                      title: '打开最近工作...',
                                       area: ['800px', '600px'],
                                       minHeight:'200px',
                                       content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
