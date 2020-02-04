@@ -128,18 +128,18 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 {
                     if (errorPath.IsNullOrEmpty())
                     {
-                        return ConvertFailResult(null, errorMsg);
+                        return ConvertFailResultStr(null, errorMsg);
                     }
                     else
                     {
                         HttpContext.Session.SetString("ErrorDevicePath", errorPath);
-                        return ConvertFailResult(null, "haveError");
+                        return ConvertFailResultStr(null, "haveError");
                     }
                 }
             }
             else
             {
-                return ConvertFailResult(null, "请选择文件");
+                return ConvertFailResultStr(null, "请选择文件");
             }
         }
 

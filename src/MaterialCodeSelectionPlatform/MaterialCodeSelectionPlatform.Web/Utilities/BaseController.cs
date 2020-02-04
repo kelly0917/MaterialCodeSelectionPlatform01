@@ -125,6 +125,20 @@ namespace MaterialCodeSelectionPlatform.ManagerWeb
             dataResult.Success = false;
             return Json(dataResult);
         }
+
+        /// <summary>
+        /// 转换为错误的结果格式
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        protected IActionResult ConvertFailResultStr(object result, string msg)
+        {
+            DataResult dataResult = new DataResult();
+            dataResult.Message = msg;
+            dataResult.Success = false;
+            return Content(JsonConvert.SerializeObject(dataResult));
+        }
         /// <summary>
         /// DataResult转换为JsonResult的结果格式
         /// </summary>
