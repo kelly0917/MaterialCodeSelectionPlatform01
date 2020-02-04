@@ -224,19 +224,36 @@ namespace MaterialCodeSelectionPlatform.Data
                 var partIds = condtion.PartNumberDtoList.Select(c => c.Id).ToList();
                 if (mto != null)
                 {
-                    var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
-                    if (mto.CheckStatus == 1)//审批状态【1：working 】【2：approved】
+                    #region 获取原有的记录
+                    var entList = new{Id="", DesignQty=0 };
+                    var oldList = Db.Queryable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId);
+                    var sList = oldList.Select(c => new { Id = c.PartNumberId, DesignQty = c.DesignQty }).ToList();
+                    var tList = condtion.PartNumberDtoList.Select(c => new { Id = c.Id, DesignQty = c.DesignQty }).ToList();
+                    #endregion
+                    if (sList.SequenceEqual(tList))
                     {
-                        //新增明细
-                        addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        return listDetail;//如果相同，直接返回
                     }
                     else
                     {
-                        // 物资汇总表                   
-                        mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version.Value + 1);
-                        //新增明细
-                        addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
+                        if (mto.CheckStatus == 1)//审批状态【1：working 】【2：approved】
+                        {
+                            mto.Version = mto.Version + 1;
+                            Db.Updateable(mto).ExecuteCommand();
+                            //新增明细
+                            addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        }
+                        else
+                        {
+                            // 物资汇总表                   
+                            mto = addMaterialTakeOff(projectId, deviceId, userId, 1, mto.Version.Value + 1);
+                            //新增明细
+                            addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
+                        }
                     }
+                      
+                       
                 }
                 else
                 {
@@ -342,7 +359,7 @@ namespace MaterialCodeSelectionPlatform.Data
            SELECT TOP 1 * FROM MaterialTakeOff WHERE CreateUserId='' AND ProjectId='' AND DeviceId='' AND Status=0 ORDER BY Version desc
             */
             #endregion
-            var model =await Db.Queryable<MaterialTakeOff>().Where(c=>c.Status==0 && c.CreateUserId==userid && c.DeviceId==deviceid).OrderBy(c=>c.CreateTime,OrderByType.Desc).FirstAsync();
+            var model =await Db.Queryable<MaterialTakeOff>().Where(c=>c.Status==0 && c.CreateUserId==userid && c.ProjectId== projectid && c.DeviceId == deviceid).OrderBy(c=>c.LastModifyTime,OrderByType.Desc).FirstAsync();
             return model;
         }
         /// <summary>
@@ -370,8 +387,9 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="userId">用户Id</param>
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
+        /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid)
+       public async  Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid, int downLoad)
         {
             #region SQL 
             /*
@@ -404,6 +422,17 @@ namespace MaterialCodeSelectionPlatform.Data
                             ComponentTypeName = g.Key,
                             PartNumberList = g.ToList()
                         };
+            if (downLoad == 1)
+            {
+                // 更新版次
+                var ent =await Db.Queryable<MaterialTakeOff>().Where(it => it.Status==0&& it.ProjectId==projectid &&it.DeviceId==deviceid && it.CreateUserId==userId&&it.CheckStatus==1).OrderBy(it=>it.LastModifyTime,OrderByType.Desc).FirstAsync();
+                if (ent != null)
+                {
+                    ent.CheckStatus = 2;
+                    ent.LastModifyTime = DateTime.Now;
+                    Db.Updateable(ent).ExecuteCommand();
+                }
+            }
             return await Task.Run(() => { return resut.ToList(); });
         }
     }
