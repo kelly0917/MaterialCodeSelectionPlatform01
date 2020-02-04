@@ -163,122 +163,129 @@
     </div>
 
     <script src="~/layuiadmin/layui/layui.js"></script>
-    <script>
-        layui.config({
-            base: '../layuiadmin/' //静态资源所在路径
-        }).extend({
-            index: 'lib/index' //主入口模块
-        }).use('index');
+<script>
 
-          layui.use(['layer', 'jquery'],
-            function () {
-                var layer = layui.layer;
-                var $ = layui.jquery;
-                window.logout = function () {
-                    layer.confirm('确定退出吗', function (index) {
-                        $.ajax({
-                            url: "/Login/LoginOut?pt=" + Math.random(),
-                            success: function (data) {
-                                if (data == "success") {
-                                    window.location.href = "/Login/Index";
-                                }
-                            },
-                            error: function (errorData) {
-                                debugger;
+    function closeiframe(msg) {
+        layer.closeAll('iframe');
+        if (msg) {
+            layer.msg(msg);
+        }
+    }
+    layui.config({
+        base: '../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+
+    layui.use(['layer', 'jquery'],
+        function () {
+            var layer = layui.layer;
+            var $ = layui.jquery;
+            window.logout = function () {
+                layer.confirm('确定退出吗', function (index) {
+                    $.ajax({
+                        url: "/Login/LoginOut?pt=" + Math.random(),
+                        success: function (data) {
+                            if (data == "success") {
+                                window.location.href = "/Login/Index";
                             }
-                        })
-                    });
+                        },
+                        error: function (errorData) {
+                            debugger;
+                        }
+                    })
+                });
 
-                }
+            }
 
 
                 
-                //跳转页面
-                window.locationPage = function (featureid) {
+            //跳转页面
+            window.locationPage = function (featureid) {
 
-                    var deviceLi = $("li[lay-id='/Device/Index']");
-                    if (deviceLi.length > 0) {
-                        deviceLi.find("i").click();
-                    }
+                var deviceLi = $("li[lay-id='/Device/Index']");
+                if (deviceLi.length > 0) {
+                    deviceLi.find("i").click();
+                }
                     
-                    //$("li[lay-attr='/Device/Index']").remove();
-                    var dom = $('a[lay-tips=' + featureid + ']');
+                //$("li[lay-attr='/Device/Index']").remove();
+                var dom = $('a[lay-tips=' + featureid + ']');
                    
-                    dom.trigger('click');
-                    //dom.attr("lay-href", url);
+                dom.trigger('click');
+                //dom.attr("lay-href", url);
                   
 
-                }
+            }
 
 
 
 
 
-                window.changePwd = function () {
-                    layer.open({
-                        type: 2,
-                        content: '/Home/ChangePwd?' + Math.random(),
-                        title: '修改密码',
-                        area: ["400px;", "280px;"]//宽 高
-                    });
+            window.changePwd = function () {
+                layer.open({
+                    type: 2,
+                    content: '/Home/ChangePwd?' + Math.random(),
+                    title: '修改密码',
+                    area: ["400px;", "280px;"]//宽 高
+                });
 
-                }
+            }
 
-                window.sysData = function()
-                {
-                    $.ajax({
-                        url: '/Home/StartDealProgress?' + Math.random(),
-                        dataType: "json",
-                        success: function (data) {
-                            if (data.Success) {
-                                layer.open({
-                                    type: 2,
-                                    content: '/Home/SysDataInfo',
-                                    title: '同步进度',
-                                    area: ["300px;", "100px;"]//宽 高
-                                });
-                            } else {
-                                layer.msg("同步启动失败", { icon: 5 });
-                            }
-                        }
-                    });
-               
-                }
-
-                //根据保存的地址F5只刷新当前页面
-
-                var menus = $("[url]");
-                //var storage = window.sessionStorage;
-                menus.each(function () {
-                    var url = $(this).attr('url'); //当前url
-                    var li = $(this).parent().parent().parent();
-                    var dd = $(this).parent();
-                    if ($.cookie('historyUrl') != "" && $.cookie('historyUrl') != null && $.cookie('historyUrl') != 'null') {
-                        if ($.cookie('historyUrl').indexOf('Login/Index') > 0) { //刚登录默认首页
-                            if (url.indexOf('SystemHome/Index') > 0) {
-                                li.addClass("layui-nav-itemed")
-                                dd.addClass("layui-this")
-                                $(this).trigger('click');
-                                return false;
-                            }
-                        }
-                        else {
-                            if ($.cookie('historyUrl').indexOf(url) > 0) { //根据历史记录加载页面
-                                li.addClass("layui-nav-itemed")
-                                dd.addClass("layui-this")
-                                $(this).click();
-                                return false;
-                            }
-
+            window.sysData = function()
+            {
+                $.ajax({
+                    url: '/Home/StartDealProgress?' + Math.random(),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Success) {
+                            layer.open({
+                                type: 2,
+                                content: '/Home/SysDataInfo',
+                                title: '同步进度',
+                                area: ["300px;", "100px;"]//宽 高
+                            });
+                        } else {
+                            layer.msg("同步启动失败", { icon: 5 });
                         }
                     }
+                });
+               
+            }
 
-                })
+            //根据保存的地址F5只刷新当前页面
+
+            var menus = $("[url]");
+            //var storage = window.sessionStorage;
+            menus.each(function () {
+                var url = $(this).attr('url'); //当前url
+                var li = $(this).parent().parent().parent();
+                var dd = $(this).parent();
+                if ($.cookie('historyUrl') != "" && $.cookie('historyUrl') != null && $.cookie('historyUrl') != 'null') {
+                    if ($.cookie('historyUrl').indexOf('Login/Index') > 0) { //刚登录默认首页
+                        if (url.indexOf('SystemHome/Index') > 0) {
+                            li.addClass("layui-nav-itemed")
+                            dd.addClass("layui-this")
+                            $(this).trigger('click');
+                            return false;
+                        }
+                    }
+                    else {
+                        if ($.cookie('historyUrl').indexOf(url) > 0) { //根据历史记录加载页面
+                            li.addClass("layui-nav-itemed")
+                            dd.addClass("layui-this")
+                            $(this).click();
+                            return false;
+                        }
+
+                    }
+                }
+
+            })
 
 
 
-            });
-    </script>
+        });
+</script>
 </body>
 </html>
 
