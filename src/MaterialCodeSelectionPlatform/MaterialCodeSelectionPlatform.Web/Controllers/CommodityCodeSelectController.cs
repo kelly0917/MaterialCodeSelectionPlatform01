@@ -266,11 +266,23 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             try
             {
                 //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
-               
+                var excelName = "管道综合材料表_ENG";
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,1);
-                var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
-                var newPath=ExcelHelper.WriteDataTable(result,path, "次页", 3);
-                return DownLoad(newPath);              
+                var dirPath = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\";
+                var filePath = dirPath + $"{excelName}.xlsx";
+                #region 删除上次生成的EXCEL文件
+                var files = Directory.GetFiles(dirPath)?.ToList().Where(c=> Path.GetFileNameWithoutExtension(c).StartsWith(excelName)&&Path.GetFileNameWithoutExtension(c)!= excelName).ToList();
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var ent in files)
+                    {
+                        System.IO.File.Delete(ent);
+                    }
+                }
+                #endregion
+                var newPath =ExcelHelper.WriteDataTable(result, filePath, "");
+                var file= DownLoad(newPath);               
+                return file;
             }
             catch (Exception e)
             {

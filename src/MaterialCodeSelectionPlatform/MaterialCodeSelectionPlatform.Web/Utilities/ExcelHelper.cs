@@ -325,85 +325,152 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                 //根据文件流创建excel数据结构
                 IWorkbook workbook = WorkbookFactory.Create(fs);
-             
+
                 //IWorkbook workbook = new HSSFWorkbook(fs);
-                //如果有指定工作表名称
-                if (!string.IsNullOrEmpty(sheetName))
-                {
-                    sheet = workbook.GetSheet(sheetName);
-                    //如果没有找到指定的sheetName对应的sheet，则尝试获取第一个sheet
-                    if (sheet == null)
-                    {
-                        sheet = workbook.GetSheetAt(0);
-                    }
-                }
-                else
-                {
-                    //如果没有指定的sheetName，则尝试获取第一个sheet
-                    sheet = workbook.GetSheetAt(0);
-                }
 
-                if (sheet != null)
+                var sheetCount=workbook.NumberOfSheets;
+                var referenceNameList = GeReferencetNameList(workbook);//引用字段列表
+                if (sheetCount > 0)
                 {
-
-                    var referenceNameList = GeReferencetNameList(workbook, sheet.SheetName);//引用字段列表
-                    IRow titleRow = sheet.GetRow(titleRowIndex);
-                    int rowCount = sheet.LastRowNum;//总行数
-                    int cellCount = titleRow.LastCellNum;//一行最后一个cell的编号 即总的列数
-                    var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
-                    if (dataList != null && dataList.Count > 0)
+                    for (var i = 0; i < sheetCount; i++)
                     {
-                        var seqNo = 1;
-                        ICellStyle style = workbook.CreateCellStyle();
-                        style.BorderBottom = BorderStyle.Thin;
-                        style.BorderLeft = BorderStyle.Thin;
-                        style.BorderRight = BorderStyle.Thin;
-                        style.BorderTop = BorderStyle.Thin;
-                        foreach (var ent in dataList)
+                        sheet = workbook.GetSheetAt(i);
+                        if (sheet != null)
                         {
-                            foreach (var item in ent.PartNumberList)
-                            {                                
-                                Type t = item.GetType();
-                                IRow row = sheet.CreateRow(startRow++);
-                                for (var i = 0; i < cellCount; i++)
+                            setExcelTemplateValue(sheet, dataList);//填充模板$xxx$的值 
+                            var refList = referenceNameList.Where(c => c.SheetName == sheet.SheetName).ToList();
+                            var dict = GetRefColumnDic(refList, sheet.SheetName, ref startRow);//查找【名称管理器】                           
+                            if (dict != null && dict.Count > 0)
+                            {
+                                #region 填充明细记录
+                                int seqNo = 1;
+                                var dtoList = new List<Domain.PartNumberDto>();
+                                foreach (var model in dataList)
                                 {
-                                   
-                                    var cell = row.CreateCell(i);
-                                    cell.CellStyle = style;
-                                    if (dict.ContainsKey(i.ToString()))
-                                    {                                       
-                                        PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
-                                        if (propertyInfo != null)
-                                        {
-                                            cell.SetCellValue(propertyInfo.GetValue(item, null)?.ToString());
-                                        }
-                                        if (dict[i.ToString()].ToLower() == "seqno")
-                                        {
-                                            cell.SetCellValue(seqNo++);
-                                        }
-                                    }
-                                    else
+                                    if (model.PartNumberList != null && model.PartNumberList.Count > 0)
                                     {
-                                        cell.SetCellValue("");
+                                        dtoList.AddRange(model.PartNumberList);
                                     }
                                 }
+                                createRowValue<Domain.PartNumberDto>(dtoList, workbook, sheet, dict, titleRowIndex, startRow, ref seqNo);
+                                #endregion
                             }
                         }
                     }
-                    //保存文件
-                    fileName = Path.GetDirectoryName(fileName) + "//物料表.xlsx";
-                    using (var ws = File.Create(fileName))
-                    {
-                        workbook.Write(ws);
-                    }                    
                 }
-                return fileName;
+                //保存文件
+                var dirPath = Path.GetDirectoryName(fileName);
+                var name = Path.GetFileNameWithoutExtension(fileName);
+                var newFileName = Path.GetDirectoryName(fileName) +Path.DirectorySeparatorChar+ name+DateTime.Now.ToString("yyyyMMddHHmmss")+ ".xlsx";
+                using (var ws = File.Create(newFileName))
+                {
+                    workbook.Write(ws);
+                }
+                return newFileName;
             }
             catch (Exception ex)
             {
                 log.LogError(ex);
                 return null;
             }
+        }
+        /// <summary>
+        /// 创建明细记录
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataList"></param>
+        /// <param name="workbook"></param>
+        /// <param name="sheet"></param>
+        /// <param name="dict">记录名称管理器的字典</param>
+        /// <param name="titleRowIndex">指定一个标题的行</param>
+        /// <param name="startRow">记录最大开始产生数据的列</param>
+        /// <param name="seqNo">序号开始的索引 </param>
+        private static void createRowValue<T>(List<T>  dataList,IWorkbook workbook, ISheet sheet,Dictionary<string,string> dict, int titleRowIndex,int startRow,ref int seqNo)
+        {
+           
+            //var referenceNameList = GeReferencetNameList(workbook, sheet.SheetName);//引用字段列表
+            IRow titleRow = sheet.GetRow(titleRowIndex);
+            int rowCount = sheet.LastRowNum;//总行数
+            int cellCount = titleRow.Cells.Count;//一行最后一个cell的编号 即总的列数
+            //var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
+            if (dataList != null && dataList.Count > 0)
+            {               
+                ICellStyle style = workbook.CreateCellStyle();
+                style.BorderBottom = BorderStyle.Thin;
+                style.BorderLeft = BorderStyle.Thin;
+                style.BorderRight = BorderStyle.Thin;
+                style.BorderTop = BorderStyle.Thin;
+                foreach (var item in dataList)
+                {
+                    Type t = item.GetType();
+                    IRow row = sheet.CreateRow(startRow++);
+                    for (var i = 0; i < cellCount; i++)
+                    {
+                        var cell = row.CreateCell(i);
+                        cell.CellStyle = style;
+                        if (dict.ContainsKey(i.ToString()))
+                        {
+                            PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
+                            if (propertyInfo != null)
+                            {
+                                cell.SetCellValue(propertyInfo.GetValue(item, null)?.ToString());
+                            }
+                            if (dict[i.ToString()].ToLower() == "seqno")
+                            {
+                                cell.SetCellValue(seqNo++);
+                            }
+                        }
+                        else
+                        {
+                            cell.SetCellValue("");
+                        }
+                    }
+                }
+            }
+        }
+        private static void setExcelTemplateValue(ISheet sheet, List<Domain.PartNumberReport> dataList)
+        {
+            int rowCount = sheet.LastRowNum;//总行数
+            for (var i = 0; i < rowCount; i++)
+            {
+                var row = sheet.GetRow(i);
+                var cellCount = row.Cells.Count;
+                for (var j = 0; j < cellCount; j++)
+                {
+                    var cell = row.Cells[j];
+                    var cellString = cell?.ToString();
+                    if (!string.IsNullOrEmpty(cellString)&& cellString.IndexOf("$")>-1)
+                    {
+                        foreach (var ent in dataList)
+                        {
+                            cellString = getColumnString<Domain.PartNumberReport>(ent, cellString);
+                        }
+                        cell.SetCellValue(cellString);
+                    }
+                }
+            }
+        }
+        private static string getColumnString<T>(T item,string cellString)
+        {
+            cellString = cellString.ToLower();
+            Type t = item.GetType();
+            var propertyInfos = t.GetProperties();
+            if (propertyInfos != null && propertyInfos.Length > 0)
+            {
+                foreach (var pro in propertyInfos)
+                {
+                    var name ="$"+pro.Name.ToLower()+"$";
+                    var value = pro.GetValue(item, null);
+                    if (value != null)
+                    {
+                        if (cellString.IndexOf(name) > -1)
+                        {
+                            cellString = cellString.Replace(name, value.ToString());
+                        }
+                    }
+                }
+            }
+            return cellString;
         }
         public static Dictionary<string, string> GetRefColumnDic(List<IName> list, string sheetName,ref int startRow)
         {
@@ -422,7 +489,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                             var key = $"{cellIndex}";
                             if (!dic.ContainsKey(key))
                             {
-                                dic.Add(key, refName.NameName.ToLower());
+                                //dic.Add(key, refName.NameName.ToLower());
+                                dic.Add(key, refName.NameName.ToLower().Replace("p_",""));//去掉固定的标识 
                             }
                             if (startRow < rowIndex)
                             {

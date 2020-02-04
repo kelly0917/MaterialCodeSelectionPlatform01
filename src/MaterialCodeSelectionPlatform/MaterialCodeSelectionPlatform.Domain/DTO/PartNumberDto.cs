@@ -9,6 +9,35 @@ namespace MaterialCodeSelectionPlatform.Domain
     public class PartNumberReport
     {
         /// <summary>
+        /// 项目名称 
+        /// </summary>
+        public string ProjectName { get; set; }
+        /// <summary>
+        /// 项目编码
+        /// </summary>
+        public string ProjectCode { get; set; }
+        /// <summary>
+        /// 用户名称 
+        /// </summary>
+        public string UserName { get; set; }
+        /// <summary>
+        /// 当前时间
+        /// </summary>
+        public string DateTime { get; set; }
+        /// <summary>
+        /// 装置编码
+        /// </summary>
+        public string DeviceCode { get; set; }
+        /// <summary>
+        /// 装置名称 
+        /// </summary>
+        public string DeviceName { get; set; }
+        /// <summary>
+        /// 装置描述
+        /// </summary>
+        public string DeviceRemark { get; set; }
+
+        /// <summary>
         /// 物资编码类型名称
         /// </summary>
         public string ComponentTypeName { get; set; }
