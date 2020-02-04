@@ -2,10 +2,13 @@
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.ManagerWeb;
 using MaterialCodeSelectionPlatform.Service;
+using MaterialCodeSelectionPlatform.Web.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -119,10 +122,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="code">物资编码</param>
         /// <param name="page">第几页</param>
         /// <param name="limit">每页显示的记录数</param>
+        /// <param name="componentTypeId">物资类型ID</param>
         /// <param name="attrName">属性名称 </param>
         /// <param name="attrValue">属性值，多个值 用逗号隔开</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string attrName,string attrValue)
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,string attrName,string attrValue)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
@@ -135,6 +139,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 condition.AttrValue = attrValue.Split(',').ToList();
             }
+            condition.ComponentTypeId = componentTypeId;
             condition.Page = dataPage;
             condition.Code = code;          
             var list = await this.Service.GetCommodityCodeDataList(condition);
@@ -250,16 +255,26 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return View();
             }
         }
-        public async Task<ActionResult> DownloadExcelReport(string projectid, string deviceid)
+        /// <summary>
+        /// 导出物料表
+        /// </summary>
+        /// <param name="projectid">项目ID</param>
+        /// <param name="deviceid">装置ID</param>
+        /// <returns></returns>
+        public async Task<IActionResult> DownloadExcelReport(string projectid, string deviceid)
         {
             try
-            {            
+            {
+                //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
+               
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
-                return Json(result);
+                var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
+                var newPath=ExcelHelper.WriteDataTable(result,path, "次页", 3);
+                return DownLoad(newPath);              
             }
             catch (Exception e)
             {
-                return View();
+                return Json(new DataResult() { Success = false, Message = e.Message });
             }
         }
     }

@@ -11,15 +11,19 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// <summary>
         /// 属性名称
         /// </summary>
-        public string AttributeName { get; set; }       
-        public List<string> ValueList { get; set; }
-    }   
+        public string AttributeName { get; set; }
+        /// <summary>
+        /// 属性对应的值 
+        /// </summary>
+        public List<string> ValueList { get; set; }        
+      
+    }
 
     /// <summary>
     /// 物资编码属性 DTO
     /// </summary>
     public class CommodityCodeAttributeDto : CommodityCodeAttribute
     {
-       
+
     }
 }

@@ -27,11 +27,11 @@
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label" style="width: auto;">物资类型</label>
             <div class="layui-input-inline">
-                <input type="text" name="txtCode" class="layui-input" id="txtCode"  style="width:100%" />
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:100%" />
             </div>
 
         </div>
-        <div class="layui-inline "   style="width:500px">
+        <div class="layui-inline " style="width:500px">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
     </div>
@@ -75,15 +75,16 @@
         </div>
     </div>
     <div class="usteel-content w" style="width:100%">
-        <div class="usteel-condition" id="usteel-condition">          
+        <div class="usteel-condition" id="usteel-condition">
             <div class="selector" lay-filter="chapterRender">
                 <!-- 多选属性区域 -->
-            </div>           
+            </div>
         </div>
 
     </div>
 </div>
 <input type="hidden" id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
+<input type="hidden" id="txtComponentTypeId" name="txtComponentTypeId" value="" />
 <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80}" id="tbCommodityCodeList" lay-filter="useruv"></table>
 <div class="layui-form" action="" id="openShow" style="display:none">
     <table class="layui-table" id="projectDevice">
@@ -100,10 +101,12 @@
                 <th>版次</th>
                 <th>状态</th>
                 <th>时间</th>
+                <th>操作</th>
             </tr>
         </thead>
         <tbody id="trody"></tbody>
     </table>
+    <div class="layui-layer-title" style="cursor: move;">新建工作...</div>
     <div class="layui-form" action="" id="searchForm2">
         <div class="layui-form-item search">
             <div class="layui-inline layui-float-left">
@@ -141,13 +144,13 @@
 
 
             window.loadData = function (parms) {
-               
+                var componentTypeId=$("#txtComponentTypeId").val();
                 var para = getSearchCondition("searchForm");
                 table.render({
                     elem: '#tbCommodityCodeList',
                     height: 'full-80',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&componentTypeId="+componentTypeId+"&" + Math.random() + parms//数据接口
                     , page: true //开启分页
                     , limit: 15
                     , limits: [15,50, 100]
@@ -375,14 +378,18 @@
                 });
             //==============获取【物资类型】属性==================
             function getTypeAttr(id) {
-                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {
-                 // $(".selector").html("");
+                if (id == "-1") {
+                    $("#txtComponentTypeId").val("");
+                }
+                else {
+                    $("#txtComponentTypeId").val(id);
+                }
+                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {                    
                  if (result.length == 0) {
                      layer.msg("获取不到属性");
-                      $(".selector").html("");
+                     $(".selector").html("");                                    
                  }
-                 else {
-                     debugger;
+                 else {                    
                      var html = "";
                      for (var i = 0; i < result.length; i++) {
                          var attributeName = result[i].attributeName;
@@ -421,11 +428,12 @@
                      }
                      $(".selector").html(html);
                     // form.render('chapterRender');///重新渲染select#chapterId
-                  layui.use('form', function() {
-        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-        form.render();
-    });
-                 }
+                      layui.use('form', function() {
+                        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+                        form.render();
+                    });
+                   }
+                   loadData();
              });
         }
             //==============获取【物资类型】属性end==================
@@ -447,13 +455,14 @@
                                 tr += "<td>"+ent.deviceName+"</td>";
                                 tr += "<td>"+ent.version+"</td>";
                                 tr += "<td>"+ent.checkStatusName+"</td>";
-                                tr += "<td>"+ent.timeString+"</td>";
+                                tr += "<td>" + ent.timeString + "</td>";
+                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
                                 tr += " </tr>";
                             }
                             $("#trody").append(tr);
                             winIndex= layer.open({
                                       type: 1,
-                                      title: '最近',
+                                      title: '打开最近工作...',
                                       area: ['800px', '600px'],
                                       minHeight:'200px',
                                       content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响

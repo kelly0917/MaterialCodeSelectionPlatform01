@@ -74,7 +74,7 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
                // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
-                var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c => c.Status == 0 && c.AttributeName == condition.AttrName && condition.AttrValue.Contains(c.AttributeValue)).ToList();
+                var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c => c.Status == 0&&c.ComponentTypeId== condition.ComponentTypeId && c.AttributeName == condition.AttrName && condition.AttrValue.Contains(c.AttributeValue)).ToList();
                 if (tempList != null && tempList.Count > 0)
                 {
                     commodityCodeIdList = tempList.Select(c => c.CommodityCodeId).Distinct().ToList();
@@ -82,6 +82,10 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             query = query.Where((a, b) => a.Status == 0);
+            if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
+            {
+                query = query.Where((a, b) => a.ComponentTypeId== condition.ComponentTypeId);
+            }
             if (commodityCodeIdList.Count > 0)
             {
                 query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
@@ -90,10 +94,7 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 query = query.Where((a, b) => a.Code.Contains(condition.Code));
             }
-            if (condition.CommodityCodeId != null && condition.CommodityCodeId.Count > 0)
-            {
-                query = query.Where((a, b) => condition.CommodityCodeId.Contains(a.Id));
-            }
+          
             query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
             var total = 0;
             var data = await query.Select((a, b) => (new CommodityCodeDto { Id = a.Id, Desc = b.Desc, Code = a.Code, CN_ShortDesc = a.CN_ShortDesc })).ToPageListAsync(condition.Page.PageNo, condition.Page.PageSize, total);
@@ -144,7 +145,7 @@ namespace MaterialCodeSelectionPlatform.Data
                             orderby g.Key
                             select new ComponentTypeAttribute()
                             {
-                                AttributeName = g.Key,
+                                AttributeName = g.Key,                              
                                 ValueList = g.Select(c => c.AttributeValue).Distinct().ToList()
                             };              
                 attrList = resut.ToList();
@@ -386,7 +387,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
            */
             #endregion
-            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.CN_PartNumberLongDesc, a.id,a.DesignQty from MaterialTakeOffDetail a
+            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.* from MaterialTakeOffDetail a
             INNER JOIN PartNumber c ON c.Id=a.PartNumberId
             INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
             INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId

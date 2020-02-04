@@ -70,10 +70,13 @@
             $('#btnReport').on('click', function () {
                 var projectid = "@ViewData["projectid"]";
                 var deviceid = "@ViewData["deviceid"]";
-                $.get("/CommodityCodeSelect/DownloadExcelReport?projectid="+projectid +"&deviceid="+deviceid+"&pt=" + Math.random() , function (data) {
-                    layer.msg(data.message);
-                  //  window.location.reload();
-                });
+                var url = "/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random();
+                window.location.href =url;
+                //$.get("/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random(), function (data) {
+                //    debugger;
+                //    layer.msg(data.message);
+                //  //  window.location.reload();
+                //});
             });
         });
 </script>
