@@ -6,6 +6,7 @@ using MaterialCodeSelectionPlatform.Web.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -245,6 +246,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             try
             {
+                var dirPath = Directory.GetCurrentDirectory() + "\\ReportTemplates\\";
+                NameValueCollection fileList = new NameValueCollection();
+                getTemplate(dirPath,ref fileList);
+                ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,0);
@@ -261,17 +266,24 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="projectid">项目ID</param>
         /// <param name="deviceid">装置ID</param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadExcelReport(string projectid, string deviceid)
+        public async Task<IActionResult> DownloadExcelReport(string projectid, string deviceid,string templatePath)
         {
             try
             {
                 //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
-                var excelName = "管道综合材料表_ENG";
+                
+                templatePath = HttpUtility.UrlDecode(templatePath);
+                var saveDir= Directory.GetCurrentDirectory() + "\\ReportTemplates\\Download\\";
+                if (!Directory.Exists(saveDir))
+                {
+                    Directory.CreateDirectory(saveDir);
+                }
+                var excelName = Path.GetFileNameWithoutExtension(templatePath);
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,1);
-                var dirPath = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\";
+                var dirPath = Path.GetDirectoryName(templatePath);
                 var filePath = dirPath + $"{excelName}.xlsx";
                 #region 删除上次生成的EXCEL文件
-                var files = Directory.GetFiles(dirPath)?.ToList().Where(c=> Path.GetFileNameWithoutExtension(c).StartsWith(excelName)&&Path.GetFileNameWithoutExtension(c)!= excelName).ToList();
+                var files = Directory.GetFiles(saveDir)?.ToList();
                 if (files != null && files.Count > 0)
                 {
                     foreach (var ent in files)
@@ -280,13 +292,35 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     }
                 }
                 #endregion
-                var newPath =ExcelHelper.WriteDataTable(result, filePath, "");
+                var saveFilePath = saveDir + excelName + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                var newPath =ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
                 var file= DownLoad(newPath);               
                 return file;
             }
             catch (Exception e)
             {
                 return Json(new DataResult() { Success = false, Message = e.Message });
+            }
+        }
+        private void getTemplate(string dirPath,ref NameValueCollection fileList)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+            var files = dirInfo.GetFiles().Where(c => Path.GetExtension(c.FullName)?.ToLower() == ".xlsx").ToList();
+            if (files != null && files.Count > 0)
+            {
+                foreach (var file in files)
+                {
+                    var name = $"{dirInfo.Name}\\{file.Name}";
+                    fileList.Add(name,file.FullName);
+                }
+            }
+            var dirList = dirInfo.GetDirectories().Where(c=>c.Name.ToLower()!= "download").ToList();
+            if (dirList != null && dirList.Count > 0)
+            {
+                foreach (var dir in dirList)
+                {
+                    getTemplate(dir.FullName,ref fileList);
+                }
             }
         }
     }
