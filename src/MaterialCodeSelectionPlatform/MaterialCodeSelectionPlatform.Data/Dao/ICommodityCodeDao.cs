@@ -54,7 +54,8 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="userId">用户Id</param>
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
+        /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-        Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid);
+        Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid,int downLoad);
     }
 }

@@ -247,7 +247,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
-                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
+                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,0);
                 return View(result);
             }
             catch (Exception e)
@@ -267,7 +267,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
                
-                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
+                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,1);
                 var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
                 var newPath=ExcelHelper.WriteDataTable(result,path, "次页", 3);
                 return DownLoad(newPath);              
