@@ -422,6 +422,26 @@ namespace MaterialCodeSelectionPlatform.Data
                             ComponentTypeName = g.Key,
                             PartNumberList = g.ToList()
                         };
+            #region 项目、装置信息
+            var resutList = resut?.ToList();
+            if (resutList != null && resutList.Count() > 0)
+            {
+                var project = Db.Queryable<Project>().Where(c => c.Status == 0 && c.Id == projectid).Single();
+                var device = Db.Queryable<Device>().Where(c => c.Status == 0 && c.Id == deviceid).Single();
+                var user = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id ==userId).Single();
+                resutList.ForEach(c =>
+                {
+                    c.ProjectName = project?.Name;
+                    c.ProjectCode = project?.Code;
+                    c.DeviceName = device?.Name;
+                    c.DeviceCode = device?.Code;
+                    c.DeviceRemark = device?.Remark;
+                    c.UserName = user?.Name;
+                    c.DateTime = DateTime.Now.ToString("yyyy-MM-dd");
+                    
+                });
+            }
+            #endregion
             if (downLoad == 1)
             {
                 // 更新版次
@@ -433,7 +453,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     Db.Updateable(ent).ExecuteCommand();
                 }
             }
-            return await Task.Run(() => { return resut.ToList(); });
+            return await Task.Run(() => { return resutList; });
         }
     }
 }
