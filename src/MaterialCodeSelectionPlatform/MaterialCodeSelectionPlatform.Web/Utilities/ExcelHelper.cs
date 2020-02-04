@@ -353,6 +353,12 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
                     if (dataList != null && dataList.Count > 0)
                     {
+                        var seqNo = 1;
+                        ICellStyle style = workbook.CreateCellStyle();
+                        style.BorderBottom = BorderStyle.Thin;
+                        style.BorderLeft = BorderStyle.Thin;
+                        style.BorderRight = BorderStyle.Thin;
+                        style.BorderTop = BorderStyle.Thin;
                         foreach (var ent in dataList)
                         {
                             foreach (var item in ent.PartNumberList)
@@ -361,21 +367,32 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                                 IRow row = sheet.CreateRow(startRow++);
                                 for (var i = 0; i < cellCount; i++)
                                 {
+                                   
+                                    var cell = row.CreateCell(i);
+                                    cell.CellStyle = style;
                                     if (dict.ContainsKey(i.ToString()))
-                                    {
+                                    {                                       
                                         PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
                                         if (propertyInfo != null)
                                         {
-                                            row.CreateCell(i).SetCellValue(propertyInfo.GetValue(item, null)?.ToString());
+                                            cell.SetCellValue(propertyInfo.GetValue(item, null)?.ToString());
                                         }
-                                    }                                   
+                                        if (dict[i.ToString()].ToLower() == "seqno")
+                                        {
+                                            cell.SetCellValue(seqNo++);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        cell.SetCellValue("");
+                                    }
                                 }
                             }
                         }
                     }
                     //保存文件
-                    var newFilePath = Path.GetDirectoryName(fileName) + "//aa.xlsx";
-                    using (var ws = File.Create(newFilePath))
+                    fileName = Path.GetDirectoryName(fileName) + "//物料表.xlsx";
+                    using (var ws = File.Create(fileName))
                     {
                         workbook.Write(ws);
                     }                    

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -254,7 +255,13 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return View();
             }
         }
-        public async Task<ActionResult> DownloadExcelReport(string projectid, string deviceid)
+        /// <summary>
+        /// 导出物料表
+        /// </summary>
+        /// <param name="projectid">项目ID</param>
+        /// <param name="deviceid">装置ID</param>
+        /// <returns></returns>
+        public async Task<IActionResult> DownloadExcelReport(string projectid, string deviceid)
         {
             try
             {
@@ -262,12 +269,12 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                
                 var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid);
                 var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
-                ExcelHelper.WriteDataTable(result,path, "次页", 3);
-                return Json(result);
+                var newPath=ExcelHelper.WriteDataTable(result,path, "次页", 3);
+                return DownLoad(newPath);              
             }
             catch (Exception e)
             {
-                return View();
+                return Json(new DataResult() { Success = false, Message = e.Message });
             }
         }
     }

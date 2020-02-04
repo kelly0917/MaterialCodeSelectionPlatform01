@@ -387,7 +387,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
            */
             #endregion
-            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.CN_PartNumberLongDesc, a.id,a.DesignQty from MaterialTakeOffDetail a
+            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.* from MaterialTakeOffDetail a
             INNER JOIN PartNumber c ON c.Id=a.PartNumberId
             INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
             INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
