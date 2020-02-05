@@ -155,6 +155,9 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         public async Task<User> GetByUserNamePwd(string userName, string pwd)
         {
+
+            
+
             return await DbContext.AsQueryable().Where(c => c.LoginName == userName && c.Password == pwd).FirstAsync();
 
         }
