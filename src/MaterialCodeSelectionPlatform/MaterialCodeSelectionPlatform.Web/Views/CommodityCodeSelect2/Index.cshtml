@@ -1,0 +1,163 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<link href="~/js/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline layui-float-left">
+            <label class="layui-form-label">项目：</label>
+            <div class="layui-input-inline">
+                <select lay-search id="selProject" name="selProject" lay-filter="selProject"></select>
+            </div>
+        </div>
+        <div class="layui-inline layui-float-left">
+            <label class="layui-form-label">装置：</label>
+            <div class="layui-input-inline">
+                <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
+            </div>
+        </div>
+        <div class="layui-inline layui-float-left">
+            <label class="layui-form-label" style="width: auto;">物资类型</label>
+            <div class="layui-input-inline">
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:100%" />
+            </div>
+
+        </div>
+        <div class="layui-inline " style="width:500px">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+    </div>
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width:100px">物资类型：</label>
+            <div class="layui-input-inline" id="divsel1">
+                <select lay-search name="sel1" lay-filter="sel1"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel2">
+                <select lay-search name="sel2" lay-filter="sel2"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel3">
+                <select lay-search name="sel3" lay-filter="sel3"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel4">
+                <select lay-search name="sel4" lay-filter="sel4"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel5">
+                <select lay-search name="sel5" lay-filter="sel5"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel6">
+                <select lay-search name="sel6" lay-filter="sel6"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel7">
+                <select lay-search name="sel7" lay-filter="sel7"></select>
+            </div>
+            <div class="layui-input-inline  selType" id="divsel8">
+                <select lay-search name="sel8" lay-filter="sel8"></select>
+            </div>
+            <div class="layui-input-inline  selType" id="divsel9">
+                <select lay-search name="sel9" lay-filter="sel9"></select>
+            </div>
+            <div class="layui-input-inline selType" id="divsel10">
+                <select lay-search name="sel10" lay-filter="sel10"></select>
+            </div>
+
+        </div>
+        <div class="layui-inline layui-float-rigth" style="float:right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
+        </div>
+    </div>
+    <div class="usteel-content w" style="width:100%;padding:0px">
+        <div class="usteel-condition" id="usteel-condition" style="padding:0px">
+            <div class="selector" lay-filter="chapterRender">
+                <!-- 多选属性区域 -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    //页面加载
+    $("#txtCode").autocomplete({
+        source: function (request, response) {
+            var name = $.ui.autocomplete.escapeRegex(request.term);
+            response($.grep(source(name), function (item) {
+                return item;
+            }));
+        },
+        select: function (data) {
+            setTimeout(function() {
+                var index = selectList.indexOf($("#txtCode").val());
+                //当前选中的Id
+                var compenentTypeId = selectIds[index];
+            },100);
+        }
+    });
+    var selectList = new Array();
+    var selectIds = new Array();
+
+    //利用ajax根据输入的到数据库查找 相当于
+    function source(name) {
+        console.log(name);
+        var desc = name;
+        var projectId = $("select[name=selProject]").val();
+        var result = new Array();
+        $.ajax({
+            url: "/CommodityCodeSelect2/GetCompenetTypeByMCDesc?desc=" +
+                encodeURIComponent(desc) +
+                "&projectId=" +
+                projectId,
+            type: "get",
+            async: false,
+            dataType: "json",
+            success: function(data) {
+                if (dealResult(data)) {
+                    for (var i = 0; i < data.Data.length; i++) {
+                        selectIds[i] = data.Data[i].ComponentTypeId;
+                        result[i] = data.Data[i].ComponentTypeCode + "(" + data.Data[i].Count + ")";
+                    }
+                }
+            }
+        });
+        selectList = result;
+        return result;
+
+    }
+
+   
+</script>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function() {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+
+
+            //项目
+            $("select[name=selProject]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" +
+                    Math.random(),
+                defaultValue: "-1",
+                complete: function() {
+                }
+            });
+            $("select[name=selProject2]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" +
+                    Math.random(),
+                defaultValue: "-1",
+                complete: function() {
+                }
+            });
+            form.render();
+        });
+
+</script>

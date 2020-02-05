@@ -92,7 +92,7 @@
                     </div>
 
                     <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-                        @if (ViewData["Role"]!=null && (ViewData["Role"].ToString() == "0" || ViewData["Role"].ToString() == "1"))
+                        @if (ViewData["Role"] != null && (ViewData["Role"].ToString() == "0" || ViewData["Role"].ToString() == "1"))
                         {
                             <li data-name="get" class="layui-nav-item">
                                 <a href="javascript:;" lay-href="/User/Index" lay-tips="用户管理" lay-direction="2">
@@ -113,11 +113,18 @@
                                 </a>
                             </li>
                         }
-                        
+
                         <li data-name="get" class="layui-nav-item">
                             <a href="javascript:;" lay-href="/CommodityCodeSelect/Index" lay-tips="物资选码" lay-direction="2">
                                 <i class="layui-icon layui-icon-auz"></i>
                                 <cite>物资选码</cite>
+                            </a>
+                        </li>
+
+                        <li data-name="get" class="layui-nav-item">
+                            <a href="javascript:;" lay-href="/CommodityCodeSelect2/Index" lay-tips="Demo" lay-direction="2">
+                                <i class="layui-icon layui-icon-auz"></i>
+                                <cite>Demo</cite>
                             </a>
                         </li>
                     </ul>
