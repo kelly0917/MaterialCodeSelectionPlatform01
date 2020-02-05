@@ -89,8 +89,9 @@
             $('#btnReport').on('click', function () {
                 var projectid = "@ViewData["projectid"]";
                 var deviceid = "@ViewData["deviceid"]";
+                var mtoId = "@ViewData["mtoId"]";
                 var templatePath = encodeURIComponent($("#selTemplate").val());
-                var url = "/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
+                var url = "/CommodityCodeSelect/DownloadExcelReport?mtoId="+mtoId+"&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
                 window.location.href =url;
                 //$.get("/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random(), function (data) {
                 //    debugger;
