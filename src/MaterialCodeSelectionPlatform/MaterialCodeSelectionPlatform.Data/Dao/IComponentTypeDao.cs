@@ -15,5 +15,12 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         Task<List<ComponentTypeCount>> GetByCommodityCodeDesc(string projectId, string desc);
 
+        /// <summary>
+        /// 获取物资类型的物资编码获取对应的属性和属性值
+        /// </summary>
+        /// <param name="compenentTypeId"></param>
+        /// <returns></returns>
+        Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId);
+
     }
 }
