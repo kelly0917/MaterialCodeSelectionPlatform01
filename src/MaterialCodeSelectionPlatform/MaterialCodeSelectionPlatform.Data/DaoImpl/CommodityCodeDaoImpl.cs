@@ -69,17 +69,33 @@ namespace MaterialCodeSelectionPlatform.Data
             AND a.Id IN('62F59486-6CF8-42D9-8622-37C3090CEE0A')
             */
             #endregion
-            List<string> commodityCodeIdList = condition.CompenetCodeIds;
-            //if (condition.AttrValue != null && condition.AttrValue.Count > 0)
-            //{
-            //    // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
-            //   // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
-            //    var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c => c.Status == 0&&c.ComponentTypeId== condition.ComponentTypeId && c.AttributeName == condition.AttrName && condition.AttrValue.Contains(c.AttributeValue)).ToList();
-            //    if (tempList != null && tempList.Count > 0)
-            //    {
-            //        commodityCodeIdList = tempList.Select(c => c.CommodityCodeId).Distinct().ToList();
-            //    }
-            //}
+            List<string> commodityCodeIdList = new List<string>();
+            var queryC = Db.Queryable<CommodityCodeAttribute>()
+                .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
+            if (condition.CompenetAttributes.Count>0)
+            {
+                // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
+                // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
+
+                foreach (var conditionCompenetAttribute in condition.CompenetAttributes)
+                {
+                    var tempList = await queryC.Where(c =>
+                        c.AttributeName == conditionCompenetAttribute.AttrName &&
+                        conditionCompenetAttribute.AttrValue == (c.AttributeValue)).ToListAsync();
+                    if (tempList != null && tempList.Count > 0)
+                    {
+                        commodityCodeIdList.AddRange(tempList.Select(c => c.CommodityCodeId).ToList());
+                    }
+                }
+
+                commodityCodeIdList = commodityCodeIdList.Distinct().ToList();
+
+            }
+            else
+            {
+                commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
+            }
+
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             query = query.Where((a, b) => a.Status == 0);
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())

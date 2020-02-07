@@ -134,12 +134,12 @@
 
             window.loadData = function (parms) {
                 
-                var para = getSearchCondition("searchForm");
-
-                var cpIds = new Array();
+                var cpIds = [];
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
-                    cpIds.push($(checks[i]).attr("Id"));
+                    var attrName = $(checks[i]).attr("AttrName");
+                    var attrValue = $(checks[i]).attr("title");
+                    cpIds.push({AttrName:attrName,AttrValue:attrValue});
                 }
 
                 table.render({
@@ -147,7 +147,7 @@
                     height: 'full-80',
                     method:'post',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&componentTypeId=" + componentTypeId + "&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
                     ,where: {compenentCodeIds:cpIds}
                     , page: true //开启分页
                     , limit: 15
@@ -423,7 +423,7 @@
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
-                var checkbox = ' <input type="checkbox" name="" title="{title}" Id="{ID}" lay-skin="primary">';
+                var checkbox = ' <input type="checkbox" name="" title="{title}" Id="{AttrName}" lay-skin="primary">';
                 var divStart = '<div class="layui-inline layui-row layui-col-xs12">';
                 var divEnd = '</div>';
                 componentTypeId = ctId;
@@ -445,7 +445,7 @@
                                 for (var j = 0; j < data.Data[i].AttributeValueModels.length; j++) {
                                     checkboxStrs += checkbox
                                         .replace("{title}", data.Data[i].AttributeValueModels[j].Value)
-                                        .replace("{ID}", data.Data[i].AttributeValueModels[j].Id);
+                                        .replace("{AttrName}", data.Data[i].AttrbuteName);
                                 }
                                 var r = divStart + labelStr + divcheboxStart + checkboxStrs + divEnd + divEnd;
                                 result += r;

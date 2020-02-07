@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using MaterialCodeSelectionPlatform.Domain.DTO;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
@@ -125,7 +126,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="limit">每页显示的记录数</param>
         /// <param name="componentTypeId">物资类型ID</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,List<string> compenentCodeIds)
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
@@ -139,7 +140,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             //    condition.AttrValue = attrValue.Split(',').ToList();
             //}
             condition.ComponentTypeId = componentTypeId;
-            condition.CompenetCodeIds = compenentCodeIds;
+            condition.CompenetAttributes = compenentCodeIds;
             condition.Page = dataPage;
             condition.Code = code;          
             var list = await this.Service.GetCommodityCodeDataList(condition);

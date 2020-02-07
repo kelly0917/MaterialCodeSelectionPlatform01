@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MaterialCodeSelectionPlatform.Domain.DTO;
 
 namespace MaterialCodeSelectionPlatform.Domain
 {
@@ -31,7 +32,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// <summary>
         /// 选中的属性的物资编码Ids
         /// </summary>
-        public List<string> CompenetCodeIds { get; set; }
+        public List<AttributeModel> CompenetAttributes { get; set; }
 
     }
 }

@@ -16,4 +16,12 @@ namespace MaterialCodeSelectionPlatform.Domain.DTO
 
         public string Value { get; set; }
     }
+
+
+    public class AttributeModel
+    {
+        public string AttrName { get; set; }
+
+        public string AttrValue { get; set; }
+    }
 }

@@ -59,8 +59,9 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 ComAttrModel cm = new ComAttrModel();
                 cm.AttrbuteName = attribute;
-                cm.AttributeValueModels = list.Where(c => c.AttributeName == attribute).Select(c =>
-                    new AttributeValueModel() {Id = c.CommodityCodeId, Value = c.AttributeValue}).ToList();
+
+                cm.AttributeValueModels = 
+                    list.Where(c => c.AttributeName == attribute).Select(c =>new AttributeValueModel() {Value = c.AttributeValue}).Distinct().ToList();
 
                 comAttrModels.Add(cm);
             }
