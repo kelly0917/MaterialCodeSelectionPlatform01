@@ -157,28 +157,29 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="commodityCodeId">物资编码Id</param>
         /// <param name="userId">用户Id</param>
+        /// <param name="projectId">项目ID</param>
+        /// <param name="deviceId">装置Id</param>
         /// <returns></returns>
-        public async Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId,string userId)
+        public async Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId,string userId,string projectId,string deviceId)
         {
             #region sql
             /*
            --采购码
-            SELECT c.[Desc] ComponentTypeName, b.DesignQty , a. *
-            FROM PartNumber a
-            LEFT JOIN ComponentType c ON a.ComponentTypeId =c.Id AND c.Status=0
-            LEFT JOIN (SELECT a. *
-			             FROM MaterialTakeOffDetail a
-			             WHERE MaterialTakeOffId = (SELECT TOP 1 Id
-			                                         FROM MaterialTakeOff
-			                                         WHERE status = 0
-			                                             AND CreateUserId = '24271a95-c37e-4fd2-bde5-4c41cab7fb74'
-			                                         ORDER BY Version DESC)
-             ) b ON a.Id = b.CommodityCodeId
-            WHERE a.Status = 0 AND a.CommodityCodeId = '8BE429B9-EFCB-4876-A48C-7B4BDAE6534E'
-    
-
-
-   
+                       
+         SELECT c.[Desc] ComponentTypeName, b.DesignQty , a. *
+                    FROM PartNumber a
+                    LEFT JOIN ComponentType c ON a.ComponentTypeId =c.Id AND c.Status=0
+                    LEFT JOIN (SELECT a. *
+			                     FROM MaterialTakeOffDetail a
+			                     WHERE MaterialTakeOffId = (SELECT TOP 1 Id
+			                                                 FROM MaterialTakeOff
+			                                                 WHERE status = 0
+			                                                     AND CreateUserId = '24271a95-c37e-4fd2-bde5-4c41cab7fb74'
+			                                                     AND ProjectId='a2c18936-9668-4d33-a714-d036af548545'
+			                                                     AND DeviceId='9501822a-8da4-42ca-97a2-b9940ec85407'
+			                                                 ORDER BY Version DESC)
+                     ) b ON a.id = b.PartNumberId
+                 WHERE a.Status = 0 AND a.CommodityCodeId = '0003E333-8C94-4774-98C5-855619A4C0E8' order by a.CN_SizeDesc ASC
             */
             #endregion
             List<PartNumberReport> list = new List<PartNumberReport>();
@@ -191,10 +192,12 @@ namespace MaterialCodeSelectionPlatform.Data
 			                                         FROM MaterialTakeOff
 			                                         WHERE status = 0
 			                                             AND CreateUserId = @CreateUserId
+ 			                                             AND ProjectId=@projectId
+			                                             AND DeviceId=@deviceId
 			                                         ORDER BY Version DESC)
              ) b ON a.id = b.PartNumberId
             WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by a.CN_SizeDesc asc";
-           var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId });           
+           var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId, projectId = projectId, deviceId = deviceId });           
             var resut =  from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
@@ -371,14 +374,48 @@ namespace MaterialCodeSelectionPlatform.Data
         {
             #region SQL 
             /*
-             SELECT b.Name ProjectName,c.Name DeviceName, a.* from MaterialTakeOff a
+           
+            SELECT
+            b.Name ProjectName,c.Name DeviceName,a.*
+            FROM MaterialTakeOff a
+            INNER JOIN   (
+                    SELECT
+                        a.ProjectId,a.DeviceId,
+                        MAX (a.LastModifyTime) LastModifyTime
+                    FROM
+                        MaterialTakeOff a
+                    WHERE
+                      a.Status=0 and  a.CreateUserId='24271a95-c37e-4fd2-bde5-4c41cab7fb74'
+                    GROUP BY
+                       a.ProjectId,a.DeviceId
+                ) k on a.LastModifyTime = k.LastModifyTime
             INNER JOIN Project b ON b.Id=a.ProjectId
             INNER JOIN device  c ON c.Id=a.DeviceId
-            WHERE a.Status=0 AND b.Status=0 AND c.Status=0 AND a.CreateUserId='24271a95-c37e-4fd2-bde5-4c41cab7fb74' ORDER BY a.LastModifyTime desc
+            WHERE a.Status=0 and a.CreateUserId='24271a95-c37e-4fd2-bde5-4c41cab7fb74'
+
+
            */
             #endregion
-            var list = await Db.Queryable<MaterialTakeOff, Project, Device>((a,b,c)=>new object[] { JoinType.Inner,a.ProjectId==b.Id,JoinType.Inner,a.DeviceId==c.Id}).Where((a,b,c) => a.Status == 0&&b.Status==0&&c.Status==0 && a.CreateUserId == userid).OrderBy((a)=>a.LastModifyTime,OrderByType.Desc)
-               .Select((a, b, c) => new MaterialTakeOffDto { ProjectName=b.Name, DeviceName=c.Name,Id = a.Id,ProjectId=a.ProjectId,DeviceId=a.DeviceId,CreateTime=a.CreateTime,LastModifyTime=a.LastModifyTime,CheckStatus=a.CheckStatus,Version=a.Version}).ToListAsync();
+            //var list = await Db.Queryable<MaterialTakeOff, Project, Device>((a,b,c)=>new object[] { JoinType.Inner,a.ProjectId==b.Id,JoinType.Inner,a.DeviceId==c.Id}).Where((a,b,c) => a.Status == 0&&b.Status==0&&c.Status==0 && a.CreateUserId == userid).OrderBy((a)=>a.LastModifyTime,OrderByType.Desc)
+            //   .Select((a, b, c) => new MaterialTakeOffDto { ProjectName=b.Name, DeviceName=c.Name,Id = a.Id,ProjectId=a.ProjectId,DeviceId=a.DeviceId,CreateTime=a.CreateTime,LastModifyTime=a.LastModifyTime,CheckStatus=a.CheckStatus,Version=a.Version}).ToListAsync();
+            var sql = $@"SELECT
+            b.Name ProjectName,c.Name DeviceName,a.*
+            FROM MaterialTakeOff a
+            INNER JOIN   (
+                    SELECT
+                        a.ProjectId,a.DeviceId,
+                        MAX (a.LastModifyTime) LastModifyTime
+                    FROM
+                        MaterialTakeOff a
+                    WHERE
+                      a.Status=0 and  a.CreateUserId=@CreateUserId
+                    GROUP BY
+                       a.ProjectId,a.DeviceId
+                ) k on a.LastModifyTime = k.LastModifyTime
+            INNER JOIN Project b ON b.Id=a.ProjectId
+            INNER JOIN device  c ON c.Id=a.DeviceId
+            WHERE a.Status=0 and a.CreateUserId=@CreateUserId";
+            var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { CreateUserId = userid });
             return list;
         }
         /// <summary>
@@ -389,7 +426,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-       public async  Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid, int downLoad)
+       public async  Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid, int downLoad)
         {
             #region SQL 
             /*
@@ -405,13 +442,18 @@ namespace MaterialCodeSelectionPlatform.Data
 
            */
             #endregion
+            var topWhere = " ORDER BY b.LastModifyTime desc";
+            //if (!string.IsNullOrWhiteSpace(mtoId))
+            //{
+            //    topWhere = $" and b.id='{mtoId}'";
+            //}
             var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.* from MaterialTakeOffDetail a
             INNER JOIN PartNumber c ON c.Id=a.PartNumberId
             INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
             INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
             WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=
             (
-            SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId=@ProjectId AND b.DeviceId=@DeviceId AND b.CreateUserId=@CreateUserId ORDER BY b.LastModifyTime desc
+            SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId=@ProjectId AND b.DeviceId=@DeviceId AND b.CreateUserId=@CreateUserId {topWhere}
             )  ORDER BY e.code,c.code ";
             var partNumberList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId = userId, DeviceId = deviceid, ProjectId = projectid });
             var resut = from p in partNumberList
@@ -422,6 +464,26 @@ namespace MaterialCodeSelectionPlatform.Data
                             ComponentTypeName = g.Key,
                             PartNumberList = g.ToList()
                         };
+            #region 项目、装置信息
+            var resutList = resut?.ToList();
+            if (resutList != null && resutList.Count() > 0)
+            {
+                var project = Db.Queryable<Project>().Where(c => c.Status == 0 && c.Id == projectid).Single();
+                var device = Db.Queryable<Device>().Where(c => c.Status == 0 && c.Id == deviceid).Single();
+                var user = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id ==userId).Single();
+                resutList.ForEach(c =>
+                {
+                    c.ProjectName = project?.Name;
+                    c.ProjectCode = project?.Code;
+                    c.DeviceName = device?.Name;
+                    c.DeviceCode = device?.Code;
+                    c.DeviceRemark = device?.Remark;
+                    c.UserName = user?.Name;
+                    c.DateTime = DateTime.Now.ToString("yyyy-MM-dd");
+                    
+                });
+            }
+            #endregion
             if (downLoad == 1)
             {
                 // 更新版次
@@ -433,7 +495,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     Db.Updateable(ent).ExecuteCommand();
                 }
             }
-            return await Task.Run(() => { return resut.ToList(); });
+            return await Task.Run(() => { return resutList; });
         }
     }
 }

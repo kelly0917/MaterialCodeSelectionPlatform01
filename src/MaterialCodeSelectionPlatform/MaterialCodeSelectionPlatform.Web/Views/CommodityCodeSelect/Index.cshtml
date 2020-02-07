@@ -34,57 +34,76 @@
         <div class="layui-inline " style="width:500px">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
-    </div>
-    <div class="layui-form-item search">
-        <div class="layui-inline">
-            <label class="layui-form-label" style="width:100px">物资类型：</label>
-            <div class="layui-input-inline" id="divsel1">
-                <select lay-search name="sel1" lay-filter="sel1"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel2">
-                <select lay-search name="sel2" lay-filter="sel2"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel3">
-                <select lay-search name="sel3" lay-filter="sel3"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel4">
-                <select lay-search name="sel4" lay-filter="sel4"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel5">
-                <select lay-search name="sel5" lay-filter="sel5"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel6">
-                <select lay-search name="sel6" lay-filter="sel6"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel7">
-                <select lay-search name="sel7" lay-filter="sel7"></select>
-            </div>
-            <div class="layui-input-inline  selType" id="divsel8">
-                <select lay-search name="sel8" lay-filter="sel8"></select>
-            </div>
-            <div class="layui-input-inline  selType" id="divsel9">
-                <select lay-search name="sel9" lay-filter="sel9"></select>
-            </div>
-            <div class="layui-input-inline selType" id="divsel10">
-                <select lay-search name="sel10" lay-filter="sel10"></select>
-            </div>
-
-        </div>
         <div class="layui-inline layui-float-rigth" style="float:right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
     </div>
-    <div class="usteel-content w" style="width:100%;padding:0px">
-        <div class="usteel-condition" id="usteel-condition" style="padding:0px">
-            <div class="selector" lay-filter="chapterRender">
-                <!-- 多选属性区域 -->
+    <div class="layui-collapse" lay-filter="test">
+        <div class="layui-colla-item">
+            <div class="layui-form-item search">
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width:110px; padding-left:10px;" onclick="changeVisivility()">
+                        <div style="padding-top:8px;"> <i id="collaIcon" class="layui-icon"> &#xe602; </i> 物资类型：</div>                       
+                    </div>
+                  
+
+                    <div class="layui-input-inline" id="divsel1">
+                        <select lay-search name="sel1" lay-filter="sel1"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel2">
+                        <select lay-search name="sel2" lay-filter="sel2"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel3">
+                        <select lay-search name="sel3" lay-filter="sel3"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel4">
+                        <select lay-search name="sel4" lay-filter="sel4"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel5">
+                        <select lay-search name="sel5" lay-filter="sel5"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel6">
+                        <select lay-search name="sel6" lay-filter="sel6"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel7">
+                        <select lay-search name="sel7" lay-filter="sel7"></select>
+                    </div>
+                    <div class="layui-input-inline  selType" id="divsel8">
+                        <select lay-search name="sel8" lay-filter="sel8"></select>
+                    </div>
+                    <div class="layui-input-inline  selType" id="divsel9">
+                        <select lay-search name="sel9" lay-filter="sel9"></select>
+                    </div>
+                    <div class="layui-input-inline selType" id="divsel10">
+                        <select lay-search name="sel10" lay-filter="sel10"></select>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="layui-colla-content layui-show">
+                <!--  <div id="attrDiv" class="usteel-content w" style="width: 99%;padding: 0px 5px 0px 5px;border: 1px;border-style: solid;border-color: darkgray;display:none">-->
+                <div class="usteel-condition" id="usteel-condition" style="padding:0px">
+                    <div class="selector" lay-filter="chapterRender">
+                        <!-- 多选属性区域 -->
+                    </div>
+                </div>
+
+                <!--</div>-->
             </div>
         </div>
 
+
+
     </div>
+
+
+
 </div>
 <input type="hidden" id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 <input type="hidden" id="txtComponentTypeId" name="txtComponentTypeId" value="" />
+<input type="hidden" id="txtMtoId" name="txtMtoId" value="" />
 <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80}" id="tbCommodityCodeList" lay-filter="useruv"></table>
 <div class="layui-form" action="" id="openShow" style="display:none">
     <table class="layui-table" id="projectDevice">
@@ -269,127 +288,128 @@
                 function(data1) {
                     var value = data1.value;
                     hidDropdownlist(1);
+                     if (value == -1) {
+                        getTypeAttr(value);
+                        return;
+                    }
                     $("select[name=sel2]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-
-                            if ($("select[name=sel2]").val() != "" && $("select[name=sel2]").find("option").length > 0) {
-                                $("#divsel2").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                            selDropdownlist(2,value);
                         }
                     });
                 });
             form.on('select(sel2)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(2);
+                    hidDropdownlist(2);
+                     if (value == -1) {
+                       var parentValue = $("select[name=sel1]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel3]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            if ($("select[name=sel3]").val() != ""&&$("select[name=sel3]").find("option").length>0) {
-                                $("#divsel3").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+
+                             selDropdownlist(3,value);
                         }
                     });
                 });
             form.on('select(sel3)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(3);
+                    hidDropdownlist(3);
+                     if (value == -1) {
+                       var parentValue = $("select[name=sel2]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel4]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            if ($("select[name=sel4]").val() != ""&&$("select[name=sel4]").find("option").length>0) {
-                                $("#divsel4").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                             selDropdownlist(4,value);
                         }
                     });
                 });
             form.on('select(sel4)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(4);
+                    hidDropdownlist(4);
+                     if (value == -1) {
+                       var parentValue = $("select[name=sel3]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel5]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            if ($("select[name=sel5]").val() != ""&&$("select[name=sel5]").find("option").length>0) {
-                                $("#divsel5").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                             selDropdownlist(5,value);
                         }
                     });
                 });
             form.on('select(sel5)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(5);
+                    hidDropdownlist(5);
+                      if (value == -1) {
+                       var parentValue = $("select[name=sel4]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel6]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            if ($("select[name=sel6]").val() != ""&&$("select[name=sel6]").find("option").length>0) {
-                                $("#divsel6").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                            selDropdownlist(6,value);
                         }
                     });
                 });
             form.on('select(sel6)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(6);
+                    hidDropdownlist(6);
+                     if (value == -1) {
+                       var parentValue = $("select[name=sel5]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel7]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            if ($("select[name=sel7]").val() != ""&&$("select[name=sel7]").find("option").length>0) {
-                                $("#divsel7").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                             selDropdownlist(7,value);
                         }
                     });
                 });
             form.on('select(sel7)',
                 function(data1) {
                     var value = data1.value;
-                     hidDropdownlist(7);
+                    hidDropdownlist(7);
+                     if (value == -1) {
+                       var parentValue = $("select[name=sel6]").val();
+                        getTypeAttr(parentValue);
+                        return;
+                    }
                     $("select[name=sel8]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            if ($("select[name=sel8]").val() != ""&&$("select[name=sel8]").find("option").length>0) {
-                                $("#divsel8").show();
-                            }
-                            else {
-                                getTypeAttr(value);
-                            }
+                            selDropdownlist(8,value);
                         }
                     });
                 });
             //==============获取【物资类型】属性==================
             function getTypeAttr(id) {
+
                 if (id == "-1") {
                     $("#txtComponentTypeId").val("");
                 }
                 else {
                     $("#txtComponentTypeId").val(id);
                 }
-                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {                    
+                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {
                  if (result.length == 0) {
                      layer.msg("获取不到属性");
-                     $(".selector").html("");                                    
+                     $(".selector").html("");
+                     $("#usteel-condition").hide();
                  }
-                 else {                    
+                 else {
                      var html = "";
                      for (var i = 0; i < result.length; i++) {
                          var attributeName = result[i].attributeName;
@@ -427,6 +447,7 @@
                          html += "</div>";
                      }
                      $(".selector").html(html);
+                     $("#usteel-condition").show();
                     // form.render('chapterRender');///重新渲染select#chapterId
                       layui.use('form', function() {
                         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
@@ -435,7 +456,22 @@
                    }
                    loadData();
              });
-        }
+            }
+            function selDropdownlist(n,parentValue) {
+                var childValue = $("select[name=sel"+n+"]").val();
+                if (childValue != "" && $("select[name=sel"+n+"]").find("option").length > 0) {
+                    $("#divsel"+n+"").show();
+                    if (childValue != -1 && childValue != null) {
+                        getTypeAttr(childValue);
+                    }
+                    else {
+                        getTypeAttr(parentValue);
+                    }
+                }
+                else {
+                    getTypeAttr(parentValue);
+                }
+            }
             //==============获取【物资类型】属性end==================
             //==============打开【最近项目，装置】==================
 
@@ -451,12 +487,12 @@
                                 var ent = result.data[i];
 
                                 tr += "<tr>";
-                                tr += "<td><a onclick=projectClick('"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
+                                tr += "<td><a onclick=projectClick('"+ ent.id +"','"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
                                 tr += "<td>"+ent.deviceName+"</td>";
                                 tr += "<td>"+ent.version+"</td>";
                                 tr += "<td>"+ent.checkStatusName+"</td>";
                                 tr += "<td>" + ent.timeString + "</td>";
-                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
+                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('"+ ent.id +"','" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
                                 tr += " </tr>";
                             }
                             $("#trody").append(tr);
@@ -520,8 +556,9 @@
              }
         //==============确定【项目】【装置】end==================
          //==============选择【项目】【装置】==================
-        function projectClick(projectId, deviceId) {
+        function projectClick(id,projectId, deviceId) {
             $("#selProject").val(projectId);
+            $("#txtMtoId").val(id);
             layui.form.render('select');
             $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
                 //<option value="-1">全部</option>
@@ -543,17 +580,32 @@
         function openReoprt() {
             var projectId = $("#selProject").val();
             var deviceId = $("#selDevice").val();
+            var mtoId= $("#txtMtoId").val();
             if ((projectId == -1 || projectId == "" || projectId == null) || (deviceId == -1 || deviceId == "" || deviceId == null)) {
                 layer.msg("【项目】和【装置】必须选择");
                 return;
             }
             layer.open({
                             type: 2,
-                            content: '/CommodityCodeSelect/ReportIndex?projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
+                            content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
                             title: '选择采购码',
                             area: ["1000px;", "700px;"]//宽 高
                         });
          }
         //==============打开【查看料表】end==================
+        //==============显示隐藏属性=========//
 
+    function changeVisivility() {
+        var isShow = $("#usteel-condition").is(":hidden");
+        if (isShow) {
+            $("#usteel-condition").show();
+           $("#collaIcon").html(" &#xe61a; ");
+
+        }
+        else {
+            $("#usteel-condition").hide();
+            $("#collaIcon").html(" &#xe602; ");
+        }
+    }
+        //============显示隐藏属性end==============//
 </script>

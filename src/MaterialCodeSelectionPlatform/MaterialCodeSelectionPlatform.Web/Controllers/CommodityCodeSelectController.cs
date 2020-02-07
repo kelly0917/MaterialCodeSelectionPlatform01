@@ -6,6 +6,7 @@ using MaterialCodeSelectionPlatform.Web.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -60,8 +61,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 case 3://物资类型
                     var list3 = await componentTypeService.GetByParentId("ParentId",parentId);
                     if(list3.Count>0)
-                        list3.Insert(0,new ComponentType(){ Code = "全部",Id="-1"});
-                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Code, Value = c.Id }).ToList();
+                        list3.Insert(0,new ComponentType(){ Desc = "全部",Id="-1"});
+                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
                     return Json(result3);
                 //case 4://物资编码
                 //    var list4 = await Service.GetByParentId("ComponentTypeId",parentId);
@@ -178,7 +179,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             ViewData["commodityCodeId"] = commodityCodeId;
             ViewData["projectId"] = projectId;
             ViewData["deviceId"] = deviceId;
-            var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId);
+            var list = await this.Service.GetCommodityCodePartNumberList(commodityCodeId, userId, projectId, deviceId);
             return View(list);
         }
         /// <summary>
@@ -237,17 +238,22 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <summary>
         /// 获取用户的物料表
         /// </summary>
-        /// <param name="userId">用户Id</param>
+        /// <param name="mtoId">物资汇总表Id</param>
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
         /// <returns></returns>
-        public async Task<ActionResult> ReportIndex(string projectid, string deviceid)
+        public async Task<ActionResult> ReportIndex(string mtoId, string projectid, string deviceid)
         {
             try
             {
+                var dirPath = Directory.GetCurrentDirectory() + "\\ReportTemplates\\";
+                NameValueCollection fileList = new NameValueCollection();
+                getTemplate(dirPath,ref fileList);
+                ViewData["mtoId"] = mtoId;
+                ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
-                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,0);
+                var result = await Service.GetUserMaterialTakeReport(mtoId,this.UserId, projectid, deviceid,0);
                 return View(result);
             }
             catch (Exception e)
@@ -261,20 +267,61 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="projectid">项目ID</param>
         /// <param name="deviceid">装置ID</param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadExcelReport(string projectid, string deviceid)
+        public async Task<IActionResult> DownloadExcelReport(string mtoId, string projectid, string deviceid,string templatePath)
         {
             try
             {
                 //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
-               
-                var result = await Service.GetUserMaterialTakeReport(this.UserId, projectid, deviceid,1);
-                var path = Directory.GetCurrentDirectory() + "\\ReportTemplates\\管道综合材料表\\管道综合材料表_ENG.xlsx";
-                var newPath=ExcelHelper.WriteDataTable(result,path, "次页", 3);
-                return DownLoad(newPath);              
+                
+                templatePath = HttpUtility.UrlDecode(templatePath);
+                var saveDir= Directory.GetCurrentDirectory() + "\\ReportTemplates\\Download\\";
+                if (!Directory.Exists(saveDir))
+                {
+                    Directory.CreateDirectory(saveDir);
+                }
+                var excelName = Path.GetFileNameWithoutExtension(templatePath);
+                var result = await Service.GetUserMaterialTakeReport(mtoId, this.UserId, projectid, deviceid,1);
+                var dirPath = Path.GetDirectoryName(templatePath);
+                var filePath = dirPath + $"{excelName}.xlsx";
+                #region 删除上次生成的EXCEL文件
+                var files = Directory.GetFiles(saveDir)?.ToList();
+                if (files != null && files.Count > 0)
+                {
+                    foreach (var ent in files)
+                    {
+                        System.IO.File.Delete(ent);
+                    }
+                }
+                #endregion
+                var saveFilePath = saveDir + excelName + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                var newPath =ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
+                var file= DownLoad(newPath);               
+                return file;
             }
             catch (Exception e)
             {
                 return Json(new DataResult() { Success = false, Message = e.Message });
+            }
+        }
+        private void getTemplate(string dirPath,ref NameValueCollection fileList)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
+            var files = dirInfo.GetFiles().Where(c => Path.GetExtension(c.FullName)?.ToLower() == ".xlsx").ToList();
+            if (files != null && files.Count > 0)
+            {
+                foreach (var file in files)
+                {
+                    var name = $"{dirInfo.Name}\\{file.Name}";
+                    fileList.Add(name,file.FullName);
+                }
+            }
+            var dirList = dirInfo.GetDirectories().Where(c=>c.Name.ToLower()!= "download").ToList();
+            if (dirList != null && dirList.Count > 0)
+            {
+                foreach (var dir in dirList)
+                {
+                    getTemplate(dir.FullName,ref fileList);
+                }
             }
         }
     }

@@ -34,8 +34,10 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="commodityCodeId">物资编码Id</param>
         /// <param name="userId">用户Id</param>
+        /// <param name="projectId">项目ID</param>
+        /// <param name="deviceId">装置Id</param>
         /// <returns></returns>
-        Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId, string userId);
+        Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId, string userId, string projectId, string deviceId);
         /// <summary>
         /// 保存【物资汇总明细表】
         /// </summary>
@@ -56,6 +58,6 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-        Task<List<PartNumberReport>> GetUserMaterialTakeReport(string userId, string projectid, string deviceid,int downLoad);
+        Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid,int downLoad);
     }
 }
