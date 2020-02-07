@@ -24,10 +24,11 @@ namespace MaterialCodeSelectionPlatform.Data
             }
 
             var catalogQuery = Db.Queryable<ProjectCatalogMap>();
-            if (projectId.IsNotNullAndNotEmpty())
+            if (projectId.IsNotNullAndNotEmpty() && projectId!="-1" && projectId!= EmptyGuid.ToLower())
             {
                 catalogQuery = catalogQuery.Where(c => c.ProjectId == projectId);
             }
+
             //项目关联的编码库
             var catalogIds = await catalogQuery.Select(c => c.CatalogId).ToListAsync();
 

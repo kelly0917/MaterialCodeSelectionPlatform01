@@ -7,7 +7,14 @@
     .selType {
         display: none;
     }
+    .layui-form-label {
+        width: 100px;
+    }
 </style>
+
+<link href="~/js/jquery-ui.css" rel="stylesheet" />
+<script src="~/js/jquery-ui.js"></script>
+
 <link rel="stylesheet" type="text/css" href="~/lib/usteel-search/search.css?t=@DateTime.Now" />
 <script type="text/javascript" src="~/lib/usteel-search/search.js?t=@DateTime.Now"></script>
 <div class="layui-form" action="" id="searchForm">
@@ -38,62 +45,18 @@
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
     </div>
-    <div class="layui-collapse" lay-filter="test">
-        <div class="layui-colla-item">
-            <div class="layui-form-item search">
-                <div class="layui-inline">
-                    <div class="layui-input-inline" style="width:110px; padding-left:10px;" onclick="changeVisivility()">
-                        <div style="padding-top:8px;"> <i id="collaIcon" class="layui-icon"> &#xe602; </i> 物资类型：</div>                       
-                    </div>
-                  
-
-                    <div class="layui-input-inline" id="divsel1">
-                        <select lay-search name="sel1" lay-filter="sel1"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel2">
-                        <select lay-search name="sel2" lay-filter="sel2"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel3">
-                        <select lay-search name="sel3" lay-filter="sel3"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel4">
-                        <select lay-search name="sel4" lay-filter="sel4"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel5">
-                        <select lay-search name="sel5" lay-filter="sel5"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel6">
-                        <select lay-search name="sel6" lay-filter="sel6"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel7">
-                        <select lay-search name="sel7" lay-filter="sel7"></select>
-                    </div>
-                    <div class="layui-input-inline  selType" id="divsel8">
-                        <select lay-search name="sel8" lay-filter="sel8"></select>
-                    </div>
-                    <div class="layui-input-inline  selType" id="divsel9">
-                        <select lay-search name="sel9" lay-filter="sel9"></select>
-                    </div>
-                    <div class="layui-input-inline selType" id="divsel10">
-                        <select lay-search name="sel10" lay-filter="sel10"></select>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="layui-colla-content layui-show">
-                <!--  <div id="attrDiv" class="usteel-content w" style="width: 99%;padding: 0px 5px 0px 5px;border: 1px;border-style: solid;border-color: darkgray;display:none">-->
-                <div class="usteel-condition" id="usteel-condition" style="padding:0px">
-                    <div class="selector" lay-filter="chapterRender">
-                        <!-- 多选属性区域 -->
-                    </div>
-                </div>
-
-                <!--</div>-->
+    @*物资类型*@
+    <div class="layui-form-item search">
+        <div class="layui-inline" id="divCPContainer">
+            <label class="layui-form-label">物资类型：</label>
+            <div class="layui-input-inline" id="divsel200">
+                <select lay-search name="sel200" lay-filter="cpType"></select>
             </div>
         </div>
-
+       
+    </div>
+    @*属性值列表*@
+    <div class="layui-form-item search" id="divAttrContainer">
 
 
     </div>
@@ -101,6 +64,13 @@
 
 
 </div>
+
+<div style="display: none" id="divReplaceSel">
+    <div class="layui-input-inline" id="divsel{i}" index="{i}">
+        <select lay-search name="sel{i}" lay-filter="cpType"></select>
+    </div>
+</div>
+
 <input type="hidden" id="txtUserId" name="txtUserId" value="@ViewData["UserId"]" />
 <input type="hidden" id="txtComponentTypeId" name="txtComponentTypeId" value="" />
 <input type="hidden" id="txtMtoId" name="txtMtoId" value="" />
@@ -153,7 +123,7 @@
 </script>
 
 <script type="text/javascript">
-
+    var componentTypeId="";
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -163,13 +133,22 @@
 
 
             window.loadData = function (parms) {
-                var componentTypeId=$("#txtComponentTypeId").val();
+                
                 var para = getSearchCondition("searchForm");
+
+                var cpIds = new Array();
+                var checks = $("input[type=checkbox]:checked");
+                for (var i = 0; i < checks.length; i++) {
+                    cpIds.push($(checks[i]).attr("Id"));
+                }
+
                 table.render({
                     elem: '#tbCommodityCodeList',
                     height: 'full-80',
+                    method:'post',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&componentTypeId="+componentTypeId+"&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList' + para + "&componentTypeId=" + componentTypeId + "&" + Math.random() + parms//数据接口
+                    ,where: {compenentCodeIds:cpIds}
                     , page: true //开启分页
                     , limit: 15
                     , limits: [15,50, 100]
@@ -216,7 +195,7 @@
                             layer.msg('请选择项目！');
                             return;
                         }
-                         if ($("#selDevice").val() == null || $("#selDevice").val() == "-1") {
+                        if ($("#selDevice").val() == null || $("#selDevice").val() == "-1") {
                             layer.msg('请选择装置！');
                             return;
                         }
@@ -234,7 +213,7 @@
             //刷新表格
             window.flush = function () {
                 loadData();
-              }
+            }
             openProject();//打开最近【项目】【装置】
 
             var defaultValue = "@ViewData["projectId"]";
@@ -245,16 +224,16 @@
                 }
             });
             //项目
-              $("select[name=selProject]").dropdownlist({
+            $("select[name=selProject]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                 }
-              });
-              $("select[name=selProject2]").dropdownlist({
+            });
+            $("select[name=selProject2]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
                 }
-              });
-             form.render();
-             form.on('select(selProject)',
+            });
+            form.render();
+            form.on('select(selProject)',
                 function(data1) {
                     var value = data1.value;
                     $("select[name=selDevice]").dropdownlist({
@@ -265,8 +244,8 @@
                             //}
                         }
                     });
-                 });
-             form.on('select(selProject2)',
+                });
+            form.on('select(selProject2)',
                 function(data1) {
                     var value = data1.value;
                     $("select[name=selDevice2]").dropdownlist({
@@ -278,201 +257,10 @@
                         }
                     });
                 });
-            //物资分类
-            $("select[name=sel1]").dropdownlist({
-                url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                }
-            });
+
             form.render();
-            form.on('select(sel1)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(1);
-                     if (value == -1) {
-                        getTypeAttr(value);
-                        return;
-                    }
-                    $("select[name=sel2]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                            selDropdownlist(2,value);
-                        }
-                    });
-                });
-            form.on('select(sel2)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(2);
-                     if (value == -1) {
-                       var parentValue = $("select[name=sel1]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel3]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                             selDropdownlist(3,value);
-                        }
-                    });
-                });
-            form.on('select(sel3)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(3);
-                     if (value == -1) {
-                       var parentValue = $("select[name=sel2]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel4]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                             selDropdownlist(4,value);
-                        }
-                    });
-                });
-            form.on('select(sel4)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(4);
-                     if (value == -1) {
-                       var parentValue = $("select[name=sel3]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel5]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-
-                             selDropdownlist(5,value);
-                        }
-                    });
-                });
-            form.on('select(sel5)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(5);
-                      if (value == -1) {
-                       var parentValue = $("select[name=sel4]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel6]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-
-                            selDropdownlist(6,value);
-                        }
-                    });
-                });
-            form.on('select(sel6)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(6);
-                     if (value == -1) {
-                       var parentValue = $("select[name=sel5]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel7]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-
-                             selDropdownlist(7,value);
-                        }
-                    });
-                });
-            form.on('select(sel7)',
-                function(data1) {
-                    var value = data1.value;
-                    hidDropdownlist(7);
-                     if (value == -1) {
-                       var parentValue = $("select[name=sel6]").val();
-                        getTypeAttr(parentValue);
-                        return;
-                    }
-                    $("select[name=sel8]").dropdownlist({
-                        url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-
-                            selDropdownlist(8,value);
-                        }
-                    });
-                });
-            //==============获取【物资类型】属性==================
-            function getTypeAttr(id) {
-
-                if (id == "-1") {
-                    $("#txtComponentTypeId").val("");
-                }
-                else {
-                    $("#txtComponentTypeId").val(id);
-                }
-                $.get("/CommodityCodeSelect/GetTypeAttributeList?id=" + id + "&pt=" + Math.random(), function (result) {
-                 if (result.length == 0) {
-                     layer.msg("获取不到属性");
-                     $(".selector").html("");
-                     $("#usteel-condition").hide();
-                 }
-                 else {
-                     var html = "";
-                     for (var i = 0; i < result.length; i++) {
-                         var attributeName = result[i].attributeName;
-                         var valuelist = result[i].valueList;
-                         html += "<div class='usteel-search' data_type='"+attributeName+"'>";
-                         html += "<div class='sl-key'>";
-                         html += "<strong>"+attributeName+"：</strong>";
-                         html += "</div>";
-                         html += "<div class='sl-value'>";
-                         html += "<div class='sl-v-list'>";
-                         html += "<ul>";
-                         if (valuelist != null && valuelist.length > 0) {
-                             for (var k = 0; k < valuelist.length; k++) {
-                                 //var id = valuelist[k].componenttypeid;//物资类型ID
-                                 var value = valuelist[k];
-                                 html += "<li data_id='"+value+"'>";
-                                 html += "<a href='javascript:;'>";
-                                 html += "<i class=''></i><span>"+value+"</span>";
-                                 html += "</a>";
-                                 html += "</li>";
-
-                             }
-                         }
-                         html += "</ul>";
-                         html += "</div>";
-                         html += "<div class='sl-btns'>";
-                         html += "<a href='JavaScript:;' class='btn btn-primary disabled'>确定</a>";
-                         html += "<a href='JavaScript:;' class='btn btn-default'>取消</a>";
-                         html += "</div>";
-                         html += "</div>";
-                         html += "<div class='sl-ext'>";
-                         html += "<a href='JavaScript:;' class='sl-b-more' style='visibility: hidden;'><i class='layui-icon layui-icon-down'></i>更多</a>";
-                         html += "<a href='JavaScript:;' class='sl-b-multiple'><i class='layui-icon layui-icon-add-1'></i>多选</a>";
-                         html += "</div>";
-                         html += "</div>";
-                     }
-                     $(".selector").html(html);
-                     $("#usteel-condition").show();
-                    // form.render('chapterRender');///重新渲染select#chapterId
-                      layui.use('form', function() {
-                        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-                        form.render();
-                    });
-                   }
-                   loadData();
-             });
-            }
-            function selDropdownlist(n,parentValue) {
-                var childValue = $("select[name=sel"+n+"]").val();
-                if (childValue != "" && $("select[name=sel"+n+"]").find("option").length > 0) {
-                    $("#divsel"+n+"").show();
-                    if (childValue != -1 && childValue != null) {
-                        getTypeAttr(childValue);
-                    }
-                    else {
-                        getTypeAttr(parentValue);
-                    }
-                }
-                else {
-                    getTypeAttr(parentValue);
-                }
-            }
-            //==============获取【物资类型】属性end==================
             //==============打开【最近项目，装置】==================
 
             function openProject() {
@@ -497,109 +285,261 @@
                             }
                             $("#trody").append(tr);
                             winIndex= layer.open({
-                                      type: 1,
-                                      title: '打开最近工作...',
-                                      area: ['800px', '600px'],
-                                      minHeight:'200px',
-                                      content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                                      //,btn: ['按钮一', '按钮二', '按钮三']
-                                      //,yes: function(index, layero){
-                                      //  //按钮【按钮一】的回调
-                                      //}
-                                      //,btn2: function(index, layero){
-                                      //  //按钮【按钮二】的回调
+                                type: 1,
+                                title: '打开最近工作...',
+                                area: ['800px', '600px'],
+                                minHeight:'200px',
+                                content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                //,btn: ['按钮一', '按钮二', '按钮三']
+                                //,yes: function(index, layero){
+                                //  //按钮【按钮一】的回调
+                                //}
+                                //,btn2: function(index, layero){
+                                //  //按钮【按钮二】的回调
 
-                                      //    return false; 开启该代码可禁止点击该按钮关闭
-                                      //}
-                                      //,btn3: function(index, layero){
-                                      //  //按钮【按钮三】的回调
+                                //    return false; 开启该代码可禁止点击该按钮关闭
+                                //}
+                                //,btn3: function(index, layero){
+                                //  //按钮【按钮三】的回调
 
-                                      //  //return false 开启该代码可禁止点击该按钮关闭
-                                      //}
-                                      //,cancel: function(){
-                                      //  //右上角关闭回调
+                                //  //return false 开启该代码可禁止点击该按钮关闭
+                                //}
+                                //,cancel: function(){
+                                //  //右上角关闭回调
 
-                                      //  //return false 开启该代码可禁止点击该按钮关闭
-                                      //}
-                                   });
+                                //  //return false 开启该代码可禁止点击该按钮关闭
+                                //}
+                            });
                         }
                     }
-                  });
+                });
 
             }
-             //==============打开【最近项目，装置】end==================
-             //==============隐藏下拉框==================
-            function hidDropdownlist(currInt) {
-                currInt = currInt + 1;
-                for (var i = currInt; i < 10; i++) {//假设预留10个
-                    if ($("select[name=sel" + i + "]").length > 0) {
-                         $("select[name=sel" + i + "]").find("option:selected").text("");
-                         $("#divsel"+i+"").hide();
+            //==============打开【最近项目，装置】end==================
+
+
+
+            //物资分类
+            $("select[name=sel200]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                    form.render();
+                    bindEvent();
+                }
+            });
+            var index = 200;
+            var ddlCp = $("#divReplaceSel").html();
+
+
+            //加载物资类型
+            window.loadCompenetType = function (compenentTypeId) {
+                $("#divCPContainer").html('');
+                realDDP(compenentTypeId);
+            };
+
+            //加载下一层
+            window.loadChildCType = function (sel) {
+                var name = sel.elem.name;
+                var ind = name.replace("sel", "") * 1.0;
+                //移除子选项
+                for (var i = ind - 1; i > 0; i--) {
+                    var div = $("select[name=sel" + i + "]").parent().remove();
+                }
+                //清空属性
+                $("#divAttrContainer").html('');
+                index = ind - 1;
+                var value = sel.value;
+                //加载下一层
+                $.ajax({
+                    url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(),
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var sel = ddlCp.replace("{i}", index).replace("{i}", index).replace("{i}", index)
+                                .replace("{i}", index);
+                            $("#divCPContainer").append(sel);
+                            $("select[name=sel" + index + "]").dropdownlist({
+                                jsonData: data,
+                                defaultValue: "-1"
+                            });
+                            form.render();
+                            bindEvent();
+                        } else {
+                            loadAttr(value);
+                        }
+
+
+                    },
+                    error: function (erorData) {
+
                     }
-                 }
-             }
-             //==============隐藏下拉框end==================
+                })
+            }
 
+
+            window.realDDP = function (ctId) {
+                index = index + 1;
+                $.ajax({
+                    url: "/CommodityCodeSelect2/GetCompenetById?compenentTypeId=" + ctId,
+                    type: 'get',
+                    dataTyp: 'json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var sel = ddlCp.replace("{i}", index).replace("{i}", index).replace("{i}", index)
+                                .replace("{i}", index);
+                            $("#divCPContainer").prepend(sel);
+
+                            //项目
+                            $("select[name=sel" + index + "]").dropdownlist({
+                                jsonData: data,
+                                defaultValue: ctId
+                            });
+                            $.ajax({
+                                url: "/CommodityCodeSelect2/GetParentCompenetById?compenentTypeId=" + ctId,
+                                type: 'get',
+                                dataType: 'json',
+                                success: function (data) {
+                                    if (data.Success) {
+                                        realDDP(data.Data);
+                                    } else {
+                                        var last = '<label class="layui-form-label" >物资类型：</label>';
+                                        $("#divCPContainer").prepend(last);
+                                        form.render();
+                                        bindEvent();
+                                    }
+                                },
+                                error: function (errorData) {
+
+                                }
+                            });
+                        }
+                    },
+                    error: function (errorData) {
+
+                    }
+                });
+            }
+
+            //加载属性
+            window.loadAttr = function (ctId) {
+                var label = '<label class="layui-form-label" >{属性}：</label>';
+                var checkbox = ' <input type="checkbox" name="" title="{title}" Id="{ID}" lay-skin="primary">';
+                var divStart = '<div class="layui-inline layui-row layui-col-xs12">';
+                var divEnd = '</div>';
+                componentTypeId = ctId;
+                var divcheboxStart = ' <div class="layui-input-block">';
+
+                $("#divAttrContainer").html('');
+                $.ajax({
+                    url: "/CommodityCodeSelect2/GetAttributeByTypeId?compenentTypeId=" + ctId,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (data) {
+
+                        if (data.Success) {
+                            var result = "";
+                            for (var i = 0; i < data.Data.length; i++) {
+
+                                var labelStr = label.replace("{属性}", data.Data[i].AttrbuteName);
+                                var checkboxStrs = "";
+                                for (var j = 0; j < data.Data[i].AttributeValueModels.length; j++) {
+                                    checkboxStrs += checkbox
+                                        .replace("{title}", data.Data[i].AttributeValueModels[j].Value)
+                                        .replace("{ID}", data.Data[i].AttributeValueModels[j].Id);
+                                }
+                                var r = divStart + labelStr + divcheboxStart + checkboxStrs + divEnd + divEnd;
+                                result += r;
+                            }
+                            $("#divAttrContainer").html(result);
+                            form.render();
+                        }
+                    },
+                    error: function (errorData) {
+
+                    }
+
+                });
+
+
+            }
+
+            //绑定下拉框绑定事件
+            window.bindEvent = function () {
+                form.on('select(cpType)',
+                    function (data1) {
+                        componentTypeId = data1.value;
+                        loadChildCType(data1);
+                    });
+            }
+
+
+            window.search = function () {
+                var cpIds = new Array();
+                var checks = $("input[type=checkbox]:checked");
+                for (var i = 0; i < checks.length; i++) {
+                    cpIds.push($(checks[i]).attr("Id"));
+                }
+            }
         });
-         var winIndex = 0;
-          //==============确定【项目】【装置】==================
-            function selectProjectDevice() {
-                var projectId = $("#selProject2").val();
-                var deviceId = $("#selDevice2").val();
-                $("#selProject").html($("#selProject2").html());
-                $("#selDevice").html($("#selDevice2").html());
+    var winIndex = 0;
+    //==============确定【项目】【装置】==================
+    function selectProjectDevice() {
+        var projectId = $("#selProject2").val();
+        var deviceId = $("#selDevice2").val();
+        $("#selProject").html($("#selProject2").html());
+        $("#selDevice").html($("#selDevice2").html());
 
-                $("#selProject").val(projectId);
+        $("#selProject").val(projectId);
+        $("#selDevice").val(deviceId);
+        layui.form.render('select');
+        layer.close(winIndex);
+    }
+    //==============确定【项目】【装置】end==================
+    //==============选择【项目】【装置】==================
+    function projectClick(id,projectId, deviceId) {
+        $("#selProject").val(projectId);
+        $("#txtMtoId").val(id);
+        layui.form.render('select');
+        $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
+            //<option value="-1">全部</option>
+            if (result != null && result.length > 0) {
+                var optionHtml = "";
+                for (var i = 0; i < result.length; i++) {
+                    optionHtml += "<option value="+result[i].value+">"+result[i].text+"</option>";
+                }
+                $("#selDevice").html(optionHtml);
                 $("#selDevice").val(deviceId);
                 layui.form.render('select');
-                layer.close(winIndex);
-             }
-        //==============确定【项目】【装置】end==================
-         //==============选择【项目】【装置】==================
-        function projectClick(id,projectId, deviceId) {
-            $("#selProject").val(projectId);
-            $("#txtMtoId").val(id);
-            layui.form.render('select');
-            $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
-                //<option value="-1">全部</option>
-                if (result != null && result.length > 0) {
-                    var optionHtml = "";
-                    for (var i = 0; i < result.length; i++) {
-                        optionHtml += "<option value="+result[i].value+">"+result[i].text+"</option>";
-                    }
-                    $("#selDevice").html(optionHtml);
-                    $("#selDevice").val(deviceId);
-                      layui.form.render('select');
-                }
-                  layer.close(winIndex);
-            });
-                layer.close(winIndex);
-             }
-        //==============选择【项目】【装置】end==================
-          //==============打开【查看料表】==================
-        function openReoprt() {
-            var projectId = $("#selProject").val();
-            var deviceId = $("#selDevice").val();
-            var mtoId= $("#txtMtoId").val();
-            if ((projectId == -1 || projectId == "" || projectId == null) || (deviceId == -1 || deviceId == "" || deviceId == null)) {
-                layer.msg("【项目】和【装置】必须选择");
-                return;
             }
-            layer.open({
-                            type: 2,
-                            content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
-                            title: '选择采购码',
-                            area: ["1000px;", "700px;"]//宽 高
-                        });
-         }
-        //==============打开【查看料表】end==================
-        //==============显示隐藏属性=========//
+            layer.close(winIndex);
+        });
+        layer.close(winIndex);
+    }
+    //==============选择【项目】【装置】end==================
+    //==============打开【查看料表】==================
+    function openReoprt() {
+        var projectId = $("#selProject").val();
+        var deviceId = $("#selDevice").val();
+        var mtoId= $("#txtMtoId").val();
+        if ((projectId == -1 || projectId == "" || projectId == null) || (deviceId == -1 || deviceId == "" || deviceId == null)) {
+            layer.msg("【项目】和【装置】必须选择");
+            return;
+        }
+        layer.open({
+            type: 2,
+            content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
+            title: '选择采购码',
+            area: ["1000px;", "700px;"]//宽 高
+        });
+    }
+    //==============打开【查看料表】end==================
+    //==============显示隐藏属性=========//
 
     function changeVisivility() {
         var isShow = $("#usteel-condition").is(":hidden");
         if (isShow) {
             $("#usteel-condition").show();
-           $("#collaIcon").html(" &#xe61a; ");
+            $("#collaIcon").html(" &#xe61a; ");
 
         }
         else {
@@ -607,5 +547,58 @@
             $("#collaIcon").html(" &#xe602; ");
         }
     }
-        //============显示隐藏属性end==============//
+    //============显示隐藏属性end==============//
 </script>
+
+
+
+<script type="text/javascript">
+    //页面加载
+    $("#txtCode").autocomplete({
+        source: function (request, response) {
+            var name = $.ui.autocomplete.escapeRegex(request.term);
+            response($.grep(source(name), function (item) {
+                return item;
+            }));
+        },
+        select: function (data) {
+            setTimeout(function () {
+                var index = selectList.indexOf($("#txtCode").val());
+                //当前选中的Id
+                var compenentTypeId = selectIds[index];
+                loadCompenetType(compenentTypeId);
+                loadAttr(compenentTypeId);
+            }, 100);
+        }
+    });
+
+    var selectList = new Array();
+    var selectIds = new Array();
+    //利用ajax根据输入的到数据库查找 相当于
+    function source(name) {
+        console.log(name);
+        var desc = name;
+        var projectId = $("select[name=selProject]").val();
+        var result = new Array();
+        $.ajax({
+            url: "/CommodityCodeSelect2/GetCompenetTypeByMCDesc?desc=" +
+                encodeURIComponent(desc) +
+                "&projectId=" +
+                projectId,
+            type: "get",
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                if (dealResult(data)) {
+                    for (var i = 0; i < data.Data.length; i++) {
+                        selectIds[i] = data.Data[i].ComponentTypeId;
+                        result[i] = data.Data[i].ComponentTypeDesc + "(" + data.Data[i].Count + ")";
+                    }
+                }
+            }
+        });
+        selectList = result;
+        return result;
+    }
+</script>
+

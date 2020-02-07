@@ -124,23 +124,22 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="page">第几页</param>
         /// <param name="limit">每页显示的记录数</param>
         /// <param name="componentTypeId">物资类型ID</param>
-        /// <param name="attrName">属性名称 </param>
-        /// <param name="attrValue">属性值，多个值 用逗号隔开</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,string attrName,string attrValue)
+        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,List<string> compenentCodeIds)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
             dataPage.PageSize = limit;
-            attrName = HttpUtility.UrlDecode(attrName);
-            attrValue = HttpUtility.UrlDecode(attrValue);
+            //attrName = HttpUtility.UrlDecode(attrName);
+            //attrValue = HttpUtility.UrlDecode(attrValue);
             CommodityCodeSerachCondition condition = new CommodityCodeSerachCondition();
-            condition.AttrName = attrName;
-            if (!string.IsNullOrEmpty(attrValue))
-            {
-                condition.AttrValue = attrValue.Split(',').ToList();
-            }
+            //condition.AttrName = attrName;
+            //if (!string.IsNullOrEmpty(attrValue))
+            //{
+            //    condition.AttrValue = attrValue.Split(',').ToList();
+            //}
             condition.ComponentTypeId = componentTypeId;
+            condition.CompenetCodeIds = compenentCodeIds;
             condition.Page = dataPage;
             condition.Code = code;          
             var list = await this.Service.GetCommodityCodeDataList(condition);

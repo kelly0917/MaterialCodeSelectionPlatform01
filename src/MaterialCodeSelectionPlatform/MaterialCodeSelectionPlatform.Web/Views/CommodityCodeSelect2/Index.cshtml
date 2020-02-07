@@ -29,15 +29,15 @@
 
         </div>
         <div class="layui-inline " style="width:500px">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="search()">搜索</button>
         </div>
     </div>
     @*物资类型*@
     <div class="layui-form-item search">
         <div class="layui-inline" id="divCPContainer">
             <label class="layui-form-label">物资类型：</label>
-            <div class="layui-input-inline" id="divsel1">
-                <select lay-search name="sel1"  lay-filter="cpType"></select>
+            <div class="layui-input-inline" id="divsel200">
+                <select lay-search name="sel200"  lay-filter="cpType"></select>
             </div>
         </div>
         <div class="layui-inline layui-float-rigth" style="float:right">
@@ -81,7 +81,6 @@
 
     var selectList = new Array();
     var selectIds = new Array();
-
     //利用ajax根据输入的到数据库查找 相当于
     function source(name) {
         console.log(name);
@@ -108,8 +107,6 @@
         selectList = result;
         return result;
     }
-
-
 </script>
 
 <script type="text/javascript">
@@ -141,11 +138,13 @@
                 });
           
             //物资分类
-            $("select[name=sel1]").dropdownlist({
+            $("select[name=sel200]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                    form.render();
+                    bindEvent();
                 }
             });
-            var index = 0;
+            var index = 200;
             var ddlCp = $("#divReplaceSel").html();
 
       
@@ -254,7 +253,7 @@
                     type: 'get',
                     dataType: 'json',
                     success: function(data) {
-                        debugger;
+               
                         if (data.Success) {
                             var result = "";
                             for (var i = 0; i < data.Data.length; i++) {
@@ -290,6 +289,14 @@
                     });
             }
 
+
+            window.search = function () {
+                var cpIds = new Array();
+                var checks = $("input[type=checkbox]:checked");
+                for (var i = 0; i < checks.length; i++) {
+                    cpIds.push($(checks[i]).attr("Id"));
+                }
+            }
         });
 
 </script>
