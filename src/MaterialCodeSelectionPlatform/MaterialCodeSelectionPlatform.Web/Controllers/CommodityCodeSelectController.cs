@@ -292,7 +292,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     }
                 }
                 #endregion
-                var saveFilePath = saveDir + excelName + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                var saveFilePath = saveDir + excelName + "_" +DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
                 var newPath =ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
                 var file= DownLoad(newPath);               
                 return file;
