@@ -72,7 +72,8 @@ namespace MaterialCodeSelectionPlatform.Data
             List<string> commodityCodeIdList = new List<string>();
             var queryC = Db.Queryable<CommodityCodeAttribute>()
                 .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
-            if (condition.CompenetAttributes.Count>0)
+            var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
+            if (condition.CompenetAttributes.Count > 0)
             {
                 // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
                 // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
@@ -90,27 +91,27 @@ namespace MaterialCodeSelectionPlatform.Data
 
                 commodityCodeIdList = commodityCodeIdList.Distinct().ToList();
 
+             
+
             }
             else
             {
                 commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
             }
 
-            var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             query = query.Where((a, b) => a.Status == 0);
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b) => a.ComponentTypeId== condition.ComponentTypeId);
+                query = query.Where((a, b) => a.ComponentTypeId == condition.ComponentTypeId);
             }
-            if (commodityCodeIdList.Count > 0)
-            {
-                query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
-            }
+
+            query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
+
             //if (condition.Code.IsNotNullAndNotEmpty())
             //{
             //    query = query.Where((a, b) => a.Code.Contains(condition.Code));
             //}
-          
+
             query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
             var total = 0;
             var data = await query.Select((a, b) => (new CommodityCodeDto { Id = a.Id, Desc = b.Desc, Code = a.Code, CN_ShortDesc = a.CN_ShortDesc })).ToPageListAsync(condition.Page.PageNo, condition.Page.PageSize, total);
@@ -132,12 +133,12 @@ namespace MaterialCodeSelectionPlatform.Data
             var query = Db.Queryable<CommodityCodeAttribute>();
             if (id.IsNotNullAndNotEmpty())
             {
-                query = query.Where(a => a.CommodityCodeId==id && a.Status==0).OrderBy(a=>a.SeqNo);
+                query = query.Where(a => a.CommodityCodeId == id && a.Status == 0).OrderBy(a => a.SeqNo);
                 // 更新点击的次数
-                var value = Db.Updateable<CommodityCode>().UpdateColumns(it => new { it.Hits }).ReSetValue(it => it.Hits == (it.Hits + 1)).Where(it=>it.Id==id).ExecuteCommand();
+                var value = Db.Updateable<CommodityCode>().UpdateColumns(it => new { it.Hits }).ReSetValue(it => it.Hits == (it.Hits + 1)).Where(it => it.Id == id).ExecuteCommand();
 
             }
-            var list = await query.ToListAsync();           
+            var list = await query.ToListAsync();
             return list;
         }
         /// <summary>
@@ -153,19 +154,19 @@ namespace MaterialCodeSelectionPlatform.Data
             */
             #endregion
             List<ComponentTypeAttribute> attrList = new List<ComponentTypeAttribute>();
-            var list =await Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0 &&c.AttributeValue!="" && c.ComponentTypeId== id).ToListAsync();
-            if(list!=null&& list.Count>0)
+            var list = await Db.Queryable<CommodityCodeAttribute>().Where(c => c.Status == 0 && c.AttributeValue != "" && c.ComponentTypeId == id).ToListAsync();
+            if (list != null && list.Count > 0)
             {
                 var resut = from p in list
                             group p by p.AttributeName into g
                             orderby g.Key
                             select new ComponentTypeAttribute()
                             {
-                                AttributeName = g.Key,                              
+                                AttributeName = g.Key,
                                 ValueList = g.Select(c => c.AttributeValue).Distinct().ToList()
-                            };              
+                            };
                 attrList = resut.ToList();
-            }         
+            }
             return attrList;
         }
         /// <summary>
@@ -176,7 +177,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="projectId">项目ID</param>
         /// <param name="deviceId">装置Id</param>
         /// <returns></returns>
-        public async Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId,string userId,string projectId,string deviceId)
+        public async Task<List<PartNumberReport>> GetCommodityCodePartNumberList(string commodityCodeId, string userId, string projectId, string deviceId)
         {
             #region sql
             /*
@@ -213,16 +214,16 @@ namespace MaterialCodeSelectionPlatform.Data
 			                                         ORDER BY Version DESC)
              ) b ON a.id = b.PartNumberId
             WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by a.CN_SizeDesc asc";
-           var partNumberList= Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId =userId, CommodityCodeId = commodityCodeId, projectId = projectId, deviceId = deviceId });           
-            var resut =  from p in partNumberList
+            var partNumberList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId = userId, CommodityCodeId = commodityCodeId, projectId = projectId, deviceId = deviceId });
+            var resut = from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
                         select new PartNumberReport()
                         {
-                           ComponentTypeName=g.Key,
-                           PartNumberList= g.ToList()
+                            ComponentTypeName = g.Key,
+                            PartNumberList = g.ToList()
                         };
-            return await Task.Run(()=>{ return resut.ToList(); }); 
+            return await Task.Run(() => { return resut.ToList(); });
         }
         /// <summary>
         /// 保存【物资汇总明细表】
@@ -244,7 +245,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 if (mto != null)
                 {
                     #region 获取原有的记录
-                    var entList = new{Id="", DesignQty=0 };
+                    var entList = new { Id = "", DesignQty = 0 };
                     var oldList = Db.Queryable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId);
                     var sList = oldList.Select(c => new { Id = c.PartNumberId, DesignQty = c.DesignQty }).ToList();
                     var tList = condtion.PartNumberDtoList.Select(c => new { Id = c.Id, DesignQty = c.DesignQty }).ToList();
@@ -271,8 +272,8 @@ namespace MaterialCodeSelectionPlatform.Data
                             addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                         }
                     }
-                      
-                       
+
+
                 }
                 else
                 {
@@ -299,10 +300,10 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="userId">用户ID</param>
         ///  <param name="checkStatus">审批状态【1：working 】【2：approved】</param>
         ///   <param name="version">版次</param>
-        private MaterialTakeOff addMaterialTakeOff(string projectId,string deviceId,string userId,int checkStatus=1,int version=0)
+        private MaterialTakeOff addMaterialTakeOff(string projectId, string deviceId, string userId, int checkStatus = 1, int version = 0)
         {
             #region 物资汇总表
-           var  mto = new MaterialTakeOff();
+            var mto = new MaterialTakeOff();
             mto.Id = Guid.NewGuid().ToString(); ;
             mto.CheckStatus = checkStatus;//审批状态【1：working 】【2：approved】
             mto.Version = version;
@@ -371,14 +372,14 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="projectid">项目ID</param>
         /// <param name="deviceid">装置Id</param>
         /// <returns></returns>
-        private async Task<MaterialTakeOff> getOnwerTopMaterialTakeOff(string userid,string projectid,string deviceid)
+        private async Task<MaterialTakeOff> getOnwerTopMaterialTakeOff(string userid, string projectid, string deviceid)
         {
             #region sql
             /*
            SELECT TOP 1 * FROM MaterialTakeOff WHERE CreateUserId='' AND ProjectId='' AND DeviceId='' AND Status=0 ORDER BY Version desc
             */
             #endregion
-            var model =await Db.Queryable<MaterialTakeOff>().Where(c=>c.Status==0 && c.CreateUserId==userid && c.ProjectId== projectid && c.DeviceId == deviceid).OrderBy(c=>c.LastModifyTime,OrderByType.Desc).FirstAsync();
+            var model = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userid && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
             return model;
         }
         /// <summary>
@@ -442,7 +443,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-       public async  Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid, int downLoad)
+        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid, int downLoad)
         {
             #region SQL 
             /*
@@ -486,7 +487,7 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 var project = Db.Queryable<Project>().Where(c => c.Status == 0 && c.Id == projectid).Single();
                 var device = Db.Queryable<Device>().Where(c => c.Status == 0 && c.Id == deviceid).Single();
-                var user = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id ==userId).Single();
+                var user = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id == userId).Single();
                 resutList.ForEach(c =>
                 {
                     c.ProjectName = project?.Name;
@@ -496,14 +497,14 @@ namespace MaterialCodeSelectionPlatform.Data
                     c.DeviceRemark = device?.Remark;
                     c.UserName = user?.Name;
                     c.DateTime = DateTime.Now.ToString("yyyy-MM-dd");
-                    
+
                 });
             }
             #endregion
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent =await Db.Queryable<MaterialTakeOff>().Where(it => it.Status==0&& it.ProjectId==projectid &&it.DeviceId==deviceid && it.CreateUserId==userId&&it.CheckStatus==1).OrderBy(it=>it.LastModifyTime,OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId && it.CheckStatus == 1).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
                     ent.CheckStatus = 2;

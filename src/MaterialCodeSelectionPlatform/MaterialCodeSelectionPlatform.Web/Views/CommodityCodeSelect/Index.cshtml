@@ -138,6 +138,7 @@
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
                     var attrName = $(checks[i]).attr("AttrName");
+                  
                     var attrValue = $(checks[i]).attr("title");
                     cpIds.push({AttrName:attrName,AttrValue:attrValue});
                 }
@@ -423,7 +424,7 @@
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
-                var checkbox = ' <input type="checkbox" name="" title="{title}" Id="{AttrName}" lay-skin="primary">';
+                var checkbox = ' <input type="checkbox" name="" title="{title}" AttrName="{AttrName}" lay-skin="primary">';
                 var divStart = '<div class="layui-inline layui-row layui-col-xs12">';
                 var divEnd = '</div>';
                 componentTypeId = ctId;
@@ -442,9 +443,9 @@
 
                                 var labelStr = label.replace("{属性}", data.Data[i].AttrbuteName);
                                 var checkboxStrs = "";
-                                for (var j = 0; j < data.Data[i].AttributeValueModels.length; j++) {
+                                for (var j = 0; j < data.Data[i].AttributeValues.length; j++) {
                                     checkboxStrs += checkbox
-                                        .replace("{title}", data.Data[i].AttributeValueModels[j].Value)
+                                        .replace("{title}", data.Data[i].AttributeValues[j])
                                         .replace("{AttrName}", data.Data[i].AttrbuteName);
                                 }
                                 var r = divStart + labelStr + divcheboxStart + checkboxStrs + divEnd + divEnd;
