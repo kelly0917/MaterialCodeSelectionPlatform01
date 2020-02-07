@@ -6,14 +6,16 @@ namespace MaterialCodeSelectionPlatform.Domain.DTO
     {
         public string AttrbuteName { get; set; }
 
-        public List<AttributeValueModel> AttributeValueModels { get; set; }
+        public List<string> AttributeValues { get; set; }
     }
 
 
-    public class AttributeValueModel
-    {
-        public string Id { get; set; }
+   
 
-        public string Value { get; set; }
+    public class AttributeModel
+    {
+        public string AttrName { get; set; }
+
+        public string AttrValue { get; set; }
     }
 }
