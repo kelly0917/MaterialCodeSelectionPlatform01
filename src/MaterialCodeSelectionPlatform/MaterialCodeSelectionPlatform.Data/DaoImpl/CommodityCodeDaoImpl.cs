@@ -70,8 +70,7 @@ namespace MaterialCodeSelectionPlatform.Data
             */
             #endregion
             List<string> commodityCodeIdList = new List<string>();
-            var queryC = Db.Queryable<CommodityCodeAttribute>()
-                .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
+          
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             if (condition.CompenetAttributes.Count > 0)
             {
@@ -80,6 +79,8 @@ namespace MaterialCodeSelectionPlatform.Data
 
                 foreach (var conditionCompenetAttribute in condition.CompenetAttributes)
                 {
+                    var queryC = Db.Queryable<CommodityCodeAttribute>()
+                        .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
                     var tempList = await queryC.Where(c =>
                         c.AttributeName == conditionCompenetAttribute.AttrName &&
                         conditionCompenetAttribute.AttrValue == (c.AttributeValue)).ToListAsync();
@@ -96,6 +97,8 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             else
             {
+                var queryC = Db.Queryable<CommodityCodeAttribute>()
+                    .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
                 commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
             }
 
