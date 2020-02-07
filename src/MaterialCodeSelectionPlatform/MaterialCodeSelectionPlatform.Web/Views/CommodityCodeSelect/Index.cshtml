@@ -34,16 +34,16 @@
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label" style="width: auto;">物资类型</label>
             <div class="layui-input-inline">
-                <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:100%" />
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:500px" />
             </div>
-
-        </div>
-        <div class="layui-inline " style="width:500px">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
         <div class="layui-inline layui-float-rigth" style="float:right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
+        <div class="layui-inline layui-float-rigt" style="float:right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+
     </div>
     @*物资类型*@
     <div class="layui-form-item search">
@@ -270,7 +270,7 @@
                         layer.msg(result.message);
                     }
                     else {
-                        if (result.data.length > 0) {
+                        if (result.data.length >= 0) {
                             var tr= "";
                             for (var i = 0; i < result.data.length; i++) {
                                 var ent = result.data[i];
