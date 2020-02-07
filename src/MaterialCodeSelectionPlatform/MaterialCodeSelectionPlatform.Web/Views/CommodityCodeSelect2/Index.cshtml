@@ -32,18 +32,19 @@
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
     </div>
+    @*物资类型*@
     <div class="layui-form-item search">
         <div class="layui-inline" id="divCPContainer">
             <label class="layui-form-label">物资类型：</label>
             <div class="layui-input-inline" id="divsel1">
-                <select lay-search name="sel1" lay-filter="sel1"></select>
+                <select lay-search name="sel1"  lay-filter="cpType"></select>
             </div>
         </div>
         <div class="layui-inline layui-float-rigth" style="float:right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
     </div>
-
+    @*属性值列表*@
     <div class="layui-form-item search" id="divAttrContainer">
         
        
@@ -53,7 +54,7 @@
 
 <div style="display: none" id="divReplaceSel">
     <div class="layui-input-inline" id="divsel{i}" index="{i}">
-        <select lay-search name="sel{i}" lay-filter="sel{i}"></select>
+        <select lay-search name="sel{i}" lay-filter="cpType"></select>
     </div>
 </div>
 
@@ -135,9 +136,6 @@
                     $("select[name=selDevice]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
-                            //if ($("select[name=sel2]").val() != "") {
-                            //    $("#divsel2").show();
-                            //}
                         }
                     });
                 });
@@ -155,8 +153,48 @@
             window.loadCompenetType = function (compenentTypeId) {
                 $("#divCPContainer").html('');
                 realDDP(compenentTypeId);
-            
             };
+
+            //加载下一层
+            window.loadChildCType = function(sel) {
+                var name = sel.elem.name;
+                var ind = name.replace("sel", "") * 1.0;
+                //移除子选项
+                for (var i = ind-1; i > 0; i--) {
+                    var div = $("select[name=sel" + i + "]").parent().remove();
+                }
+                //清空属性
+                $("#divAttrContainer").html('');
+                index = ind - 1;
+                var value = sel.value;
+                //加载下一层
+                $.ajax({
+                    url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=" + value + "&pt=" + Math.random(),
+                    type: "get",
+                    dataType: "json",
+                    success: function(data) {
+                        if (data.length > 0) {
+                            var sel = ddlCp.replace("{i}", index).replace("{i}", index).replace("{i}", index)
+                                .replace("{i}", index);
+                            $("#divCPContainer").append(sel);
+                            $("select[name=sel" + index + "]").dropdownlist({
+                                jsonData: data,
+                                defaultValue: "-1"
+                            });
+                            form.render();
+                            bindEvent();
+                        } else {
+                            loadAttr(value);
+                        }
+
+
+                    },
+                    error: function(erorData) {
+
+                    }
+                })
+            }
+
 
             window.realDDP=function(ctId) {
                 index = index + 1;
@@ -164,27 +202,29 @@
                     url: "/CommodityCodeSelect2/GetCompenetById?compenentTypeId=" + ctId,
                     type: 'get',
                     dataTyp: 'json',
-                    success: function (data) {
+                    success: function(data) {
                         if (data.length > 0) {
-                            var sel = ddlCp.replace("{i}", index).replace("{i}", index).replace("{i}", index).replace("{i}", index);
+                            var sel = ddlCp.replace("{i}", index).replace("{i}", index).replace("{i}", index)
+                                .replace("{i}", index);
                             $("#divCPContainer").prepend(sel);
 
                             //项目
-                            $("select[name=sel"+index+"]").dropdownlist({
-                                jsonData:data,
-                                defaultValue:ctId
+                            $("select[name=sel" + index + "]").dropdownlist({
+                                jsonData: data,
+                                defaultValue: ctId
                             });
                             $.ajax({
                                 url: "/CommodityCodeSelect2/GetParentCompenetById?compenentTypeId=" + ctId,
                                 type: 'get',
                                 dataType: 'json',
-                                success: function (data) {
+                                success: function(data) {
                                     if (data.Success) {
                                         realDDP(data.Data);
                                     } else {
                                         var last = '<label class="layui-form-label" >物资类型：</label>';
                                         $("#divCPContainer").prepend(last);
                                         form.render();
+                                        bindEvent();
                                     }
                                 },
                                 error: function(errorData) {
@@ -196,7 +236,7 @@
                     error: function(errorData) {
 
                     }
-                })
+                });
             }
 
             //加载属性
@@ -213,12 +253,12 @@
                     url: "/CommodityCodeSelect2/GetAttributeByTypeId?compenentTypeId=" + ctId,
                     type: 'get',
                     dataType: 'json',
-                    success: function (data) {
+                    success: function(data) {
                         debugger;
                         if (data.Success) {
                             var result = "";
                             for (var i = 0; i < data.Data.length; i++) {
-                               
+
                                 var labelStr = label.replace("{属性}", data.Data[i].AttrbuteName);
                                 var checkboxStrs = "";
                                 for (var j = 0; j < data.Data[i].AttributeValueModels.length; j++) {
@@ -226,7 +266,7 @@
                                         .replace("{title}", data.Data[i].AttributeValueModels[j].Value)
                                         .replace("{ID}", data.Data[i].AttributeValueModels[j].Id);
                                 }
-                                var r = divStart + labelStr +divcheboxStart + checkboxStrs + divEnd+ divEnd;
+                                var r = divStart + labelStr + divcheboxStart + checkboxStrs + divEnd + divEnd;
                                 result += r;
                             }
                             $("#divAttrContainer").html(result);
@@ -237,9 +277,17 @@
 
                     }
 
-                })
+                });
 
 
+            }
+
+            //绑定下拉框绑定事件
+            window.bindEvent = function() {
+                form.on('select(cpType)',
+                    function (data1) {
+                        loadChildCType(data1);
+                    });
             }
 
         });

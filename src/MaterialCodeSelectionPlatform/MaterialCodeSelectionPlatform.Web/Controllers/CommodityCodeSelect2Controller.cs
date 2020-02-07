@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -63,7 +64,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 
             var result = await componentTypeService.GetByParentId("ParentId", currentCompType.ParentId);
 
-            var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id });
+            var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+            list.Insert(0,new DropDownListItemDTO(){Text = "全部",Value = "-1"});
             return Json(list);
         }
 
