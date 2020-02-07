@@ -16,5 +16,15 @@ namespace MaterialCodeSelectionPlatform.Service
         {
             return await _ComponentTypeDao.GetByCommodityCodeDesc(projectId, desc);
         }
+
+        /// <summary>
+        /// 获取物资类型的物资编码获取对应的属性和属性值
+        /// </summary>
+        /// <param name="compenentTypeId"></param>
+        /// <returns></returns>
+        public async Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId)
+        {
+            return await _ComponentTypeDao.GetAttributeByCompenetType(compenentTypeId);
+        }
     }
 }
