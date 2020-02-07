@@ -77,20 +77,52 @@ namespace MaterialCodeSelectionPlatform.Data
                 // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
                 // var tempList = Db.Queryable<CommodityCodeAttribute>().Where(c=>c.Status==0&&c.AttributeName==condition.AttrName&&condition.AttrValue.Contains(c.AttributeValue)).GroupBy(it => new { it.ComponentTypeId}).Select(it => new { it.ComponentTypeId}).ToList();
 
-                foreach (var conditionCompenetAttribute in condition.CompenetAttributes)
+                var attrbuteNames = condition.CompenetAttributes.Select(c => c.AttrName).Distinct().ToList();
+
+                
+
+                foreach (var attrbuteName in attrbuteNames)
                 {
-                    var queryC = Db.Queryable<CommodityCodeAttribute>()
-                        .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
-                    var tempList = await queryC.Where(c =>
-                        c.AttributeName == conditionCompenetAttribute.AttrName &&
-                        conditionCompenetAttribute.AttrValue == (c.AttributeValue)).ToListAsync();
-                    if (tempList != null && tempList.Count > 0)
+                    if (commodityCodeIdList.Count > 0)
                     {
-                        commodityCodeIdList.AddRange(tempList.Select(c => c.CommodityCodeId).ToList());
+                        var queryC = Db.Queryable<CommodityCodeAttribute>()
+                            .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
+
+                        var values = condition.CompenetAttributes.Where(c => c.AttrName == attrbuteName)
+                            .Select(c => c.AttrValue).Distinct().ToList();
+
+                        var list  = await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c=>c.CommodityCodeId).ToListAsync();
+                        var oldList = commodityCodeIdList.ToList();
+                        commodityCodeIdList = list.Where(c=> oldList.Contains(c)).Distinct().ToList();
                     }
+                    else
+                    {
+                        var queryC = Db.Queryable<CommodityCodeAttribute>()
+                            .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
+
+                        var values = condition.CompenetAttributes.Where(c => c.AttrName == attrbuteName)
+                            .Select(c => c.AttrValue).Distinct().ToList();
+
+                        var list  =await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c=>c.CommodityCodeId).ToListAsync();
+                        commodityCodeIdList = list.Distinct().ToList();
+                    }
+                    
                 }
 
-                commodityCodeIdList = commodityCodeIdList.Distinct().ToList();
+
+                //foreach (var conditionCompenetAttribute in condition.CompenetAttributes)
+                //{
+                  
+                //    var tempList = await queryC.Where(c =>
+                //        c.AttributeName == conditionCompenetAttribute.AttrName &&
+                //        conditionCompenetAttribute.AttrValue == (c.AttributeValue)).ToListAsync();
+                //    if (tempList != null && tempList.Count > 0)
+                //    {
+                //        commodityCodeIdList.AddRange(tempList.Select(c => c.CommodityCodeId).ToList());
+                //    }
+                //}
+
+              
 
              
 
@@ -324,6 +356,7 @@ namespace MaterialCodeSelectionPlatform.Data
         }
         private void addMaterialTakeOffDetail(List<PartNumberDto> list, List<MaterialTakeOffDetail> listDetail, List<string> partIds, string projectId, string deviceId, string userId, CommodityCode commodityCode, MaterialTakeOff mto)
         {
+            var value = Db.Updateable<CommodityCode>().UpdateColumns(it => new { it.Hits }).ReSetValue(it => it.Hits == (it.Hits + 1)).Where(it => it.Id == commodityCode.Id).ExecuteCommand();
             var partNumberList = Db.Queryable<PartNumber>().In(partIds).ToList();
             if (partNumberList != null && partNumberList.Count > 0)
             {
