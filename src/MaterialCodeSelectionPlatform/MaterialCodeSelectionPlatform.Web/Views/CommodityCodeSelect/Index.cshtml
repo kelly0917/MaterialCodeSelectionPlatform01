@@ -123,7 +123,8 @@
 </script>
 
 <script type="text/javascript">
-    var componentTypeId="";
+    var componentTypeId = "";
+    var userInputText = "";//用户搜索的内容
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -145,10 +146,10 @@
 
                 table.render({
                     elem: '#tbCommodityCodeList',
-                    height: 'full-80',
+               
                     method:'post',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
                     ,where: {compenentCodeIds:cpIds}
                     , page: true //开启分页
                     , limit: 15
@@ -470,6 +471,7 @@
                     function (data1) {
                         componentTypeId = data1.value;
                         loadChildCType(data1);
+                        userInputText = "";
                     });
             }
 
@@ -558,6 +560,7 @@
     $("#txtCode").autocomplete({
         source: function (request, response) {
             var name = $.ui.autocomplete.escapeRegex(request.term);
+            userInputText = name;
             response($.grep(source(name), function (item) {
                 return item;
             }));
@@ -569,6 +572,8 @@
                 var compenentTypeId = selectIds[index];
                 loadCompenetType(compenentTypeId);
                 loadAttr(compenentTypeId);
+
+                loadData();
             }, 100);
         }
     });

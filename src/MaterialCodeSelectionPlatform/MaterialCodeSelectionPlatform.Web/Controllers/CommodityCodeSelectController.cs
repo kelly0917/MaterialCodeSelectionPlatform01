@@ -126,7 +126,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="limit">每页显示的记录数</param>
         /// <param name="componentTypeId">物资类型ID</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string code, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds)
+        public async Task<IActionResult> GetCommodityCodeDataList(string inputText, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
@@ -142,7 +142,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             condition.ComponentTypeId = componentTypeId;
             condition.CompenetAttributes = compenentCodeIds;
             condition.Page = dataPage;
-            condition.Code = code;          
+            condition.InputText = inputText;          
             var list = await this.Service.GetCommodityCodeDataList(condition);
             return ConvertListResult(list, dataPage);
         }

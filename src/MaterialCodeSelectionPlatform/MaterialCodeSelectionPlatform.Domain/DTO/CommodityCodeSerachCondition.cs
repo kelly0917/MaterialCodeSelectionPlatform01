@@ -19,7 +19,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// <summary>
         /// 编码
         /// </summary>
-        public string Code { get; set; }
+        public string InputText { get; set; }
         ///// <summary>
         ///// 属性名称
         ///// </summary>

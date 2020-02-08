@@ -70,7 +70,13 @@ namespace MaterialCodeSelectionPlatform.Data
             */
             #endregion
             List<string> commodityCodeIdList = new List<string>();
-          
+
+            if (condition.InputText.IsNotNullAndNotEmpty())
+            {
+                commodityCodeIdList =await Db.Queryable<CommodityCode>()
+                    .Where(c => c.CN_LongDesc.Contains(condition.InputText)).Select(c => c.Id).ToListAsync();
+            }
+
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
             if (condition.CompenetAttributes.Count > 0)
             {
@@ -122,17 +128,24 @@ namespace MaterialCodeSelectionPlatform.Data
                 //    }
                 //}
 
-              
-
-             
-
             }
             else
             {
                 var queryC = Db.Queryable<CommodityCodeAttribute>()
                     .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
-                commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
+                if (commodityCodeIdList.Count > 0)
+                {
+                    var oldList = commodityCodeIdList.ToList();
+                    commodityCodeIdList = await queryC.Where(c=>oldList.Contains(c.CommodityCodeId)).Select(c => c.CommodityCodeId).ToListAsync();
+                }
+                else
+                {
+                    commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
+                }
+            
             }
+
+
 
             query = query.Where((a, b) => a.Status == 0);
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
