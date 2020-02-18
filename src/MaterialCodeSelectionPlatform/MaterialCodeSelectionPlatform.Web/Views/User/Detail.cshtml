@@ -11,6 +11,17 @@
     .layui-input-block {
         margin-left: 150px;
     }
+    input {
+        border: 0px !important;
+        outline: none !important;
+       
+    }
+    .layui-edge {
+        display: none !important;
+    }
+    .layui-form-select .layui-input {
+        color:black !important
+    }
 </style>
 <link href="~/css/formSelects-v4.css" rel="stylesheet" />
 <script src="~/js/script/md5.js"></script>
@@ -23,28 +34,52 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">登录名：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="LoginName" required lay-verify="required|loginname" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+                    <input type="text"   readonly="readonly"  name="LoginName" required lay-verify="required|loginname" tag="请输入登录名" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">姓名：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="Name" required lay-verify="required|trueNameverdata" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                    <input type="text"   readonly="readonly"  name="Name" required lay-verify="required|trueNameverdata" tag="请输入姓名" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">域账户：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="DomainUserName"  autocomplete="off" class="layui-input">
+                    <input type="text"   readonly="readonly"  name="DomainUserName" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">性别：</label>
                 <div class="layui-input-block">
-                    <select name="Sex" lay-search>
+                    <select name="Sex" lay-search disabled="disabled">
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">专业：</label>
+                <div class="layui-input-block">
+                    <input type="text"   readonly="readonly"  name="Discipline" lay-verify="" tag="请输入专业" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">移动电话：</label>
+                <div class="layui-input-block">
+                    <input type="text"   readonly="readonly"  name="Mobilephone" lay-verify="" tag="请输入移动电话" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">座机：</label>
+                <div class="layui-input-block">
+                    <input type="text"   readonly="readonly"  name="Telephone" lay-verify="" tag="请输入座机" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱：</label>
+                <div class="layui-input-block">
+                    <input type="text"   readonly="readonly"  name="Email" lay-verify="" tag="请输入邮箱" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </div>
@@ -53,7 +88,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">角色：</label>
         <div class="layui-input-block">
-            <select name="Role" lay-search>
+            <select name="Role" lay-search disabled="disabled">
                 <option value="0">超级管理员</option>
                 <option value="1">应用管理员</option>
                 <option value="2">普通用户</option>

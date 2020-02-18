@@ -55,6 +55,8 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string DRAW_DISCIPLINE_NO { get; set; }
 		
 		public virtual int? APPROVAL_STATUS_NO { get; set; }
+		
+		public virtual string CATALOG_ID { get; set; }
 		}
 
     /// <summary>
@@ -140,7 +142,7 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual int? Version { get; set; }
 		
 		public virtual string ProjectId { get; set; }
-
+		
 		public virtual string DeviceId { get; set; }
 								}
 
@@ -212,6 +214,14 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual int? Sex { get; set; }
 								
 		public virtual string DomainUserName { get; set; }
+		
+		public virtual string Discipline { get; set; }
+		
+		public virtual string Mobilephone { get; set; }
+		
+		public virtual string Telephone { get; set; }
+		
+		public virtual string Email { get; set; }
 		}
 
     /// <summary>

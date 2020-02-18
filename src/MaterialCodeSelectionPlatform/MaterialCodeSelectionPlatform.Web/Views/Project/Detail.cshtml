@@ -11,6 +11,20 @@
     .layui-input-block {
         margin-left: 150px;
     }
+    .layui-input-block {
+        margin-left: 150px;
+    }
+    input {
+        border: 0px !important;
+        outline: none !important;
+       
+    }
+    .layui-edge {
+        display: none !important;
+    }
+    .layui-form-select .layui-input {
+        color:black !important
+    }
 </style>
 <link href="~/css/formSelects-v4.css" rel="stylesheet" />
 <script src="~/js/script/md5.js"></script>
@@ -23,13 +37,13 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">项目名称：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="Name" required lay-verify="required|name" placeholder="请输入项目名称" autocomplete="off" class="layui-input" maxlength="50">
+                    <input type="text" name="Name" required lay-verify="required|name" tag="请输入项目名称" autocomplete="off" class="layui-input" maxlength="50">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">项目编码：</label>
                 <div class="layui-input-block">
-                    <input type="text" name="Code" required lay-verify="required|code" placeholder="请输入项目编码" autocomplete="off" class="layui-input" maxlength="50">
+                    <input type="text" name="Code" required lay-verify="required|code" tag="请输入项目编码" autocomplete="off" class="layui-input" maxlength="50">
                 </div>
             </div>
           
