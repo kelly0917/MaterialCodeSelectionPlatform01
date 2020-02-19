@@ -10,6 +10,13 @@
     .layui-form-label {
         width: 100px;
     }
+    .checkboxContent {
+        height: 20px;
+        overflow: hidden;
+    }
+    .checkboxContent:hover {
+        height: auto;
+    }
 </style>
 
 <link href="~/js/jquery-ui.css" rel="stylesheet" />
@@ -429,7 +436,7 @@
                 var divStart = '<div class="layui-inline layui-row layui-col-xs12">';
                 var divEnd = '</div>';
                 componentTypeId = ctId;
-                var divcheboxStart = ' <div class="layui-input-block">';
+                var divcheboxStart = ' <div class="layui-input-block checkboxContent">';
 
                 $("#divAttrContainer").html('');
                 $.ajax({

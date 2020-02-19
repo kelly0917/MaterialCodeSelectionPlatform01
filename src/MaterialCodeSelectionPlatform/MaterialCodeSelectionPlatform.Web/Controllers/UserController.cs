@@ -288,6 +288,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             mobColumns.Add("性别");
             mobColumns.Add("角色");
             mobColumns.Add("密码");
+            mobColumns.Add("专业");
+            mobColumns.Add("移动电话");
+            mobColumns.Add("座机");
+            mobColumns.Add("邮箱");
 
             foreach (var mobColumn in mobColumns)
             {
@@ -315,7 +319,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 var sex = tableRow["性别"]?.ToString();
                 var role = tableRow["角色"]?.ToString();
                 var password = tableRow["密码"]?.ToString();
-
+                var discipline = tableRow["专业"]?.ToString();
+                var mobilephone = tableRow["移动电话"]?.ToString();
+                var telephone = tableRow["座机"]?.ToString();
+                var email = tableRow["邮箱"]?.ToString();
 
                 if (string.IsNullOrEmpty(loginName))
                 {
@@ -414,6 +421,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                         User.Sex = sexIndex;
                     }
 
+                    User.Discipline = discipline;
+                    User.Mobilephone = mobilephone;
+                    User.Telephone = telephone;
+                    User.Email = email;
                     User.Role = roleIndex;
                     User.DomainUserName = domainName;
                     User.Password = CommonHelper.ToMD5(password);
@@ -435,7 +446,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     {
                         User.Sex = sexIndex;
                     }
-
+                    User.Discipline = discipline;
+                    User.Mobilephone = mobilephone;
+                    User.Telephone = telephone;
+                    User.Email = email;
                     User.Role = roleIndex;
                     User.DomainUserName = domainName;
                     User.Password = CommonHelper.ToMD5(password);
@@ -469,6 +483,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             dr["性别"] = sourceRow["性别"];
             dr["角色"] = sourceRow["角色"];
             dr["密码"] = sourceRow["密码"];
+            dr["专业"] = sourceRow["专业"];
+            dr["移动电话"] = sourceRow["移动电话"];
+            dr["座机"] = sourceRow["座机"];
+            dr["邮箱"] = sourceRow["邮箱"];
             dr["错误信息"] = errorMsg;
             return dr;
         }

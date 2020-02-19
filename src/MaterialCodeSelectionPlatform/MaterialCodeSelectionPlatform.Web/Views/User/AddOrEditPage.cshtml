@@ -39,6 +39,7 @@
                     <input type="text" name="DomainUserName" lay-verify="" placeholder="请输入域账户" autocomplete="off" class="layui-input">
                 </div>
             </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label">性别：</label>
                 <div class="layui-input-block">
@@ -46,6 +47,30 @@
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">专业：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Discipline" lay-verify="" placeholder="请输入专业" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">移动电话：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Mobilephone" lay-verify="" placeholder="请输入移动电话" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">座机：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Telephone" lay-verify="" placeholder="请输入座机" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Email" lay-verify="" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
                 </div>
             </div>
         </div>
@@ -222,7 +247,19 @@
                 + "&LoginName=" + encodeURIComponent(($('[name=LoginName]').val()))
                 + "&Sex=" + $('[name=Sex]').val()
                 + "&Role=" + $('[name=Role]').val()
-                + "&Logo=" + $('[name=Logo]').val()
+                + "&Logo=" + $('[name=Logo]').val()+
+            "&Discipline=" +
+                encodeURIComponent(($('[name=Discipline]').val())) +
+
+                "&Mobilephone=" +
+                encodeURIComponent(($('[name=Mobilephone]').val())) +
+
+                "&Telephone=" +
+                encodeURIComponent(($('[name=Telephone]').val())) +
+
+                "&Email=" +
+                encodeURIComponent(($('[name=Email]').val())) 
+
                 + "&DomainUserName=" + $('[name=DomainUserName]').val()
                 + "&Password=" + encodeURIComponent(pwd);
 

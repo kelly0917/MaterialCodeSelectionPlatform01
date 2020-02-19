@@ -42,7 +42,8 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 Id =  d.Id,
                 ProjectId = d.ProjectId,
-                ProjectName = p.Name +"("+p.Code+")",
+                ProjectName = p.Name ,
+                ProjectCode = p.Code,
                 Name = d.Name,
                 Code = d.Code,
                 Remark = d.Remark,
