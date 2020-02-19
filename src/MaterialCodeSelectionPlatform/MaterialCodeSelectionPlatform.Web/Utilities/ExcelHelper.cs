@@ -344,15 +344,15 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                             {
                                 #region 填充明细记录
                                 int seqNo = 1;
-                                var dtoList = new List<Domain.PartNumberDto>();
+                                var dtoList = new List<Domain.PartNumberReportDetail>();
                                 foreach (var model in dataList)
                                 {
-                                    if (model.PartNumberList != null && model.PartNumberList.Count > 0)
+                                    if (model.PartNumberReportDetailList != null && model.PartNumberReportDetailList.Count > 0)
                                     {
-                                        dtoList.AddRange(model.PartNumberList);
+                                        dtoList.AddRange(model.PartNumberReportDetailList);
                                     }
                                 }
-                                createRowValue<Domain.PartNumberDto>(dtoList, workbook, sheet, dict, titleRowIndex, startRow, ref seqNo);
+                                createRowValue<Domain.PartNumberReportDetail>(dtoList, workbook, sheet, dict, titleRowIndex, startRow, ref seqNo);
                                 #endregion
                             }
                         }

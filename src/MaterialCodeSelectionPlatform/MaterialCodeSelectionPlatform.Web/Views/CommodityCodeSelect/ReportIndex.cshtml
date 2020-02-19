@@ -12,36 +12,41 @@
     @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
     <input type="hidden" name="Id" value="@ViewData["id"]" />
     <div class="layui-row">
-        <div class="layui-form" style="padding-bottom:50px">
+        <div id="tbDiv" class="layui-form" style="padding-bottom:50px">
             @{
                 foreach (var report in Model)
                 {
 
-                    <table class="layui-table">
+                    <table  class="layui-table">
                         <colgroup>
                             <col width="200">
                             <col>
                             <col width="80">
+                            <col width="80">
                         </colgroup>
                         <thead>
                             <tr style="background-color:deepskyblue;color:white">
-                                <th colspan="3">@report.ComponentTypeName </th>
+                                <th colspan="4">@report.ComponentTypeName </th>
                             </tr>
                             <tr>
                                 <th>采购码 </th>
                                 <th>采购码中文长描述 </th>
                                 <th style="text-align:center">数量 </th>
+                                <th style="text-align:center">操作 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var ent in report.PartNumberList)
+                            @foreach (var ent in report.PartNumberReportDetailList)
                             {
                                 var txtId = $"txt_{ent.Id}";
                                 <tr>
-                                    <td>@ent.Code</td>
-                                    <td>@ent.CN_PartNumberLongDesc</td>
+                                    <td>@ent.P_Code</td>
+                                    <td>@ent.P_CN_LongDesc</td>
                                     <td class="layui-align-center">
-                                        @ent.DesignQty
+                                        <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@ent.Id" value="@ent.DesignQty" class="layui-input" />
+                                    </td>
+                                    <td> 
+                                        <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">删除</button>
                                     </td>
                                 </tr>
                             }
@@ -52,26 +57,38 @@
 
         </div>
         <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
-            <div class="layui-inline layui-float-left">
-                <label class="layui-form-label" style="width:auto">材料统计表模板：</label>
-                <div class="layui-input-inline" style="width:500px">
-                    <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
-                        @{
-                            var fileList = ViewData["fileList"] as NameValueCollection;
-                            if (fileList != null && fileList.Count > 0)
-                            {
-                                foreach (string key in fileList.Keys)
+            <div class="layui-form-item search">
+                <div class="layui-inline layui-float-left">
+                    <label class="layui-form-label" style="width:130px">材料统计表模板：</label>
+                    <div class="layui-input-inline" style="width:400px">
+                        <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
+                            @{
+                                var fileList = ViewData["fileList"] as NameValueCollection;
+                                if (fileList != null && fileList.Count > 0)
                                 {
-                                   <option value="@fileList[key].ToString()">@key</option>
+                                    foreach (string key in fileList.Keys)
+                                    {
+                                        <option value="@fileList[key].ToString()">@key</option>
+                                    }
                                 }
                             }
-                        }
-                       
-                    </select>
+
+                        </select>
+                    </div>
+                    <label class="layui-form-label" style="width:50px">版本：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="txtRevision" class="layui-input" />
+                    </div>
+                    <div class="layui-inline layui-float-rigt" style="float:right">
+                        <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px">生成物料表</button>
+                    </div>
                 </div>
+              
             </div>
-            <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">生成物料表</button>
         </div>
+
+
+       
     </div>
 
 </form>
@@ -79,7 +96,15 @@
 <script src="~/js/jsencrypt.min.js"></script>
 <script type="text/javascript">
 
-
+     function clearNoNum(obj){ 
+        obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+        obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+        obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
+        obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+        if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+            obj.value= parseFloat(obj.value); 
+        } 
+    } 
       layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -90,8 +115,31 @@
                 var projectid = "@ViewData["projectid"]";
                 var deviceid = "@ViewData["deviceid"]";
                 var mtoId = "@ViewData["mtoId"]";
+                var revision = $("#txtRevision").val().trim();
+                if (revision == null || revision == "") {
+                    layer.msg("版本不能为空");
+                    return;
+                }
+                var txtList = $("input[type='text']");
+                var commodityCodeId = "@ViewData["commodityCodeId"]";
+                var projectId = "@ViewData["projectId"]";
+                var deviceId = "@ViewData["deviceId"]";
+                var list = new Array();
+                if (txtList != null && txtList.length > 0) {
+                    for (var i = 0; i < txtList.length; i++) {
+                        if (txtList[i].value != "" && parseFloat(txtList[i].value) > 0) {
+                            var obj = new Object();
+                            obj.Id = txtList[i].id.split("_")[1];
+                            obj.DesignQty = $(txtList[i]).val();
+                            obj.ProjectId = projectId;
+                            obj.DeviceId = deviceId;
+                            obj.CommoditycodeId= $(txtList[i]).attr("commoditycodeid");
+                            list.push(obj);
+                        }
+                    }
+                }
                 var templatePath = encodeURIComponent($("#selTemplate").val());
-                var url = "/CommodityCodeSelect/DownloadExcelReport?mtoId="+mtoId+"&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
+                var url = "/CommodityCodeSelect/DownloadExcelReport?revision="+revision+"&mtoId="+mtoId+"&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
                 window.location.href =url;
                 //$.get("/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random(), function (data) {
                 //    debugger;
@@ -99,5 +147,21 @@
                 //  //  window.location.reload();
                 //});
             });
-        });
+          });
+    function deleteOnclick(id) {
+       layer.confirm('确定删除吗', function (index) {
+           $.ajax({
+               url: '/CommodityCodeSelect/DeleteById?id=' + id + "&" + Math.random(),
+               dataType: "json",
+               success: function (data) {
+                   if (data.Success) {
+                       layer.msg("删除成功");
+                       window.location.href=window.location.href;
+                   } else {
+                       layer.msg("删除失败", { icon: 5 });
+                   }
+               }
+           });
+       });
+    }
 </script>

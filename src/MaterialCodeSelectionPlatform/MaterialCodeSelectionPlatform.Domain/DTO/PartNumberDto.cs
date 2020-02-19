@@ -44,17 +44,50 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// <summary>
         /// 采购码
         /// </summary>
-        public List<PartNumberDto> PartNumberList { get; set; }
+        public List<PartNumberReportDetail> PartNumberReportDetailList { get; set; }
+    }
+    public class PartNumberReportDetail : MaterialTakeOffDetail
+    {
+
+        #region PartNumber
+        public string P_Code { get; set; }
+        public string P_CN_ShortDesc { get; set; }
+        public string P_EN_ShortDesc { get; set; }
+        public string P_RU_ShortDesc { get; set; }
+        public string P_CN_LongDesc { get; set; }
+        public string P_EN_LongDesc { get; set; }
+        public string P_RU_LongDesc { get; set; }
+        public string P_CN_SizeDesc { get; set; }
+        public string P_EN_SizeDesc { get; set; }
+        public string P_RU_SizeDesc { get; set; }
+        #endregion
+        #region CommodityCode
+        public string C_Code { get; set; }
+        public string C_CN_ShortDesc { get; set; }
+        public string C_EN_ShortDesc { get; set; }
+        public string C_RU_ShortDesc { get; set; }
+        public string C_CN_LongDesc { get; set; }
+        public string C_EN_LongDesc { get; set; }
+        public string C_RU_LongDesc { get; set; }
+        #endregion
+        #region CommodityCode
+        public string T_Code { get; set; }
+        public string T_Desc { get; set; }
+        public string T_Unit { get; set; }
+        public string T_Discipline { get; set; }
+        #endregion       
+        /// <summary>
+        /// 物资编码类型名称
+        /// </summary>
+        public string ComponentTypeName { get; set; }
+       
     }
     /// <summary>
     /// 采购码DTO
     /// </summary>
     public class PartNumberDto : PartNumber
     {
-        /// <summary>
-        /// 采购码中文长描述(表：MaterialTakeOffDetail)
-        /// </summary>
-        public string CN_PartNumberLongDesc { get; set; }
+
         /// <summary>
         /// 项目Id
         /// </summary>

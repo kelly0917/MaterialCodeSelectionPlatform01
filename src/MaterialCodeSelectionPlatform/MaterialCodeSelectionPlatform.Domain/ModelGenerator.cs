@@ -140,7 +140,11 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		[Timestamp]
 		public virtual int? Version { get; set; }
-		
+		public string Revision { get; set; }
+
+
+
+
 		public virtual string ProjectId { get; set; }
 		
 		public virtual string DeviceId { get; set; }
@@ -249,35 +253,6 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string PartNumberId { get; set; }
 		
-		public virtual string CN_CommodityShortDesc { get; set; }
-		
-		public virtual string EN_CommodityShortDesc { get; set; }
-		
-		public virtual string RU_CommodityShortDesc { get; set; }
-		
-		public virtual string CN_CommodityLongDesc { get; set; }
-		
-		public virtual string EN_CommodityLongDesc { get; set; }
-		
-		public virtual string RU_CommodityLongDesc { get; set; }
-		
-		public virtual string CN_PartNumberShortDesc { get; set; }
-		
-		public virtual string EN_PartNumberShortDesc { get; set; }
-		
-		public virtual string RU_PartNumberShortDesc { get; set; }
-		
-		public virtual string CN_PartNumberLongDesc { get; set; }
-		
-		public virtual string EN_PartNumberLongDesc { get; set; }
-		
-		public virtual string RU_PartNumberLongDesc { get; set; }
-		
-		public virtual string CN_SizeDesc { get; set; }
-		
-		public virtual string EN_SizeDesc { get; set; }
-		
-		public virtual string RU_SizeDesc { get; set; }
 		
 		public virtual string ProjectId { get; set; }
 		

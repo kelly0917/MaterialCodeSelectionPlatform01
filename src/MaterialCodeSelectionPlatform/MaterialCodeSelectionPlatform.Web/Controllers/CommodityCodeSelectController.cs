@@ -253,7 +253,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
-                var result = await Service.GetUserMaterialTakeReport(mtoId,this.UserId, projectid, deviceid,0);
+                var result = await Service.GetUserMaterialTakeReport(mtoId,"",this.UserId, projectid, deviceid,0);
                 return View(result);
             }
             catch (Exception e)
@@ -264,39 +264,71 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <summary>
         /// 导出物料表
         /// </summary>
+        /// <param name="revision">版本</param>
         /// <param name="projectid">项目ID</param>
         /// <param name="deviceid">装置ID</param>
+        /// <param name="templatePath">模板路径</param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadExcelReport(string mtoId, string projectid, string deviceid,string templatePath)
+        public async Task<IActionResult> DownloadExcelReport(string revision,string mtoId, string projectid, string deviceid,string templatePath)
         {
             try
             {
                 //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
-                
+                //保存到ReportDownload\$ProjectCode$\$Device$ \ 目录下
+                //文件名希望调整为XXXXXXX_$Project$_$Device$_$Revision$_yyyyMMddhhmmss.xlsx。其中
+                //XXXX为原来的文件名
+                //$Project$为当前MTO的Project.Code
+                //$Device$为当前MTO的Device.Code
+                //$Revision$为手动输入的Revision字段
+                //yyyyMMddhhmmss为时间戳
                 templatePath = HttpUtility.UrlDecode(templatePath);
-                var saveDir= Directory.GetCurrentDirectory() + "\\ReportTemplates\\Download\\";
+                var saveDir= Directory.GetCurrentDirectory() + "\\ReportDownload\\";
                 if (!Directory.Exists(saveDir))
                 {
                     Directory.CreateDirectory(saveDir);
                 }
                 var excelName = Path.GetFileNameWithoutExtension(templatePath);
-                var result = await Service.GetUserMaterialTakeReport(mtoId, this.UserId, projectid, deviceid,1);
+                var result = await Service.GetUserMaterialTakeReport(mtoId, revision,this.UserId, projectid, deviceid,1);
                 var dirPath = Path.GetDirectoryName(templatePath);
                 var filePath = dirPath + $"{excelName}.xlsx";
                 #region 删除上次生成的EXCEL文件
-                var files = Directory.GetFiles(saveDir)?.ToList();
-                if (files != null && files.Count > 0)
-                {
-                    foreach (var ent in files)
-                    {
-                        System.IO.File.Delete(ent);
-                    }
-                }
+                //var files = Directory.GetFiles(saveDir)?.ToList();
+                //if (files != null && files.Count > 0)
+                //{
+                //    foreach (var ent in files)
+                //    {
+                //        System.IO.File.Delete(ent);
+                //    }
+                //}
                 #endregion
                 var saveFilePath = saveDir + excelName + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
                 var newPath =ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
                 var file= DownLoad(newPath);               
                 return file;
+            }
+            catch (Exception e)
+            {
+                return Json(new DataResult() { Success = false, Message = e.Message });
+            }
+        }
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public override async Task<IActionResult> DeleteById(string id)
+        {
+            try
+            {
+                var n = await Service.DeleteById(id);
+                if (n > 0)
+                {
+                    return ConvertSuccessResult(null,"删除成功");
+                }
+                else
+                {
+                    return ConvertFailResult(null,"删除失败");
+                }
             }
             catch (Exception e)
             {
