@@ -1,0 +1,4 @@
+ALTER TABLE dbo.[User] ADD Discipline VARCHAR(100) NULL;
+ALTER TABLE dbo.[User] ADD Mobilephone VARCHAR(100) NULL;
+ALTER TABLE dbo.[User] ADD Telephone VARCHAR(100) NULL;
+ALTER TABLE dbo.[User] ADD Email VARCHAR(100) NULL;

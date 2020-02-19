@@ -133,7 +133,9 @@
                                 }else {
                                     return "普通用户";
                                 }
-                            }}
+                            }
+                        }
+                        , { field: 'Discipline', title: '专业' }
                         , {
                             field: 'Status', title: '状态', templet: function(d) {
                                 if (d.Status == 0) {
@@ -157,7 +159,7 @@
                             type: 2,
                             content: '/User/Detail?id=' + data.Id + "&" + Math.random(),
                             title: '查看用户信息',
-                            area: ["540px;", "360px;"]
+                            area: ["600px;", "540px;"]//宽 高
                         });
 
                     } else if (obj.event === 'delete') {
@@ -180,7 +182,7 @@
                             type: 2,
                             content: '/User/AddOrEditPage?id=' + data.Id + "&" + Math.random(),
                             title: '编辑用户信息',
-                            area: ["540px;", "480px;"]//宽 高
+                            area: ["600px;", "700px;"]//宽 高
                         });
                     }
                     else if (obj.event === 'changerole') {
@@ -257,7 +259,7 @@
                     type: 2,
                     content: '/User/AddOrEditPage',
                     title: '新增用户信息',
-                    area: ["540px;", "480px;"]//宽 高
+                    area: ["600px;", "700px;"]//宽 高
                 });
             }
 
