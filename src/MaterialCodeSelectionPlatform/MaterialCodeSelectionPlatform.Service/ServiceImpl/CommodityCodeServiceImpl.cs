@@ -67,6 +67,15 @@ namespace MaterialCodeSelectionPlatform.Service
             return await _CommodityCodeDao.SaveMaterialTakeOffDetail(condtion);
         }
         /// <summary>
+        /// 保存:物料报表【物资汇总明细表】数量
+        /// </summary>
+        /// <param name="detailList">MaterialTakeOffDetail集合</param>
+        /// <returns></returns>
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        {
+            return await _CommodityCodeDao.UpdateReportMaterialTakeOffDetail(detailList);
+        }
+        /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <param name="userid">用户Id</param>
