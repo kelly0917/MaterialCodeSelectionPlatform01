@@ -33,12 +33,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var ent in report.PartNumberList)
+                                @foreach (var ent in report.PartNumberReportDetailList)
                                 {
                                     var txtId = $"txt_{ent.Id}";
                                     <tr>
-                                        <td>@ent.Code</td>
-                                        <td>@ent.CN_SizeDesc</td>
+                                        <td>@ent.P_Code</td>
+                                        <td>@ent.P_CN_SizeDesc</td>
                                         <td>
                                             <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@txtId" name="@txtId" value="@ent.DesignQty" commoditycodeid="@ent.CommodityCodeId" placeholder="请输入数量" autocomplete="off" class="layui-input" />
                                         </td>

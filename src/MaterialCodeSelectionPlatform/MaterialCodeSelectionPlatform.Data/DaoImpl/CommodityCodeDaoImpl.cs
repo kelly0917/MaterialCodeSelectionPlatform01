@@ -248,7 +248,16 @@ namespace MaterialCodeSelectionPlatform.Data
             */
             #endregion
             List<PartNumberReport> list = new List<PartNumberReport>();
-            var sql = $@" SELECT c.[Desc] ComponentTypeName, b.DesignQty , a. *
+            var sql = $@" SELECT c.[Desc] ComponentTypeName, b.DesignQty ,a.id, a.Code P_Code
+            ,a.CN_ShortDesc P_CN_ShortDesc
+            ,a.EN_ShortDesc P_EN_ShortDesc
+            ,a.RU_ShortDesc P_RU_ShortDesc
+            ,a.CN_LongDesc P_CN_LongDesc
+            ,a.EN_LongDesc P_EN_LongDesc
+            ,a.RU_LongDesc P_RU_LongDesc
+            ,a.EN_SizeDesc P_CN_SizeDesc
+            ,a.EN_SizeDesc P_EN_SizeDesc
+            ,a.RU_SizeDesc P_RU_SizeDesc
             FROM PartNumber a
             LEFT JOIN ComponentType c ON a.ComponentTypeId =c.Id AND c.Status=0
             LEFT JOIN (SELECT a. *
@@ -262,14 +271,14 @@ namespace MaterialCodeSelectionPlatform.Data
 			                                         ORDER BY Version DESC)
              ) b ON a.id = b.PartNumberId
             WHERE a.Status = 0 AND a.CommodityCodeId = @CommodityCodeId order by a.CN_SizeDesc asc";
-            var partNumberList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId = userId, CommodityCodeId = commodityCodeId, projectId = projectId, deviceId = deviceId });
+            var partNumberList = Db.Ado.SqlQuery<PartNumberReportDetail>(sql, new { CreateUserId = userId, CommodityCodeId = commodityCodeId, projectId = projectId, deviceId = deviceId });
             var resut = from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
                         select new PartNumberReport()
                         {
                             ComponentTypeName = g.Key,
-                            PartNumberList = g.ToList()
+                            PartNumberReportDetailList = g.ToList()
                         };
             return await Task.Run(() => { return resut.ToList(); });
         }
@@ -381,23 +390,23 @@ namespace MaterialCodeSelectionPlatform.Data
                     detail.MaterialTakeOffId = mto.Id;
                     detail.CommodityCodeId = ent.CommodityCodeId;
                     detail.PartNumberId = ent.Id;//采购码Id
-                    detail.CN_CommodityShortDesc = commodityCode.CN_ShortDesc;//物资编码短描述_中文
-                    detail.EN_CommodityShortDesc = commodityCode.EN_ShortDesc;//物资编码短描述_英文
-                    detail.RU_CommodityShortDesc = commodityCode.RU_ShortDesc;//物资编码短描述_俄文
-                    detail.CN_CommodityLongDesc = commodityCode.CN_LongDesc;//物资编码长描述_中文
-                    detail.EN_CommodityLongDesc = commodityCode.EN_LongDesc;//物资编码长描述_英文
-                    detail.RU_CommodityLongDesc = commodityCode.RU_LongDesc;//物资编码长描述_俄文
+                    //detail.CN_CommodityShortDesc = commodityCode.CN_ShortDesc;//物资编码短描述_中文
+                    //detail.EN_CommodityShortDesc = commodityCode.EN_ShortDesc;//物资编码短描述_英文
+                    //detail.RU_CommodityShortDesc = commodityCode.RU_ShortDesc;//物资编码短描述_俄文
+                    //detail.CN_CommodityLongDesc = commodityCode.CN_LongDesc;//物资编码长描述_中文
+                    //detail.EN_CommodityLongDesc = commodityCode.EN_LongDesc;//物资编码长描述_英文
+                    //detail.RU_CommodityLongDesc = commodityCode.RU_LongDesc;//物资编码长描述_俄文
 
-                    detail.CN_PartNumberShortDesc = ent.CN_ShortDesc;//采购码短描述_中文
-                    detail.EN_PartNumberShortDesc = ent.EN_ShortDesc;//采购码短描述_英文
-                    detail.RU_PartNumberShortDesc = ent.RU_ShortDesc;//采购码短描述_俄文
-                    detail.CN_PartNumberLongDesc = ent.CN_LongDesc;//采购码长描述_中文
-                    detail.EN_PartNumberLongDesc = ent.EN_LongDesc;//采购码长描述_英文
-                    detail.RU_PartNumberLongDesc = ent.RU_LongDesc;//采购码长描述_俄文
+                    //detail.CN_PartNumberShortDesc = ent.CN_ShortDesc;//采购码短描述_中文
+                    //detail.EN_PartNumberShortDesc = ent.EN_ShortDesc;//采购码短描述_英文
+                    //detail.RU_PartNumberShortDesc = ent.RU_ShortDesc;//采购码短描述_俄文
+                    //detail.CN_PartNumberLongDesc = ent.CN_LongDesc;//采购码长描述_中文
+                    //detail.EN_PartNumberLongDesc = ent.EN_LongDesc;//采购码长描述_英文
+                    //detail.RU_PartNumberLongDesc = ent.RU_LongDesc;//采购码长描述_俄文
 
-                    detail.CN_SizeDesc = ent.CN_SizeDesc;//尺寸描述_中文
-                    detail.EN_SizeDesc = ent.EN_SizeDesc;//尺寸描述_英文
-                    detail.RU_SizeDesc = ent.RU_SizeDesc;//尺寸描述_俄文
+                    //detail.CN_SizeDesc = ent.CN_SizeDesc;//尺寸描述_中文
+                    //detail.EN_SizeDesc = ent.EN_SizeDesc;//尺寸描述_英文
+                    //detail.RU_SizeDesc = ent.RU_SizeDesc;//尺寸描述_俄文
                     detail.ProjectId = projectId;//所属项目
                     detail.DeviceId = deviceId;//所属装置
                     detail.DesignQty = list.Where(c => c.Id == ent.Id).FirstOrDefault().DesignQty;//数量
@@ -487,12 +496,14 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 获取用户的物料表
         /// </summary>
+        /// <param name="mtoId">mtoId</param>
+        /// <param name="revision">版本</param>
         /// <param name="userId">用户Id</param>
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid, int downLoad)
+        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId,string revision, string userId, string projectid, string deviceid, int downLoad)
         {
             #region SQL 
             /*
@@ -509,26 +520,49 @@ namespace MaterialCodeSelectionPlatform.Data
            */
             #endregion
             var topWhere = " ORDER BY b.LastModifyTime desc";
-            //if (!string.IsNullOrWhiteSpace(mtoId))
-            //{
-            //    topWhere = $" and b.id='{mtoId}'";
-            //}
-            var sql = $@" SELECT d.[Desc] ComponentTypeName,c.Code,a.* from MaterialTakeOffDetail a
-            INNER JOIN PartNumber c ON c.Id=a.PartNumberId
-            INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
-            INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
-            WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=
-            (
-            SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId=@ProjectId AND b.DeviceId=@DeviceId AND b.CreateUserId=@CreateUserId {topWhere}
-            )  ORDER BY e.code,c.code ";
-            var partNumberList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { CreateUserId = userId, DeviceId = deviceid, ProjectId = projectid });
+            if (!string.IsNullOrWhiteSpace(mtoId))
+            {
+                topWhere = $" and b.id='{mtoId}'";
+            }
+            var sql = $@" SELECT c.Code P_Code
+                               ,c.Code P_Code
+                                ,c.CN_ShortDesc P_CN_ShortDesc
+                                ,c.EN_ShortDesc P_EN_ShortDesc
+                                ,c.RU_ShortDesc P_RU_ShortDesc
+                                ,c.CN_LongDesc P_CN_LongDesc
+                                ,c.EN_LongDesc P_EN_LongDesc
+                                ,c.RU_LongDesc P_RU_LongDesc
+                                ,c.EN_SizeDesc P_CN_SizeDesc
+                                ,c.EN_SizeDesc P_EN_SizeDesc
+                                ,c.RU_SizeDesc P_RU_SizeDesc
+                                , e.Code          C_Code
+                                , e.CN_ShortDesc  C_CN_ShortDesc
+                                , e.EN_ShortDesc  C_EN_ShortDesc
+                                , e.RU_ShortDesc  C_RU_ShortDesc
+                                , e.CN_LongDesc   C_CN_LongDesc
+                                , e.EN_LongDesc   C_EN_LongDesc
+                                , e.RU_LongDesc   C_RU_LongDesc
+                                , d.Code           T_Code
+                                , d.[Desc]         T_Desc
+                                , d.Unit           T_Unit
+                                , d.Discipline     T_Discipline
+                                ,d.[Desc] AS ComponentTypeName
+                                ,a.*  from MaterialTakeOffDetail a
+                                INNER JOIN PartNumber c ON c.Id=a.PartNumberId
+                                INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
+                                INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
+                                WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=
+                                (
+                                SELECT TOP 1 id FROM MaterialTakeOff b WHERE b.Status=0 AND  b.ProjectId=@ProjectId AND b.DeviceId=@DeviceId AND b.CreateUserId=@CreateUserId {topWhere}
+                                )  ORDER BY e.code,c.code ";
+            var partNumberList = Db.Ado.SqlQuery<PartNumberReportDetail>(sql, new { CreateUserId = userId, DeviceId = deviceid, ProjectId = projectid });
             var resut = from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
                         select new PartNumberReport()
                         {
                             ComponentTypeName = g.Key,
-                            PartNumberList = g.ToList()
+                            PartNumberReportDetailList = g.ToList()
                         };
             #region 项目、装置信息
             var resutList = resut?.ToList();
@@ -558,10 +592,22 @@ namespace MaterialCodeSelectionPlatform.Data
                 {
                     ent.CheckStatus = 2;
                     ent.LastModifyTime = DateTime.Now;
+                    ent.Revision = revision;
                     Db.Updateable(ent).ExecuteCommand();
                 }
             }
             return await Task.Run(() => { return resutList; });
         }
+        /// <summary>
+        /// 删除 MaterialTakeOffDetail
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        public async Task<int> DeleteById(string id)
+        {           
+           var n= await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.Id == id).ExecuteCommandAsync();
+            return n;
+        }
+
     }
 }

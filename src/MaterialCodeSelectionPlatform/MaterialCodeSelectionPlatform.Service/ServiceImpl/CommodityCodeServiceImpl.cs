@@ -78,14 +78,28 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <summary>
         /// 获取用户的物料表
         /// </summary>
+        /// <param nam/// <summary>
+        /// 获取用户的物料表
+        /// </summary>
+        /// <param name="mtoId">mtoId</param>
+        /// <param name="revision">版本</param>
         /// <param name="userId">用户Id</param>
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-       public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string userId, string projectid, string deviceid, int downLoad)
+        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string revision, string userId, string projectid, string deviceid, int downLoad)
         {
-            return await _CommodityCodeDao.GetUserMaterialTakeReport( mtoId, userId, projectid, deviceid,downLoad);
+            return await _CommodityCodeDao.GetUserMaterialTakeReport( mtoId, revision, userId, projectid, deviceid,downLoad);
+        }
+        /// <summary>
+        /// 删除 MaterialTakeOffDetail
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        public async  Task<int> DeleteById(string id)
+        {
+            return await _CommodityCodeDao.DeleteById(id);
         }
     }
 }
