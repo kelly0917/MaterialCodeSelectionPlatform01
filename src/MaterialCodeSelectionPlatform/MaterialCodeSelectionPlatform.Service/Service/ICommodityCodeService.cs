@@ -41,6 +41,12 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <returns></returns>
         Task<List<MaterialTakeOffDetail>> SaveMaterialTakeOffDetail(PartNumberCondition condtion);
         /// <summary>
+        /// 保存:物料报表【物资汇总明细表】数量
+        /// </summary>
+        /// <param name="detailList">MaterialTakeOffDetail集合</param>
+        /// <returns></returns>
+        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList);
+        /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <param name="userid">用户Id</param>

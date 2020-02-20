@@ -220,6 +220,23 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             }
         }
         /// <summary>
+        /// 更新:物料报表【物资汇总明细表】数量
+        /// </summary>
+        /// <param name="detailList">MaterialTakeOffDetail集合</param>
+        /// <returns></returns>
+        public async Task<IActionResult> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        {
+            try
+            {
+                var result = await Service.UpdateReportMaterialTakeOffDetail(detailList);
+                return ConvertJsonResult("更新成功", true);
+            }
+            catch (Exception e)
+            {
+                return ConvertFailResult(null, e.ToString());
+            }
+        }
+        /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <returns></returns>
@@ -282,29 +299,29 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 //$Revision$为手动输入的Revision字段
                 //yyyyMMddhhmmss为时间戳
                 templatePath = HttpUtility.UrlDecode(templatePath);
-                var saveDir= Directory.GetCurrentDirectory() + "\\ReportDownload\\";
-                if (!Directory.Exists(saveDir))
-                {
-                    Directory.CreateDirectory(saveDir);
-                }
+               
                 var excelName = Path.GetFileNameWithoutExtension(templatePath);
                 var result = await Service.GetUserMaterialTakeReport(mtoId, revision,this.UserId, projectid, deviceid,1);
-                var dirPath = Path.GetDirectoryName(templatePath);
-                var filePath = dirPath + $"{excelName}.xlsx";
-                #region 删除上次生成的EXCEL文件
-                //var files = Directory.GetFiles(saveDir)?.ToList();
-                //if (files != null && files.Count > 0)
-                //{
-                //    foreach (var ent in files)
-                //    {
-                //        System.IO.File.Delete(ent);
-                //    }
-                //}
-                #endregion
-                var saveFilePath = saveDir + excelName + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-                var newPath =ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
-                var file= DownLoad(newPath);               
-                return file;
+                if (result != null && result.Count > 0)
+                {
+                    var ent = result.FirstOrDefault();
+                    var projectCode = ent.ProjectCode;
+                    var deviceCode = ent.DeviceCode;
+                    var saveDir = Directory.GetCurrentDirectory() + "\\ReportDownload\\" + projectCode + "\\" + deviceCode + "\\";
+                    if (!Directory.Exists(saveDir))
+                    {
+                        Directory.CreateDirectory(saveDir);
+                    }                   
+                    var saveFilePath = $"{saveDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                    var newPath = ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
+                    var file = DownLoad(newPath);
+                    return file;
+                }
+                else
+                {
+                    return DownLoad(templatePath); ;
+                }
+
             }
             catch (Exception e)
             {

@@ -43,7 +43,7 @@
                                     <td>@ent.P_Code</td>
                                     <td>@ent.P_CN_LongDesc</td>
                                     <td class="layui-align-center">
-                                        <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@ent.Id" value="@ent.DesignQty" class="layui-input" />
+                                        <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@ent.Id"  materialtakeoffid="@ent.MaterialTakeOffId"  commoditycodeid="@ent.CommodityCodeId"  partnumberid="@ent.PartNumberId"  projectid="@ent.ProjectId"  deviceid="@ent.DeviceId"  designqty="@ent.DesignQty"  flag="@ent.Flag"  status="@ent.Status"  createuserid="@ent.CreateUserId"  createtime="@ent.CreateTime"  lastmodifyuserid="@ent.LastModifyUserId"  lastmodifytime ="@ent.LastModifyTime" value="@ent.DesignQty" class="layui-input" />
                                     </td>
                                     <td> 
                                         <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">删除</button>
@@ -116,11 +116,8 @@
                 var deviceid = "@ViewData["deviceid"]";
                 var mtoId = "@ViewData["mtoId"]";
                 var revision = $("#txtRevision").val().trim();
-                if (revision == null || revision == "") {
-                    layer.msg("版本不能为空");
-                    return;
-                }
-                var txtList = $("input[type='text']");
+               
+                var txtList =$("#tbDiv input[type='text']");
                 var commodityCodeId = "@ViewData["commodityCodeId"]";
                 var projectId = "@ViewData["projectId"]";
                 var deviceId = "@ViewData["deviceId"]";
@@ -129,23 +126,40 @@
                     for (var i = 0; i < txtList.length; i++) {
                         if (txtList[i].value != "" && parseFloat(txtList[i].value) > 0) {
                             var obj = new Object();
-                            obj.Id = txtList[i].id.split("_")[1];
-                            obj.DesignQty = $(txtList[i]).val();
-                            obj.ProjectId = projectId;
-                            obj.DeviceId = deviceId;
-                            obj.CommoditycodeId= $(txtList[i]).attr("commoditycodeid");
+                            obj.Id = txtList[i].id;
+                            obj.DesignQty = $("#" + obj.Id).val();                         
+                            obj.MaterialTakeOffId = $(txtList[i]).attr("materialtakeoffid"); 
+                             obj.CommodityCodeId = $(txtList[i]).attr("commoditycodeid"); 
+                             obj.PartNumberId = $(txtList[i]).attr("partnumberid"); 
+                             obj.ProjectId = $(txtList[i]).attr("projectid"); 
+                             obj.DeviceId = $(txtList[i]).attr("deviceid");                              
+                             obj.Flag = $(txtList[i]).attr("flag"); 
+                             obj.Status = $(txtList[i]).attr("status"); 
+                             obj.CreateUserId = $(txtList[i]).attr("createuserid"); 
+                             obj.CreateTime = $(txtList[i]).attr("createtime"); 
+                             obj.LastModifyUserId = $(txtList[i]).attr("lastmodifyuserid");
+                            obj.LastModifyTime = $(txtList[i]).attr("lastmodifytime");
+                          //  alert(obj.DesignQty);
                             list.push(obj);
                         }
                     }
                 }
-                var templatePath = encodeURIComponent($("#selTemplate").val());
-                var url = "/CommodityCodeSelect/DownloadExcelReport?revision="+revision+"&mtoId="+mtoId+"&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath+ "&pt=" + Math.random();
-                window.location.href =url;
-                //$.get("/CommodityCodeSelect/DownloadExcelReport?projectid=" + projectid + "&deviceid=" + deviceid + "&pt=" + Math.random(), function (data) {
-                //    debugger;
-                //    layer.msg(data.message);
-                //  //  window.location.reload();
-                //});
+                  if (revision == null || revision == "") {
+                    layer.msg("版本不能为空");
+                    return;
+                }               
+                $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list }, function (data) {
+                    if (data.success) {//更新数量成功
+                        var templatePath = encodeURIComponent($("#selTemplate").val());
+                        //导出报表
+                        var url = "/CommodityCodeSelect/DownloadExcelReport?revision=" + revision + "&mtoId=" + mtoId + "&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath + "&pt=" + Math.random();
+                        window.location.href = url;
+                    }
+                    else {
+                         layer.msg(data.message);
+                    }
+                });
+            
             });
           });
     function deleteOnclick(id) {
