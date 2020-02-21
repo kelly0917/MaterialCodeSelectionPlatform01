@@ -1,0 +1,1 @@
+ALTER TABLE dbo.[MaterialTakeOff] ADD Revision VARCHAR(100) NULL;
