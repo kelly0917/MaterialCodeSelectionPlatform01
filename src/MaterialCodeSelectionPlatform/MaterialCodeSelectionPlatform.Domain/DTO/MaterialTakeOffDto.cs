@@ -16,7 +16,10 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 装置名称
         /// </summary>
         public string DeviceName { get; set; }
-       
+       /// <summary>
+       /// 用户名
+       /// </summary>
+        public string UserName { get; set; }
         /// 时间
         /// </summary>
         public string TimeString

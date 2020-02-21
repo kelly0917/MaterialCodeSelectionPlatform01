@@ -1,0 +1,79 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+@using MaterialCodeSelectionPlatform.Domain
+@model List<MaterialTakeOffDto>
+
+<div class="layui-form" action="">
+    <div class="layui-input">
+        <input type="radio" name="copy" value="0" title="追加拷贝" checked=""> 
+        <input type="radio" name="copy" value="1" title="覆盖拷贝">
+    </div>
+    <table class="layui-table" id="projectDevice">
+        <colgroup>
+            <col width="150">
+            <col width="150">
+            <col width="200">
+            <col>
+        </colgroup>       
+        <thead>
+            <tr>
+                <th>项目</th>
+                <th>装置</th>
+                <th>版本</th>
+                <th>版次</th>
+                <th>状态</th>
+                <th>创建用户</th>
+                <th>最近修改时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="trody">
+            @{
+                foreach (var ent in Model)
+                {
+                    <tr>
+                        <td>@ent.ProjectName</td>
+                        <td>@ent.DeviceName</td>
+                        <td>@ent.Revision</td>
+                        <td>@ent.Version</td>
+                        <td>@ent.CheckStatusName</td>
+                        <td>@ent.UserName</td>
+                        <td>@ent.TimeString</td>
+                        <td><button class="layui-btn layui-btn-normal" id="@ent.Id" onclick="copy('@ent.Id')">确定</button></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+<script>
+      layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            form.render(); 
+          });
+    function copy(mtoId) {
+       
+        layer.confirm('确定拷贝吗？', function (index) {
+        var type = $('input[name="copy"]:checked').val();     
+           $.ajax({
+               url: '/CommodityCodeSelect/CopyMaterialTakeOff?mtoId=' + mtoId + "&type="+type+"&" + Math.random(),
+               dataType: "json",
+               success: function (data) {
+                   if (data.Success) {
+                       layer.msg("拷贝成功");
+                      // window.location.href=window.location.href;
+                   } else {
+                       layer.msg("拷贝失败", { icon: 5 });
+                   }
+               }
+           });
+       });
+    }
+</script>

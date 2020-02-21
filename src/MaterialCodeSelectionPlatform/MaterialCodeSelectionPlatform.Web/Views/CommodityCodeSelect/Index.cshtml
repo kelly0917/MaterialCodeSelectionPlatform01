@@ -48,8 +48,12 @@
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
         <div class="layui-inline layui-float-rigt" style="float:right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
+        </div>
+        <div class="layui-inline layui-float-rigt" style="float:right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
+
 
     </div>
     @*物资类型*@
@@ -85,15 +89,19 @@
 <div class="layui-form" action="" id="openShow" style="display:none">
     <table class="layui-table" id="projectDevice">
         <colgroup>
-            <col width="150">
-            <col width="150">
-            <col width="200">
             <col>
+            <col  width="80">
+            <col  width="80">
+            <col  width="80">
+            <col width="80">
+            <col width="100">
+            <col width="80">
         </colgroup>
         <thead>
             <tr>
                 <th>项目</th>
                 <th>装置</th>
+                <th>版本</th>
                 <th>版次</th>
                 <th>状态</th>
                 <th>时间</th>
@@ -285,7 +293,8 @@
 
                                 tr += "<tr>";
                                 tr += "<td><a onclick=projectClick('"+ ent.id +"','"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
-                                tr += "<td>"+ent.deviceName+"</td>";
+                                tr += "<td>" + ent.deviceName + "</td>";
+                                tr += "<td>" + (ent.revision == null ? "" : ent.revision) + "</td>";
                                 tr += "<td>"+ent.version+"</td>";
                                 tr += "<td>"+ent.checkStatusName+"</td>";
                                 tr += "<td>" + ent.timeString + "</td>";
@@ -526,7 +535,18 @@
         layer.close(winIndex);
     }
     //==============选择【项目】【装置】end==================
-    //==============打开【查看料表】==================
+    //==============打开【拷贝】==================
+    function copy() {
+        
+        layer.open({
+            type: 2,
+            content: '/CommodityCodeSelect/CopyIndex?' + Math.random(),
+            title: '拷贝',
+            area: ["1000px;", "700px;"]//宽 高
+        });
+    }
+    //==============打开【拷贝】end==================
+     //==============打开【查看料表】==================
     function openReoprt() {
         var projectId = $("#selProject").val();
         var deviceId = $("#selDevice").val();
