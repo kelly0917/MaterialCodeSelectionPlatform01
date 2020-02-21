@@ -145,8 +145,6 @@ namespace MaterialCodeSelectionPlatform.Data
             
             }
 
-
-
             query = query.Where((a, b) => a.Status == 0);
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
             {
@@ -159,8 +157,45 @@ namespace MaterialCodeSelectionPlatform.Data
             //{
             //    query = query.Where((a, b) => a.Code.Contains(condition.Code));
             //}
-
-            query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
+            if (string.IsNullOrEmpty(condition.OrderBy))
+            {
+                query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
+            }
+            else
+            {
+                //升序
+                if (condition.OrderByType == 0)
+                {
+                    if (condition.OrderBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b) => a.Code, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("CN_ShortDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b) => a.CN_ShortDesc, OrderByType.Asc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
+                    }
+                }
+                else
+                {
+                    if (condition.OrderBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b) => a.Code, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("CN_ShortDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b) => a.CN_ShortDesc, OrderByType.Desc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((a, b) => a.Hits, OrderByType.Desc);
+                    }
+                }
+            }
+         
             var total = 0;
             var data = await query.Select((a, b) => (new CommodityCodeDto { Id = a.Id, Desc = b.Desc, Code = a.Code, CN_ShortDesc = a.CN_ShortDesc })).ToPageListAsync(condition.Page.PageNo, condition.Page.PageSize, total);
             condition.Page.RecordCount = data.Value;
