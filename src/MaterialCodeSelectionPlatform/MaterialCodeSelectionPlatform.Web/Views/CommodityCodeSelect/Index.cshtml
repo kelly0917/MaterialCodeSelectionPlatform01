@@ -537,10 +537,11 @@
     //==============选择【项目】【装置】end==================
     //==============打开【拷贝】==================
     function copy() {
-        
+         var projectId = $("#selProject").val();
+        var deviceId = $("#selDevice").val();
         layer.open({
             type: 2,
-            content: '/CommodityCodeSelect/CopyIndex?' + Math.random(),
+            content: '/CommodityCodeSelect/CopyIndex?projectId='+projectId+"&deviceId=" +deviceId+"&"+ Math.random(),
             title: '拷贝',
             area: ["1000px;", "700px;"]//宽 高
         });
