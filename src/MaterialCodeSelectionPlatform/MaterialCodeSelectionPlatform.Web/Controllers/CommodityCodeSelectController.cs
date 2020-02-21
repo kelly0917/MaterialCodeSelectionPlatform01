@@ -283,6 +283,43 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return View();
             }
         }
+        public async Task<ActionResult> CopyIndex()
+        {
+            try
+            {
+                var result = await Service.GetUserMaterialTakeOff("");                
+                return View(result);
+            }
+            catch (Exception e)
+            {
+                return View();
+            }
+        }
+        /// <summary>
+        /// 拷贝
+        /// </summary>
+        /// <param name="mtoId"></param>
+        /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
+        /// <returns></returns>
+        public async Task<IActionResult> CopyMaterialTakeOff(string mtoId, int type)
+        {
+            try
+            {
+                var n = await Service.CopyMaterialTakeOff(mtoId, this.UserId, type);
+                if (n > 0)
+                {
+                    return ConvertSuccessResult(null, "删除成功");
+                }
+                else
+                {
+                    return ConvertFailResult(null, "删除失败");
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new DataResult() { Success = false, Message = e.Message });
+            }
+        }
         /// <summary>
         /// 导出物料表
         /// </summary>

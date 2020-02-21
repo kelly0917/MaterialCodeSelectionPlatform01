@@ -75,5 +75,13 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="id">id</param>
         /// <returns></returns>
         Task<int> DeleteById(string id);
+        /// <summary>
+        /// 拷贝
+        /// </summary>
+        /// <param name="mtoId"></param>
+        /// <param name="userId"></param>
+        /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
+        /// <returns></returns>
+        Task<int> CopyMaterialTakeOff(string mtoId, string userId, int type);
     }
 }

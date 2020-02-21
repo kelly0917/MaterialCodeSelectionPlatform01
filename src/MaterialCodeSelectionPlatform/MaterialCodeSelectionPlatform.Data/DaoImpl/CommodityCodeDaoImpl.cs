@@ -355,8 +355,6 @@ namespace MaterialCodeSelectionPlatform.Data
                          //新增明细（保持最新）
                         addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                     }
-
-
                 }
                 else
                 {
@@ -533,25 +531,35 @@ namespace MaterialCodeSelectionPlatform.Data
 
            */
             #endregion
-            //var list = await Db.Queryable<MaterialTakeOff, Project, Device>((a,b,c)=>new object[] { JoinType.Inner,a.ProjectId==b.Id,JoinType.Inner,a.DeviceId==c.Id}).Where((a,b,c) => a.Status == 0&&b.Status==0&&c.Status==0 && a.CreateUserId == userid).OrderBy((a)=>a.LastModifyTime,OrderByType.Desc)
-            //   .Select((a, b, c) => new MaterialTakeOffDto { ProjectName=b.Name, DeviceName=c.Name,Id = a.Id,ProjectId=a.ProjectId,DeviceId=a.DeviceId,CreateTime=a.CreateTime,LastModifyTime=a.LastModifyTime,CheckStatus=a.CheckStatus,Version=a.Version}).ToListAsync();
+            //var sql = $@"SELECT
+            //b.Name ProjectName,c.Name DeviceName,a.*
+            //FROM MaterialTakeOff a
+            //INNER JOIN   (
+            //        SELECT
+            //            a.ProjectId,a.DeviceId,
+            //            MAX (a.LastModifyTime) LastModifyTime
+            //        FROM
+            //            MaterialTakeOff a
+            //        WHERE
+            //          a.Status=0 and  a.CreateUserId=@CreateUserId
+            //        GROUP BY
+            //           a.ProjectId,a.DeviceId
+            //    ) k on a.LastModifyTime = k.LastModifyTime
+            //INNER JOIN Project b ON b.Id=a.ProjectId
+            //INNER JOIN device  c ON c.Id=a.DeviceId
+            //WHERE a.Status=0 and a.CreateUserId=@CreateUserId";
+            string where = string.Empty;
+            if (!string.IsNullOrEmpty(userid))
+            {
+                where = " and a.CreateUserId=@CreateUserId";
+            }
             var sql = $@"SELECT
-            b.Name ProjectName,c.Name DeviceName,a.*
-            FROM MaterialTakeOff a
-            INNER JOIN   (
-                    SELECT
-                        a.ProjectId,a.DeviceId,
-                        MAX (a.LastModifyTime) LastModifyTime
-                    FROM
-                        MaterialTakeOff a
-                    WHERE
-                      a.Status=0 and  a.CreateUserId=@CreateUserId
-                    GROUP BY
-                       a.ProjectId,a.DeviceId
-                ) k on a.LastModifyTime = k.LastModifyTime
-            INNER JOIN Project b ON b.Id=a.ProjectId
-            INNER JOIN device  c ON c.Id=a.DeviceId
-            WHERE a.Status=0 and a.CreateUserId=@CreateUserId";
+                            b.Name ProjectName,c.Name DeviceName,d.Name UserName,a.*
+                            FROM MaterialTakeOff a            
+                            INNER JOIN Project b ON b.Id=a.ProjectId
+                            INNER JOIN device  c ON c.Id=a.DeviceId
+                            LEFT JOIN [User] d ON d.Id=a.CreateUserId AND d.Status=0
+                            WHERE a.Status=0 AND b.Status=0 AND c.Status=0 {where} ORDER BY a.LastModifyTime desc";
             var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { CreateUserId = userid });
             return list;
         }
@@ -581,17 +589,19 @@ namespace MaterialCodeSelectionPlatform.Data
 
            */
             #endregion
-            var topWhere = " ORDER BY b.LastModifyTime desc";
+            //var topWhere = " ORDER BY b.LastModifyTime desc";
             MaterialTakeOff mtoEntity = null;
-            if (!string.IsNullOrWhiteSpace(mtoId))
-            {
-                topWhere = $" and b.id='{mtoId}'";
-                mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Id == mtoId).SingleAsync();
-            }
-            else
-            {
-                mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status==0&&c.CreateUserId==userId&&c.ProjectId==projectid && c.DeviceId==deviceid).OrderBy(c=>c.LastModifyTime,OrderByType.Desc).FirstAsync();
-            }
+            //if (!string.IsNullOrWhiteSpace(mtoId))
+            //{
+            //    topWhere = $" and b.id='{mtoId}'";
+            //    mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Id == mtoId).SingleAsync();
+            //}
+            //else
+            //{
+            //    mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
+            //}
+            mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
+
             var sql = $@" SELECT c.Code P_Code
                                ,c.Code P_Code
                                 ,c.CN_ShortDesc P_CN_ShortDesc
@@ -676,6 +686,112 @@ namespace MaterialCodeSelectionPlatform.Data
         {           
            var n= await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.Id == id).ExecuteCommandAsync();
             return n;
+        }
+        /// <summary>
+        /// 拷贝
+        /// </summary>
+        /// <param name="mtoId"></param>
+        /// <param name="userId"></param>
+        /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
+        /// <returns></returns>
+        public async Task<int> CopyMaterialTakeOff(string mtoId,string userId,int type)
+        {
+            var num = 0;
+            var dbModel = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id==mtoId).SingleAsync();
+            var detailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
+
+            var ownMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId==userId&&c.ProjectId==dbModel.ProjectId&&c.DeviceId==dbModel.DeviceId).SingleAsync();
+            if (ownMto == null)
+            {
+                #region 全新
+                dbModel.Id = Guid.NewGuid().ToString();
+                dbModel.CreateTime = DateTime.Now;
+                dbModel.LastModifyTime = DateTime.Now;
+                dbModel.CreateUserId = userId;
+                dbModel.LastModifyUserId = userId;
+                dbModel.CheckStatus = 1;
+                num += await Db.Insertable(dbModel).ExecuteCommandAsync();
+                if (detailList != null && detailList.Count > 0)
+                {
+                    foreach (var ent in detailList)
+                    {
+                        ent.MaterialTakeOffId = dbModel.Id;
+                        ent.CreateTime = DateTime.Now;
+                        ent.LastModifyTime = DateTime.Now;
+                        ent.CreateUserId = userId;
+                        ent.LastModifyUserId = userId;
+                    }
+                    num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                }
+
+                #endregion
+            }
+            else
+            {
+                if (type == 1)
+                {
+                    #region 覆盖拷贝
+                    num += await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == ownMto.Id).ExecuteCommandAsync();
+                    if (detailList != null && detailList.Count > 0)
+                    {
+                        foreach (var ent in detailList)
+                        {
+                            ent.MaterialTakeOffId = ownMto.Id;
+                            ent.CreateTime = DateTime.Now;
+                            ent.LastModifyTime = DateTime.Now;
+                            ent.CreateUserId = userId;
+                            ent.LastModifyUserId = userId;
+                        }
+                        num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                    }
+                    #endregion
+                }
+                else
+                {
+                    if (detailList != null && detailList.Count > 0)
+                    {
+                        var ownDetailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == ownMto.Id).ToListAsync();
+                        if (ownDetailList != null && ownDetailList.Count > 0)
+                        {
+                            #region 如果自己有明细，那就追加或叠加数量
+                            foreach (var ent in detailList)
+                            {
+                                var newEntity = ownDetailList.Where(c => c.ProjectId == ent.ProjectId && c.DeviceId == ent.DeviceId && c.PartNumberId == ent.PartNumberId).FirstOrDefault();
+                                if (newEntity != null)
+                                {
+                                    newEntity.DesignQty = newEntity.DesignQty = ent.DesignQty;//叠加数量
+                                    num += Db.Updateable(newEntity).ExecuteCommand();
+                                }
+                                else
+                                {
+                                    ent.MaterialTakeOffId = ownMto.Id;
+                                    ent.CreateTime = DateTime.Now;
+                                    ent.LastModifyTime = DateTime.Now;
+                                    ent.CreateUserId = userId;
+                                    ent.LastModifyUserId = userId;
+                                    num += await Db.Insertable(ent).ExecuteCommandAsync();
+                                }
+                            }
+                            #endregion
+                        }
+                        else 
+                        {
+                            #region 自己没有明细，直拉追加
+                            foreach (var ent in detailList)
+                            {
+                                ent.MaterialTakeOffId = ownMto.Id;
+                                ent.CreateTime = DateTime.Now;
+                                ent.LastModifyTime = DateTime.Now;
+                                ent.CreateUserId = userId;
+                                ent.LastModifyUserId = userId;
+                            }
+                            num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                            #endregion
+                        }
+                    }
+                }
+            }
+            return num;
         }
 
     }
