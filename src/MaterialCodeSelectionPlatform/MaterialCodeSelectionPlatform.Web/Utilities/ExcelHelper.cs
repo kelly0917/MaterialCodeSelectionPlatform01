@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
+using MaterialCodeSelectionPlatform.Domain;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -352,6 +353,29 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                                         dtoList.AddRange(model.PartNumberReportDetailList);
                                     }
                                 }
+                                #region 排序
+                                if (dtoList != null && dtoList.Count > 0)
+                                {
+                                    var index = 0;
+                                    foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.T_Code))
+                                    {
+                                        item.ToList().ForEach((t) => { t.T_Seq = index; });
+                                        index++;
+                                        //newPartNumberReportDetail.AddRange(item);
+                                    }
+                                    index = 0;
+                                    foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.C_Code))
+                                    {
+                                        item.ToList().ForEach((t) => { t.C_Seq = index; });
+                                        index++;
+                                        // newPartNumberReportDetail.AddRange(item);
+                                    }
+                                    index = 0;
+                                    dtoList.ToList().ForEach((t) => { t.P_Seq = index; index++; });
+                                   
+                                    dtoList = dtoList.OrderBy(c => c.T_Seq).ThenBy(c => c.C_Seq).ThenBy(c => c.P_Seq).ToList();
+                                }
+                                #endregion
                                 createRowValue<Domain.PartNumberReportDetail>(dtoList, workbook, sheet, dict, titleRowIndex, startRow, ref seqNo);
                                 #endregion
                             }
@@ -387,14 +411,19 @@ namespace MaterialCodeSelectionPlatform.Web.Common
         /// <param name="seqNo">序号开始的索引 </param>
         private static void createRowValue<T>(List<T>  dataList,IWorkbook workbook, ISheet sheet,Dictionary<string,string> dict, int titleRowIndex,int startRow,ref int seqNo)
         {
-           
+
             //var referenceNameList = GeReferencetNameList(workbook, sheet.SheetName);//引用字段列表
+            if (titleRowIndex == 0)
+            {
+                titleRowIndex = startRow;
+            }
             IRow titleRow = sheet.GetRow(titleRowIndex);
             int rowCount = sheet.LastRowNum;//总行数
             int cellCount = titleRow.Cells.Count;//一行最后一个cell的编号 即总的列数
             //var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
             if (dataList != null && dataList.Count > 0)
-            {               
+            {
+                startRow = startRow + 1;//移下一行填充数据
                 ICellStyle style = workbook.CreateCellStyle();
                 style.BorderBottom = BorderStyle.Thin;
                 style.BorderLeft = BorderStyle.Thin;
@@ -489,8 +518,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                             var key = $"{cellIndex}";
                             if (!dic.ContainsKey(key))
                             {
-                                //dic.Add(key, refName.NameName.ToLower());
-                                dic.Add(key, refName.NameName.ToLower().Replace("p_",""));//去掉固定的标识 
+                                dic.Add(key, refName.NameName.ToLower());
+                                //dic.Add(key, refName.NameName.ToLower().Replace("p_",""));//去掉固定的标识 
                             }
                             if (startRow < rowIndex)
                             {
@@ -500,7 +529,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     }
                 }
             }
-          //  startRow = startRow + 1;//移下一行
+            startRow = startRow>0? startRow - 1:startRow;//实际行，EXCEL从0开始
             return dic;
         }
         /// <summary>

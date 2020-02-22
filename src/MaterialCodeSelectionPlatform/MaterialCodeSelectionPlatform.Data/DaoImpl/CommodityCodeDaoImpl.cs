@@ -652,7 +652,8 @@ namespace MaterialCodeSelectionPlatform.Data
                     c.ProjectCode = project?.Code;
                     c.DeviceName = device?.Name;
                     c.DeviceCode = device?.Code;
-                    c.Revision = mtoEntity.Revision;
+                    c.Revision = revision;
+                    c.Version = mtoEntity.Version;
                     c.DeviceRemark = device?.Remark;
                     c.UserName = user?.Name;
                     c.DateTime = DateTime.Now.ToString("yyyy-MM-dd");
@@ -671,6 +672,7 @@ namespace MaterialCodeSelectionPlatform.Data
                         ent.CheckStatus = 2;
                     }
                     ent.LastModifyTime = DateTime.Now;
+                    ent.Version = ent.Version + 1;
                     ent.Revision = revision;
                     Db.Updateable(ent).ExecuteCommand();
                 }
@@ -690,38 +692,45 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 拷贝
         /// </summary>
-        /// <param name="mtoId"></param>
-        /// <param name="userId"></param>
+        /// <param name="mtoId">选的MTO</param>
+        /// <param name="userId">当前用户</param>
+        ///  <param name="projectId">当前的项目ID</param>
+        ///  <param name="deviceId">当前的装置ID</param>
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
-        public async Task<int> CopyMaterialTakeOff(string mtoId,string userId,int type)
+        public async Task<int> CopyMaterialTakeOff(string mtoId,string userId,string projectId,string deviceId, int type)
         {
             var num = 0;
-            var dbModel = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id==mtoId).SingleAsync();
-            var detailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
+            var dbMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id==mtoId).SingleAsync();
+            var dbMtoDetailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
 
-            var ownMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId==userId&&c.ProjectId==dbModel.ProjectId&&c.DeviceId==dbModel.DeviceId).SingleAsync();
+            var ownMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId==userId&&c.ProjectId== projectId && c.DeviceId== deviceId).SingleAsync();
             if (ownMto == null)
             {
                 #region 全新
-                dbModel.Id = Guid.NewGuid().ToString();
-                dbModel.CreateTime = DateTime.Now;
-                dbModel.LastModifyTime = DateTime.Now;
-                dbModel.CreateUserId = userId;
-                dbModel.LastModifyUserId = userId;
-                dbModel.CheckStatus = 1;
-                num += await Db.Insertable(dbModel).ExecuteCommandAsync();
-                if (detailList != null && detailList.Count > 0)
+                dbMto.Id = Guid.NewGuid().ToString();
+                dbMto.ProjectId = projectId;
+                dbMto.DeviceId = deviceId;
+                dbMto.CreateTime = DateTime.Now;
+                dbMto.LastModifyTime = DateTime.Now;
+                dbMto.CreateUserId = userId;
+                dbMto.LastModifyUserId = userId;
+                dbMto.CheckStatus = 1;
+                num += await Db.Insertable(dbMto).ExecuteCommandAsync();
+                if (dbMtoDetailList != null && dbMtoDetailList.Count > 0)
                 {
-                    foreach (var ent in detailList)
+                    foreach (var ent in dbMtoDetailList)
                     {
-                        ent.MaterialTakeOffId = dbModel.Id;
+                        ent.Id = Guid.NewGuid().ToString();
+                        ent.MaterialTakeOffId = dbMto.Id;
+                        ent.ProjectId = projectId;
+                        ent.DeviceId = deviceId;
                         ent.CreateTime = DateTime.Now;
                         ent.LastModifyTime = DateTime.Now;
                         ent.CreateUserId = userId;
                         ent.LastModifyUserId = userId;
                     }
-                    num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                    num += await Db.Insertable(dbMtoDetailList.ToArray()).ExecuteCommandAsync();
                 }
 
                 #endregion
@@ -732,44 +741,50 @@ namespace MaterialCodeSelectionPlatform.Data
                 {
                     #region 覆盖拷贝
                     num += await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == ownMto.Id).ExecuteCommandAsync();
-                    if (detailList != null && detailList.Count > 0)
+                    if (dbMtoDetailList != null && dbMtoDetailList.Count > 0)
                     {
-                        foreach (var ent in detailList)
+                        foreach (var ent in dbMtoDetailList)
                         {
+                            ent.Id = Guid.NewGuid().ToString();
                             ent.MaterialTakeOffId = ownMto.Id;
+                            ent.ProjectId = projectId;
+                            ent.DeviceId = deviceId;
                             ent.CreateTime = DateTime.Now;
                             ent.LastModifyTime = DateTime.Now;
                             ent.CreateUserId = userId;
                             ent.LastModifyUserId = userId;
                         }
-                        num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                        num += await Db.Insertable(dbMtoDetailList.ToArray()).ExecuteCommandAsync();
                     }
                     #endregion
                 }
                 else
                 {
-                    if (detailList != null && detailList.Count > 0)
+                    if (dbMtoDetailList != null && dbMtoDetailList.Count > 0)
                     {
                         var ownDetailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == ownMto.Id).ToListAsync();
                         if (ownDetailList != null && ownDetailList.Count > 0)
                         {
                             #region 如果自己有明细，那就追加或叠加数量
-                            foreach (var ent in detailList)
+                            foreach (var ent in dbMtoDetailList)
                             {
-                                var newEntity = ownDetailList.Where(c => c.ProjectId == ent.ProjectId && c.DeviceId == ent.DeviceId && c.PartNumberId == ent.PartNumberId).FirstOrDefault();
+                                var newEntity = ownDetailList.Where(c => c.Status == 0&& c.PartNumberId == ent.PartNumberId).FirstOrDefault();
                                 if (newEntity != null)
                                 {
-                                    newEntity.DesignQty = newEntity.DesignQty = ent.DesignQty;//叠加数量
-                                    num += Db.Updateable(newEntity).ExecuteCommand();
+                                    newEntity.DesignQty = newEntity.DesignQty + ent.DesignQty;//叠加数量
+                                    num += Db.Updateable(newEntity).ExecuteCommand();//更新
                                 }
                                 else
                                 {
+                                    ent.Id = Guid.NewGuid().ToString();
                                     ent.MaterialTakeOffId = ownMto.Id;
+                                    ent.ProjectId = projectId;
+                                    ent.DeviceId = deviceId;
                                     ent.CreateTime = DateTime.Now;
                                     ent.LastModifyTime = DateTime.Now;
                                     ent.CreateUserId = userId;
                                     ent.LastModifyUserId = userId;
-                                    num += await Db.Insertable(ent).ExecuteCommandAsync();
+                                    num += await Db.Insertable(ent).ExecuteCommandAsync();//追加
                                 }
                             }
                             #endregion
@@ -777,15 +792,18 @@ namespace MaterialCodeSelectionPlatform.Data
                         else 
                         {
                             #region 自己没有明细，直拉追加
-                            foreach (var ent in detailList)
+                            foreach (var ent in dbMtoDetailList)
                             {
+                                ent.Id = Guid.NewGuid().ToString();
                                 ent.MaterialTakeOffId = ownMto.Id;
+                                ent.ProjectId = projectId;
+                                ent.DeviceId = deviceId;
                                 ent.CreateTime = DateTime.Now;
                                 ent.LastModifyTime = DateTime.Now;
                                 ent.CreateUserId = userId;
                                 ent.LastModifyUserId = userId;
                             }
-                            num += await Db.Insertable(detailList.ToArray()).ExecuteCommandAsync();
+                            num += await Db.Insertable(dbMtoDetailList.ToArray()).ExecuteCommandAsync();
                             #endregion
                         }
                     }

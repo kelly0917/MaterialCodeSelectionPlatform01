@@ -78,10 +78,12 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 拷贝
         /// </summary>
-        /// <param name="mtoId"></param>
-        /// <param name="userId"></param>
+        /// <param name="mtoId">选的MTO</param>
+        /// <param name="userId">当前用户</param>
+        ///  <param name="projectId">当前的项目ID</param>
+        ///  <param name="deviceId">当前的装置ID</param>
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
-        Task<int> CopyMaterialTakeOff(string mtoId, string userId, int type);
+        Task<int> CopyMaterialTakeOff(string mtoId, string userId, string projectId, string deviceId, int type);
     }
 }
