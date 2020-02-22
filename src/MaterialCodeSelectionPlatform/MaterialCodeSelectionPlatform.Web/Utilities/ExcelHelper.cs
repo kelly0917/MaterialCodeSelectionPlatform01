@@ -356,21 +356,21 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                                 #region 排序
                                 if (dtoList != null && dtoList.Count > 0)
                                 {
-                                    var index = 0;
+                                    var index = 1;
                                     foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.T_Code))
                                     {
                                         item.ToList().ForEach((t) => { t.T_Seq = index; });
                                         index++;
                                         //newPartNumberReportDetail.AddRange(item);
                                     }
-                                    index = 0;
+                                    index = 1;
                                     foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.C_Code))
                                     {
                                         item.ToList().ForEach((t) => { t.C_Seq = index; });
                                         index++;
                                         // newPartNumberReportDetail.AddRange(item);
                                     }
-                                    index = 0;
+                                    index = 1;
                                     dtoList.ToList().ForEach((t) => { t.P_Seq = index; index++; });
                                    
                                     dtoList = dtoList.OrderBy(c => c.T_Seq).ThenBy(c => c.C_Seq).ThenBy(c => c.P_Seq).ToList();
@@ -459,7 +459,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
         }
         private static void setExcelTemplateValue(ISheet sheet, List<Domain.PartNumberReport> dataList)
         {
-            int rowCount = sheet.LastRowNum;//总行数
+            int rowCount = sheet.LastRowNum+1;//总行数
             for (var i = 0; i < rowCount; i++)
             {
                 var row = sheet.GetRow(i);
