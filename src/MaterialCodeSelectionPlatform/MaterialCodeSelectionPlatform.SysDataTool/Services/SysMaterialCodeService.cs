@@ -112,26 +112,42 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CacheData.SetDealProgress();
                 //同步物资编码属性值
 
-                sql =
-                    string.Format(
-                        @"select distinct a.descr, av.VALUE_TEXT ,iav.instance_no,iav.catalog_no,ca.SEQ_NO  from instance_attrib_value iav, attrib_equiv_set aes, attrib a, attrib_value av, attrib_represent ar, 
-                    represent_type rt,
-                    commodity c,
-                    class_attrib ca
-                    where  iav.attrib_equiv_set_no = aes.attrib_equiv_set_no
-                    and aes.attrib_no = a.attrib_no
-                    and aes.ATTRIB_EQUIV_SET_NO = av.ATTRIB_EQUIV_SET_NO
-                    and iav.catalog_no = {0}
-                    and av.attrib_represent_no  = ar.attrib_represent_no
-                    and ar.represent_type_no = rt.represent_type_no
-                    and rt.represent_type_id ='{1}'
-                    and ca.attrib_no  = a.ATTRIB_NO
-                    and ca.CATALOG_NO =  iav.CATALOG_NO
-                    and ca.cat_entity_type_no  =1
-                    and iav.instance_no =c.COMMODITY_NO
-                    and iav.CATALOG_NO = c.CATALOG_NO
-                    and c.COMMODITY_CLASS_NO = ca.CLASS_NO
-                    order by   ca.SEQ_NO", configModel.Code, configModel.COMM_REPRESENT_TYPE);
+                //sql =
+                //    string.Format(
+                //        @"select distinct a.descr, av.VALUE_TEXT ,iav.instance_no,iav.catalog_no,ca.SEQ_NO  from instance_attrib_value iav, attrib_equiv_set aes, attrib a, attrib_value av, attrib_represent ar, 
+                //    represent_type rt,
+                //    commodity c,
+                //    class_attrib ca
+                //    where  iav.attrib_equiv_set_no = aes.attrib_equiv_set_no
+                //    and aes.attrib_no = a.attrib_no
+                //    and aes.ATTRIB_EQUIV_SET_NO = av.ATTRIB_EQUIV_SET_NO
+                //    and iav.catalog_no = {0}
+                //    and av.attrib_represent_no  = ar.attrib_represent_no
+                //    and ar.represent_type_no = rt.represent_type_no
+                //    and rt.represent_type_id ='{1}'
+                //    and ca.attrib_no  = a.ATTRIB_NO
+                //    and ca.CATALOG_NO =  iav.CATALOG_NO
+                //    and ca.cat_entity_type_no  =1
+                //    and iav.instance_no =c.COMMODITY_NO
+                //    and iav.CATALOG_NO = c.CATALOG_NO
+                //    and c.COMMODITY_CLASS_NO = ca.CLASS_NO
+                //    order by   ca.SEQ_NO", configModel.Code, configModel.COMM_REPRESENT_TYPE);
+
+
+                sql =string.Format(
+                            @"select distinct ca.CLASS_ATTRIB_ID as descr,av.VALUE_TEXT,iav.instance_no,iav.catalog_no,ca.SEQ_NO from instance_attrib_value iav, attrib_equiv_set aes, attrib a,
+                attrib_value av, attrib_represent ar, represent_type rt, CLASS_ATTRIB ca
+                where iav.attrib_equiv_set_no = aes.attrib_equiv_set_no
+                and aes.attrib_no = a.attrib_no
+                and aes.ATTRIB_EQUIV_SET_NO = av.ATTRIB_EQUIV_SET_NO
+                and iav.catalog_no = {0}
+                and ca.ATTRIB_NO = a.attrib_no
+                and av.attrib_represent_no = ar.attrib_represent_no
+                and ar.represent_type_no = rt.represent_type_no
+                and rt.represent_type_id = '{1}'
+
+                and ca.CLASS_ATTRIB_NO = iav.class_attrib_no order by   ca.SEQ_NO", configModel.Code, configModel.COMM_REPRESENT_TYPE);
+
 
 
                 deleteSql = $"delete from Temp_CCPropertyValue ";

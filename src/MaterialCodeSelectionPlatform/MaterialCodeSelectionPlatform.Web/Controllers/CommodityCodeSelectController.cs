@@ -283,11 +283,19 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return View();
             }
         }
-        public async Task<ActionResult> CopyIndex()
+        public async Task<ActionResult> CopyIndex(string projectId,string deviceId)
         {
             try
             {
-                var result = await Service.GetUserMaterialTakeOff("");                
+                var result = await Service.GetUserMaterialTakeOff("");
+                if (result != null && result.Count >= 0)
+                {
+                    var own = result.Where(c => c.ProjectId == projectId && c.DeviceId == deviceId && c.CreateUserId == this.UserId).FirstOrDefault();//排除自己当前的项目与装置
+                    if (own != null)
+                    {
+                        result.Remove(own);
+                    }
+                }
                 return View(result);
             }
             catch (Exception e)
