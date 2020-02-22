@@ -42,13 +42,13 @@
                             {
                                 var txtId = $"txt_{ent.Id}";
                                 <tr>
-                                    <td>@ent.P_Code</td>
-                                    <td>@ent.P_CN_LongDesc</td>
-                                    <td class="layui-align-center">
-                                        <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@ent.Id"  materialtakeoffid="@ent.MaterialTakeOffId"  commoditycodeid="@ent.CommodityCodeId"  partnumberid="@ent.PartNumberId"  projectid="@ent.ProjectId"  deviceid="@ent.DeviceId"  designqty="@ent.DesignQty"  flag="@ent.Flag"  status="@ent.Status"  createuserid="@ent.CreateUserId"  createtime="@ent.CreateTime"  lastmodifyuserid="@ent.LastModifyUserId"  lastmodifytime ="@ent.LastModifyTime" value="@ent.DesignQty" class="layui-input" />
+                                    <td style="padding-bottom:2px; padding-top:2px">@ent.P_Code</td>
+                                    <td  style="padding-bottom:2px; padding-top:2px">@ent.P_CN_LongDesc</td>
+                                    <td class="layui-align-center"  style="padding-bottom:2px; padding-top:2px">
+                                        <input type="text" lay-verify="number" height="" onkeyup="clearNoNum(this)" id="@ent.Id"  materialtakeoffid="@ent.MaterialTakeOffId"  commoditycodeid="@ent.CommodityCodeId"  partnumberid="@ent.PartNumberId"  projectid="@ent.ProjectId"  deviceid="@ent.DeviceId"  designqty="@ent.DesignQty"  flag="@ent.Flag"  status="@ent.Status"  createuserid="@ent.CreateUserId"  createtime="@ent.CreateTime"  lastmodifyuserid="@ent.LastModifyUserId"  lastmodifytime ="@ent.LastModifyTime" value="@ent.DesignQty" class="layui-input" />
                                     </td>
-                                    <td> 
-                                        <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">删除</button>
+                                    <td  style="padding-bottom:2px; padding-top:2px"> 
+                                        <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal  layui-btn-sm layui-float-right" style="margin:0px">删除</button>
                                     </td>
                                 </tr>
                             }
