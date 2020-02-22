@@ -58,6 +58,7 @@ namespace MaterialCodeSelectionPlatform.Domain
     {
 
         #region PartNumber
+        public int P_Seq { get; set; }
         public string P_Code { get; set; }
         public string P_CN_ShortDesc { get; set; }
         public string P_EN_ShortDesc { get; set; }
@@ -70,6 +71,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         public string P_RU_SizeDesc { get; set; }
         #endregion
         #region CommodityCode
+        public int C_Seq { get; set; }
         public string C_Code { get; set; }
         public string C_CN_ShortDesc { get; set; }
         public string C_EN_ShortDesc { get; set; }
@@ -79,6 +81,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         public string C_RU_LongDesc { get; set; }
         #endregion
         #region CommodityCode
+        public int T_Seq { get; set; }
         public string T_Code { get; set; }
         public string T_Desc { get; set; }
         public string T_Unit { get; set; }

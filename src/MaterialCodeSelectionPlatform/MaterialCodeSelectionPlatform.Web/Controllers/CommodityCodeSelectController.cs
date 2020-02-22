@@ -351,6 +351,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 var result = await Service.GetUserMaterialTakeReport(mtoId, revision,this.UserId, projectid, deviceid,1);
                 if (result != null && result.Count > 0)
                 {
+                   
                     var ent = result.FirstOrDefault();
                     var projectCode = ent.ProjectCode;
                     var deviceCode = ent.DeviceCode;

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using log4net;
+using MaterialCodeSelectionPlatform.Domain;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -352,6 +353,29 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                                         dtoList.AddRange(model.PartNumberReportDetailList);
                                     }
                                 }
+                                #region 排序
+                                if (dtoList != null && dtoList.Count > 0)
+                                {
+                                    var index = 0;
+                                    foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.T_Code))
+                                    {
+                                        item.ToList().ForEach((t) => { t.T_Seq = index; });
+                                        index++;
+                                        //newPartNumberReportDetail.AddRange(item);
+                                    }
+                                    index = 0;
+                                    foreach (IGrouping<string, PartNumberReportDetail> item in dtoList.GroupBy(c => c.C_Code))
+                                    {
+                                        item.ToList().ForEach((t) => { t.C_Seq = index; });
+                                        index++;
+                                        // newPartNumberReportDetail.AddRange(item);
+                                    }
+                                    index = 0;
+                                    dtoList.ToList().ForEach((t) => { t.P_Seq = index; index++; });
+                                   
+                                    dtoList = dtoList.OrderBy(c => c.T_Seq).ThenBy(c => c.C_Seq).ThenBy(c => c.P_Seq).ToList();
+                                }
+                                #endregion
                                 createRowValue<Domain.PartNumberReportDetail>(dtoList, workbook, sheet, dict, titleRowIndex, startRow, ref seqNo);
                                 #endregion
                             }
