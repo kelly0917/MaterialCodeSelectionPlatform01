@@ -118,6 +118,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             return null;
         }
+
         /// <summary>
         /// 物资编码查询
         /// </summary>
@@ -125,8 +126,10 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="page">第几页</param>
         /// <param name="limit">每页显示的记录数</param>
         /// <param name="componentTypeId">物资类型ID</param>
+        /// <param name="orderBy">排序列明</param>
+        /// <param name="orderByType">0升序，1降序</param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string inputText, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds)
+        public async Task<IActionResult> GetCommodityCodeDataList(string inputText, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds,string orderBy,int orderByType=0)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
@@ -142,7 +145,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             condition.ComponentTypeId = componentTypeId;
             condition.CompenetAttributes = compenentCodeIds;
             condition.Page = dataPage;
-            condition.InputText = inputText;          
+            condition.InputText = inputText;
+            condition.OrderBy = orderBy;
+            condition.OrderByType = orderByType;
             var list = await this.Service.GetCommodityCodeDataList(condition);
             return ConvertListResult(list, dataPage);
         }

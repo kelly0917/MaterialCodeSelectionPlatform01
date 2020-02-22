@@ -17,6 +17,9 @@
     .checkboxContent:hover {
         height: auto;
     }
+    .layui-form-label {
+        width: 180px;
+    }
 </style>
 
 <link href="~/js/jquery-ui.css" rel="stylesheet" />
@@ -39,7 +42,7 @@
             </div>
         </div>
         <div class="layui-inline layui-float-left">
-            <label class="layui-form-label" style="width: auto;">物资类型</label>
+            <label class="layui-form-label">物资类型：</label>
             <div class="layui-input-inline">
                 <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:500px" />
             </div>
@@ -147,7 +150,8 @@
             var table = layui.table;
             var $ = layui.jquery;
 
-
+            var order = "";
+            var orderType = 0;
             window.loadData = function (parms) {
                 
                 var cpIds = [];
@@ -161,21 +165,41 @@
 
                 table.render({
                     elem: '#tbCommodityCodeList',
-               
+                    autoSort: false,
                     method:'post',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?order='+order+'&orderType='+orderType+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
                     ,where: {compenentCodeIds:cpIds}
                     , page: true //开启分页
                     , limit: 15
                     , limits: [10,15, 20,50]
                     , cols: [[ //表头
                         { field: 'Desc', title: '物资类型' },
-                        { field: 'Code', title: '物资编码' }
-                        , { field: 'CN_ShortDesc', title: '描述' }
+                        { field: 'Code', title: '物资编码' ,sort: true}
+                        , { field: 'CN_ShortDesc', title: '描述' ,sort: true}
                         , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
+                   
+
+                });
+                //监听排序事件 
+                table.on('sort(useruv)', function(obj){ //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                    console.log(obj.field); //当前排序的字段名
+                    console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+                    console.log(this); //当前排序的 th 对象
+                    order = obj.field;
+                    if (obj.type == 'desc') {
+                        orderType = 1;
+                    } else {
+                        orderType = 0;
+                    }
+                    //尽管我们的 table 自带排序功能，但并没有请求服务端。
+                    //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+                    table.reload('testReload', {
+                        initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                        ,  url: '/CommodityCodeSelect/GetCommodityCodeDataList?orderBy='+order+'&orderByType='+orderType+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                    });
 
                 });
 
