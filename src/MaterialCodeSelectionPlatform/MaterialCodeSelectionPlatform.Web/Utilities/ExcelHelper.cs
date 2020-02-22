@@ -481,7 +481,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
         }
         private static string getColumnString<T>(T item,string cellString)
         {
-            cellString = cellString.ToLower();
+            var cellValue = cellString;           
             Type t = item.GetType();
             var propertyInfos = t.GetProperties();
             if (propertyInfos != null && propertyInfos.Length > 0)
@@ -492,14 +492,16 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     var value = pro.GetValue(item, null);
                     if (value != null)
                     {
-                        if (cellString.IndexOf(name) > -1)
+                        var vName=cellString.ToLower();
+                        if (vName.IndexOf(name) > -1)
                         {
-                            cellString = cellString.Replace(name, value.ToString());
+                            cellValue = value.ToString();
                         }
                     }
+                  
                 }
             }
-            return cellString;
+            return cellValue;
         }
         public static Dictionary<string, string> GetRefColumnDic(List<IName> list, string sheetName,ref int startRow)
         {
