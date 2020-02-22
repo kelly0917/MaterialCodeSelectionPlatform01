@@ -59,11 +59,12 @@
             form.render(); 
           });
     function copy(mtoId) {
-       
+        var projectId = "@ViewData["projectId"]";
+        var deviceId = "@ViewData["deviceId"]";
         layer.confirm('确定拷贝吗？', function (index) {
         var type = $('input[name="copy"]:checked').val();     
            $.ajax({
-               url: '/CommodityCodeSelect/CopyMaterialTakeOff?mtoId=' + mtoId + "&type="+type+"&" + Math.random(),
+               url: '/CommodityCodeSelect/CopyMaterialTakeOff?mtoId=' + mtoId + "&projectId="+projectId+"&deviceId="+deviceId+"&type="+type+"&" + Math.random(),
                dataType: "json",
                success: function (data) {
                    if (data.Success) {

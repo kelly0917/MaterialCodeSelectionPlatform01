@@ -29,6 +29,10 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// </summary>
         public string DeviceCode { get; set; }
         /// <summary>
+        /// 版次
+        /// </summary>
+        public int? Version { get; set; }
+        /// <summary>
         /// 版本
         /// </summary>
         public string Revision { get; set; }

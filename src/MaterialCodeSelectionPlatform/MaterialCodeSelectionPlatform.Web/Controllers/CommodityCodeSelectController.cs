@@ -282,6 +282,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             try
             {
+                ViewData["projectId"] = projectId;
+                ViewData["deviceId"] = deviceId;
                 var result = await Service.GetUserMaterialTakeOff("");
                 if (result != null && result.Count >= 0)
                 {
@@ -304,11 +306,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="mtoId"></param>
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
-        public async Task<IActionResult> CopyMaterialTakeOff(string mtoId, int type)
+        public async Task<IActionResult> CopyMaterialTakeOff(string mtoId,string projectId,string deviceId, int type)
         {
             try
             {
-                var n = await Service.CopyMaterialTakeOff(mtoId, this.UserId, type);
+                var n = await Service.CopyMaterialTakeOff(mtoId, this.UserId, projectId, deviceId,type);
                 if (n > 0)
                 {
                     return ConvertSuccessResult(null, "删除成功");
