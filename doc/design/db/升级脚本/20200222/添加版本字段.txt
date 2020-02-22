@@ -1,1 +1,16 @@
 ALTER TABLE dbo.[MaterialTakeOff] ADD Revision VARCHAR(100) NULL;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN CN_CommodityShortDesc;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  EN_CommodityShortDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  RU_CommodityShortDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN CN_CommodityLongDesc  ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  EN_CommodityLongDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  RU_CommodityLongDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  CN_PartNumberShortDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  EN_PartNumberShortDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  RU_PartNumberShortDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  CN_PartNumberLongDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  EN_PartNumberLongDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  RU_PartNumberLongDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  CN_SizeDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  EN_SizeDesc ;
+ALTER TABLE dbo.[MaterialTakeOffDetail] DROP COLUMN  RU_SizeDesc ;
