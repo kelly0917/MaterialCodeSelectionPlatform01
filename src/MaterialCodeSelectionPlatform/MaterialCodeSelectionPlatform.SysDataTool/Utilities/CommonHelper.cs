@@ -188,6 +188,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
                 com.CommandType = CommandType.StoredProcedure;
                 if(parameters != null)
                     com.Parameters.AddRange(parameters.ToArray());
+                com.CommandTimeout = 1800;
                 com.ExecuteNonQuery();
             }
             catch (Exception e)
