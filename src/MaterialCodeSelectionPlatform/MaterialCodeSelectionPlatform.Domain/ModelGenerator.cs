@@ -271,8 +271,10 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string Code { get; set; }
 		
 		public virtual string Name { get; set; }
-		
-		public virtual string ConnectionString { get; set; }
+
+        public virtual string Description { get; set; }
+
+        public virtual string ConnectionString { get; set; }
 		
 		public virtual string CN_COMM_DESC_SHORT { get; set; }
 		
