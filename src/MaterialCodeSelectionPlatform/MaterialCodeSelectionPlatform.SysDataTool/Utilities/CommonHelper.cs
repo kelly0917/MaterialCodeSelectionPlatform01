@@ -161,9 +161,10 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
        
             SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(connString);
             sqlBulkCopy.DestinationTableName = tableName;
-
+            log.Debug("dataTable.Rows.Count="+ dataTable.Rows.Count);
             if (dataTable != null && dataTable.Rows.Count != 0)
             {
+                sqlBulkCopy.BulkCopyTimeout = 1800;
                 sqlBulkCopy.WriteToServer(dataTable);
             }
             sqlBulkCopy.Close();

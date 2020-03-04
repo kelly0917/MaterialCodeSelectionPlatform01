@@ -108,7 +108,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             foreach (var top in list)
             {
                 TreeItemModel treeItemModel = new TreeItemModel();
-                treeItemModel.title = top.Name;
+                treeItemModel.title = top.Description;
                 treeItemModel.value = top.Id;
                 treeItemModel.disabled = false;
                 treeItemModel.parentId = Guid.Empty.ToString();
@@ -129,7 +129,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             foreach (var top in list)
             {
                 TreeItemModel treeItemModel = new TreeItemModel();
-                treeItemModel.title = top.Name;
+                treeItemModel.title = top.Description;
                 treeItemModel.value = top.Id;
                 treeItemModel.disabled = false;
                 treeItemModel.parentId = Guid.Empty.ToString();
