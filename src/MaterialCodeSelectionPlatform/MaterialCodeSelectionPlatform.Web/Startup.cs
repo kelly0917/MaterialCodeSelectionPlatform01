@@ -47,7 +47,7 @@ namespace MaterialCodeSelectionPlatform.Web
             SysConfig.IsNeedPermission = isPermission;
             SysConfig.Domain = Configuration["Domain"];
             SysConfig.SysServiceUrl = Configuration["sysServiceUrl"].TrimEnd('/') + "/";
-            LDAPUtil.Register(Configuration);
+            //LDAPUtil.Register(Configuration);
         }
         public IConfigurationRoot Configuration { get; }
 
