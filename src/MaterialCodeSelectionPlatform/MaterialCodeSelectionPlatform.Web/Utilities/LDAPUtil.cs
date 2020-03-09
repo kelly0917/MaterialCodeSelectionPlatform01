@@ -6,21 +6,21 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
 {
     public class LDAPUtil
     {
-        public static string Host { get; private set; }
-        public static string BindDN { get; private set; }
-        public static string BindPassword { get; private set; }
-        public static int Port { get; private set; }
-        public static string BaseDC { get; private set; }
-        public static string CookieName { get; private set; }
 
+        public static string Domain;//域名称
+        public static string Host;//域服务器地址
+        public static string BaseDC;//根据上面的域服务器地址，每个点拆分为一个DC，例如上面的apac.contoso.com，拆分后就是DC=apac,DC=contoso,DC=com
+        public static int Port = 389;//域服务器端口，一般默认就是389
+        public static string DomainAdminUser;//域管理员账号用户名，如果只是验证登录用户，不对域做修改，可以就是登录用户名
+        public static string DomainAdminPassword;//域管理员账号密码，如果只是验证登录用户，不对域做修改，可以就是登录用户的密码
         public static void Register(IConfigurationRoot configuration)
         {
-            Host = configuration.GetValue<string>("LDAPServer");
-            Port = configuration?.GetValue<int>("LDAPPort") ?? 389;
-            BindDN = configuration.GetValue<string>("BindDN");
-            BindPassword = configuration.GetValue<string>("BindPassword");
-            BaseDC = configuration.GetValue<string>("LDAPBaseDC");
-            CookieName = configuration.GetValue<string>("CookieName");
+            Domain = configuration["Domain"];//域名称
+            Host = configuration["Host"];//域服务器地址
+            BaseDC = configuration["BaseDC"];//根据上面的域服务器地址，每个点拆分为一个DC，例如上面的apac.contoso.com，拆分后就是DC=apac,DC=contoso,DC=com
+            Port = int.Parse(configuration["ADPort"]); ;//域服务器端口，一般默认就是389
+            DomainAdminUser = configuration["DomainAdminUser"];//域管理员账号用户名，如果只是验证登录用户，不对域做修改，可以就是登录用户名
+            DomainAdminPassword = configuration["DomainAdminPassword"];//域管理员账号密码，如果只是验证登录用户，不对域做修改，可以就是登录用户的密码
         }
 
 
@@ -32,33 +32,43 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
                 using (var conn = new LdapConnection())
                 {
                     conn.Connect(Host, Port);
-                    conn.Bind($"{BindDN},{BaseDC}", BindPassword);
+                    conn.Bind(Domain + "\\" + DomainAdminUser, DomainAdminPassword);//这里用户名或密码错误会抛出异常LdapException
+
                     var entities =
-                        conn.Search(BaseDC, LdapConnection.SCOPE_SUB,
-                            $"(sAMAccountName={username})",
-                            new string[] { "sAMAccountName" }, false);
+                        conn.Search(BaseDC, LdapConnection.ScopeSub,
+                            $"sAMAccountName={username}",//注意一个多的空格都不能打，否则查不出来
+                            new string[] { "sAMAccountName", "cn", "mail" }, false);
+
                     string userDn = null;
                     while (entities.HasMore())
                     {
                         var entity = entities.Next();
-                        var account = entity.getAttribute("sAMAccountName");
+                        var sAMAccountName = entity.GetAttribute("sAMAccountName")?.StringValue;
+                        var cn = entity.GetAttribute("cn")?.StringValue;
+                        var mail = entity.GetAttribute("mail")?.StringValue;
+
+                        Console.WriteLine($"User name : {sAMAccountName}");//james
+                        Console.WriteLine($"User full name : {cn}");//James, Clark [james]
+                        Console.WriteLine($"User mail address : {mail}");//james@contoso.com
+
                         //If you need to Case insensitive, please modify the below code.
-                        if (account != null && account.StringValue == username)
+                        if (sAMAccountName != null && sAMAccountName == username)
                         {
-                            userDn = entity.DN;
+                            userDn = entity.Dn;
                             break;
                         }
                     }
                     if (string.IsNullOrWhiteSpace(userDn)) return false;
-                    conn.Bind(userDn, password);
+                    conn.Bind(userDn, password);//这里用户名或密码错误会抛出异常LdapException
                     // LdapAttribute passwordAttr = new LdapAttribute("userPassword", password);
                     // var compareResult = conn.Compare(userDn, passwordAttr);
                     conn.Disconnect();
                     return true;
                 }
             }
-            catch (LdapException)
+            catch (LdapException ldapEx)
             {
+                string message = ldapEx.Message;
 
                 return false;
             }

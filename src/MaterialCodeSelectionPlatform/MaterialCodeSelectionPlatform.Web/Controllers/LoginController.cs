@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return View();
         }
 
+
+
         /// <summary>
         /// 系统登录
         /// </summary>
@@ -38,6 +41,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> LoginUserName(string userName, string password)
         {
+
+
+
 
             ///域登录一般的用户名形式为
             ///  domain\userName  或者 userName@domain
