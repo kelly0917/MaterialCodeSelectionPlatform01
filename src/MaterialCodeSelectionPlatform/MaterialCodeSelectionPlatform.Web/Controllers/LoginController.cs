@@ -25,7 +25,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         public LoginController(IUserService userService,IConfiguration configuration)
         {
             this.userService = userService;
-            domain = configuration["Domain"];
+            domain = configuration["Domain"].ToLower();
         }
 
         public IActionResult Index()
