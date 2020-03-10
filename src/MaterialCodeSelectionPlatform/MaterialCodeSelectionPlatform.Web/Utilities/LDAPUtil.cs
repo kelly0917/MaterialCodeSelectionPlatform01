@@ -30,16 +30,17 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
         {
             try
             {
+                log.Debug($"域用户名为：{username} 开始认证登录");
                 using (var conn = new LdapConnection())
                 {
                     conn.Connect(Host, Port);
                     conn.Bind(Domain + "\\" + DomainAdminUser, DomainAdminPassword);//这里用户名或密码错误会抛出异常LdapException
-
+                    log.Debug("域服务端连接完成！");
                     var entities =
                         conn.Search(BaseDC, LdapConnection.ScopeSub,
                             $"sAMAccountName={username}",//注意一个多的空格都不能打，否则查不出来
                             new string[] { "sAMAccountName", "cn", "mail" }, false);
-
+                    log.Debug("用户查找完成！");
                     string userDn = null;
                     while (entities.HasMore())
                     {
@@ -53,7 +54,12 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
                             break;
                         }
                     }
-                    if (string.IsNullOrWhiteSpace(userDn)) return false;
+                    log.Debug("while循环完成！");
+                    if (string.IsNullOrWhiteSpace(userDn))
+                    {
+                        log.Debug("userDn为空！");
+                        return false;
+                    }
                     conn.Bind(userDn, password);//这里用户名或密码错误会抛出异常LdapException
                     // LdapAttribute passwordAttr = new LdapAttribute("userPassword", password);
                     // var compareResult = conn.Compare(userDn, passwordAttr);
