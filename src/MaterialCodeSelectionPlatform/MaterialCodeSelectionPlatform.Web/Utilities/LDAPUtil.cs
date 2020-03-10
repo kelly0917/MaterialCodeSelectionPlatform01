@@ -1,4 +1,5 @@
 ﻿using System;
+using log4net;
 using Microsoft.Extensions.Configuration;
 using Novell.Directory.Ldap;
 
@@ -6,7 +7,7 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
 {
     public class LDAPUtil
     {
-
+        private static ILog log = LogHelper.GetLogger<Object>();
         public static string Domain;//域名称
         public static string Host;//域服务器地址
         public static string BaseDC;//根据上面的域服务器地址，每个点拆分为一个DC，例如上面的apac.contoso.com，拆分后就是DC=apac,DC=contoso,DC=com
@@ -29,16 +30,17 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
         {
             try
             {
+                log.Debug($"域用户名为：{username} 开始认证登录");
                 using (var conn = new LdapConnection())
                 {
                     conn.Connect(Host, Port);
                     conn.Bind(Domain + "\\" + DomainAdminUser, DomainAdminPassword);//这里用户名或密码错误会抛出异常LdapException
-
+                    log.Debug("域服务端连接完成！");
                     var entities =
                         conn.Search(BaseDC, LdapConnection.ScopeSub,
                             $"sAMAccountName={username}",//注意一个多的空格都不能打，否则查不出来
                             new string[] { "sAMAccountName", "cn", "mail" }, false);
-
+                    log.Debug("用户查找完成！");
                     string userDn = null;
                     while (entities.HasMore())
                     {
@@ -52,7 +54,12 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
                             break;
                         }
                     }
-                    if (string.IsNullOrWhiteSpace(userDn)) return false;
+                    log.Debug("while循环完成！");
+                    if (string.IsNullOrWhiteSpace(userDn))
+                    {
+                        log.Debug("userDn为空！");
+                        return false;
+                    }
                     conn.Bind(userDn, password);//这里用户名或密码错误会抛出异常LdapException
                     // LdapAttribute passwordAttr = new LdapAttribute("userPassword", password);
                     // var compareResult = conn.Compare(userDn, passwordAttr);
@@ -63,11 +70,12 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
             catch (LdapException ldapEx)
             {
                 string message = ldapEx.Message;
-
+                log.Error(ldapEx);
                 return false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error(ex);
                 return false;
             }
         }
