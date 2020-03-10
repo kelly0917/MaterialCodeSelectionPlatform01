@@ -21,9 +21,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
     public class LoginController : Controller
     {
         private IUserService userService;
-        public LoginController(IUserService userService)
+        private string domain;
+        public LoginController(IUserService userService,IConfiguration configuration)
         {
             this.userService = userService;
+            domain = configuration["Domain"];
         }
 
         public IActionResult Index()
@@ -41,15 +43,18 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> LoginUserName(string userName, string password)
         {
-
-
-
-
             ///域登录一般的用户名形式为
             ///  domain\userName  或者 userName@domain
-            if (userName.Contains("@") || userName.Contains("\\"))
+            if (userName == null)
             {
-                if (LDAPUtil.Validate(userName, password))
+                return Content("用户名或密码错误");
+            }
+
+            userName = userName.ToLower();
+            if (userName.StartsWith(domain))
+            {
+                
+                if (LDAPUtil.Validate(userName.Replace(domain+"\\",""), password))
                 {
                     var list = await userService.GetByParentId("DomainUserName", userName);
                     if (list.Count > 0)

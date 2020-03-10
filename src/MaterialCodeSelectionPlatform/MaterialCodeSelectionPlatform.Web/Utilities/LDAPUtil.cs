@@ -44,15 +44,9 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
                     {
                         var entity = entities.Next();
                         var sAMAccountName = entity.GetAttribute("sAMAccountName")?.StringValue;
-                        var cn = entity.GetAttribute("cn")?.StringValue;
-                        var mail = entity.GetAttribute("mail")?.StringValue;
-
-                        Console.WriteLine($"User name : {sAMAccountName}");//james
-                        Console.WriteLine($"User full name : {cn}");//James, Clark [james]
-                        Console.WriteLine($"User mail address : {mail}");//james@contoso.com
-
+                       
                         //If you need to Case insensitive, please modify the below code.
-                        if (sAMAccountName != null && sAMAccountName == username)
+                        if (sAMAccountName != null && sAMAccountName.Trim().Equals(username,StringComparison.OrdinalIgnoreCase))
                         {
                             userDn = entity.Dn;
                             break;
