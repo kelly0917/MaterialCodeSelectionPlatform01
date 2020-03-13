@@ -78,6 +78,13 @@ namespace MaterialCodeSelectionPlatform.Data
             }
 
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
+
+            query = query.Where((a, b) => a.Status == 0);
+            if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
+            {
+                query = query.Where((a, b) => a.ComponentTypeId == condition.ComponentTypeId);
+            }
+
             if (condition.CompenetAttributes.Count > 0)
             {
                 // SELECT DISTINCT ComponentTypeId FROM CommodityCodeAttribute WHERE Status = 0 AND AttributeName = 'Flange Rating' AND AttributeValue IN('None', 'ASTM A350 Grade LF2 Class 1')
@@ -118,7 +125,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
                 //foreach (var conditionCompenetAttribute in condition.CompenetAttributes)
                 //{
-                  
+
                 //    var tempList = await queryC.Where(c =>
                 //        c.AttributeName == conditionCompenetAttribute.AttrName &&
                 //        conditionCompenetAttribute.AttrValue == (c.AttributeValue)).ToListAsync();
@@ -127,31 +134,12 @@ namespace MaterialCodeSelectionPlatform.Data
                 //        commodityCodeIdList.AddRange(tempList.Select(c => c.CommodityCodeId).ToList());
                 //    }
                 //}
-
+                query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
             }
-            else
-            {
-                var queryC = Db.Queryable<CommodityCodeAttribute>()
-                    .Where(c => c.Status == 0 && c.ComponentTypeId == condition.ComponentTypeId);
-                if (commodityCodeIdList.Count > 0)
-                {
-                    var oldList = commodityCodeIdList.ToList();
-                    commodityCodeIdList = await queryC.Where(c=>oldList.Contains(c.CommodityCodeId)).Select(c => c.CommodityCodeId).ToListAsync();
-                }
-                else
-                {
-                    commodityCodeIdList = await queryC.Select(c => c.CommodityCodeId).ToListAsync();
-                }
+
             
-            }
 
-            query = query.Where((a, b) => a.Status == 0);
-            if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
-            {
-                query = query.Where((a, b) => a.ComponentTypeId == condition.ComponentTypeId);
-            }
-
-            query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
+       
 
             //if (condition.Code.IsNotNullAndNotEmpty())
             //{

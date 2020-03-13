@@ -43,7 +43,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                string deleteSql = $"delete from Temp_CommodityCode ";
+                string deleteSql = $"truncate table Temp_CommodityCode ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
                 //物资编码
                 var sql =
@@ -59,7 +59,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress();
                 //采购码
-                deleteSql = $"delete from Temp_PartNumber ";
+                deleteSql = $"truncate table Temp_PartNumber ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -76,7 +76,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress();
                 //采购码属性
-                deleteSql = $"delete from Temp_PropertyValue ";
+                deleteSql = $"truncate table Temp_PropertyValue ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -93,7 +93,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 CacheData.SetDealProgress();
                 //同步字典属性
-                deleteSql = $"delete from Temp_Property ";
+                deleteSql = $"truncate table Temp_Property ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
@@ -150,7 +150,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
 
 
-                deleteSql = $"delete from Temp_CCPropertyValue ";
+                deleteSql = $"truncate table Temp_CCPropertyValue ";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 log.Debug($"临时表删除属性值数据完成，耗时：{stopwatch.ElapsedMilliseconds}mm,，编码库为：{configModel.Name}");

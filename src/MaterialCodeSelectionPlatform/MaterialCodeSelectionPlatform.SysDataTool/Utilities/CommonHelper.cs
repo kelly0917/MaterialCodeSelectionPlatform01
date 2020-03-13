@@ -164,7 +164,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
             log.Debug("dataTable.Rows.Count="+ dataTable.Rows.Count);
             if (dataTable != null && dataTable.Rows.Count != 0)
             {
-                sqlBulkCopy.BulkCopyTimeout = 1800;
+                sqlBulkCopy.BulkCopyTimeout = 3600;
                 sqlBulkCopy.WriteToServer(dataTable);
             }
             sqlBulkCopy.Close();
@@ -189,7 +189,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
                 com.CommandType = CommandType.StoredProcedure;
                 if(parameters != null)
                     com.Parameters.AddRange(parameters.ToArray());
-                com.CommandTimeout = 1800;
+                com.CommandTimeout = 3600;
                 com.ExecuteNonQuery();
             }
             catch (Exception e)
@@ -218,6 +218,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Utilities
                 SqlCommand com = new SqlCommand(sql, con);
                 if (parameters != null)
                     com.Parameters.AddRange(parameters.ToArray());
+                com.CommandTimeout = 3600;
                 com.ExecuteNonQuery();
             }
             catch (Exception e)
