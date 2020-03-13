@@ -61,7 +61,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Restart();
                 //递归排除掉 审批状态不为2,
                 CacheData.SetDealProgress();
-                string deleteSql = $"delete from Temp_ComponentType";
+                string deleteSql = $"truncate table Temp_ComponentType";
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
               
                 CommonHelper.SqlBulkCopyInsert(table, CacheData.SqlConn, tempTableName);
