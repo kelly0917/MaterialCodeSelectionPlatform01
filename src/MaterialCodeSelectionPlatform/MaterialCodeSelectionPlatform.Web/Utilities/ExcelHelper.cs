@@ -463,18 +463,21 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             for (var i = 0; i < rowCount; i++)
             {
                 var row = sheet.GetRow(i);
-                var cellCount = row.Cells.Count;
-                for (var j = 0; j < cellCount; j++)
+                if (row != null)
                 {
-                    var cell = row.Cells[j];
-                    var cellString = cell?.ToString();
-                    if (!string.IsNullOrEmpty(cellString)&& cellString.IndexOf("$")>-1)
+                    var cellCount = row.Cells.Count;
+                    for (var j = 0; j < cellCount; j++)
                     {
-                        foreach (var ent in dataList)
+                        var cell = row.Cells[j];
+                        var cellString = cell?.ToString();
+                        if (!string.IsNullOrEmpty(cellString) && cellString.IndexOf("$") > -1)
                         {
-                            cellString = getColumnString<Domain.PartNumberReport>(ent, cellString);
+                            foreach (var ent in dataList)
+                            {
+                                cellString = getColumnString<Domain.PartNumberReport>(ent, cellString);
+                            }
+                            cell.SetCellValue(cellString);
                         }
-                        cell.SetCellValue(cellString);
                     }
                 }
             }
