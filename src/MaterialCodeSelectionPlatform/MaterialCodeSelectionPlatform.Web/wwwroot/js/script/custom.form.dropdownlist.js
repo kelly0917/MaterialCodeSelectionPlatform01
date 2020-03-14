@@ -38,14 +38,25 @@
     };
 
     function successCallback($that, data, textStatus, jqXHR, settings) {
-        
+        var defaultOne = "";
+
         for (var i = 0; i < data.length; i++) {
+
             var item = data[i];
-            $that.append('<option value="' + item.value + '">' + item.text+'<option/>');
+            $that.append('<option value="' + item.value + '">' + item.text + '<option/>');
+            if (i == 0) {
+                defaultOne = item.value;
+            }
         }
         if (settings.defaultValue != '' || settings.defaultValue===0) {
             $that.val(settings.defaultValue);
         }
+
+        if (settings.defaultValue == "first") {
+            $that.val(defaultOne);
+        }
+
+
         layui.form.render('select');
 
 

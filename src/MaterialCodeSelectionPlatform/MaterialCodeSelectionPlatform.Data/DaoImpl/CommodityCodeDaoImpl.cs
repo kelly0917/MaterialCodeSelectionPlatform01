@@ -71,18 +71,34 @@ namespace MaterialCodeSelectionPlatform.Data
             #endregion
             List<string> commodityCodeIdList = new List<string>();
 
-            if (condition.InputText.IsNotNullAndNotEmpty())
-            {
-                commodityCodeIdList =await Db.Queryable<CommodityCode>()
-                    .Where(c => c.CN_LongDesc.Contains(condition.InputText)).Select(c => c.Id).ToListAsync();
-            }
-
+           
+            
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
 
+            if (condition.InputText.IsNotNullAndNotEmpty())
+            {
+                if (condition.InputText == "清空列表数据")
+                {
+                    return new List<CommodityCodeDto>();
+                }
+
+                query = query.Where((a, b) => a.CN_LongDesc.Contains(condition.InputText));
+            
+            }
+
             query = query.Where((a, b) => a.Status == 0);
+
+           
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
             {
                 query = query.Where((a, b) => a.ComponentTypeId == condition.ComponentTypeId);
+            }
+            else
+            {
+                if (condition.CatelogId.IsNotNullAndNotEmpty())
+                {
+                    query = query.Where((a, b) => b.CatalogId == condition.CatelogId);
+                }
             }
 
             if (condition.CompenetAttributes.Count > 0)
