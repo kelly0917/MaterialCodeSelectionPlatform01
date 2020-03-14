@@ -71,6 +71,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             projectSearchCondition.Code = code;
             projectSearchCondition.Name = name;
             projectSearchCondition.Status = status;
+            projectSearchCondition.UserId = UserId;
             var list = await Service.GetDataList(projectSearchCondition);
             return ConvertListResult(list, dataPage);
         }

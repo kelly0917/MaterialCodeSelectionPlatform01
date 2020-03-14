@@ -47,7 +47,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 case 1://项目
                     var list1 = await projectService.GetListAsync();
-                    var projectList = list1.ToList();
+                    var projectList = list1.ToList().Where(c=>c.CreateUserId==UserId&&c.Status==0).ToList();
                     if (projectList.Count > 0)
                         projectList.Insert(0, new Project() { Name = "全部", Id = "-1" });
                     var result1 = projectList.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
