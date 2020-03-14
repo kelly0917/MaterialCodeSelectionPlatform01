@@ -22,13 +22,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         private IComponentTypeService componentTypeService;
         private IProjectService projectService;
         private IDeviceService deviceService;
-        public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService,IProjectService projectService,IDeviceService deviceService)
+        private IUserService userService;
+        public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService,IProjectService projectService,IDeviceService deviceService,IUserService userService)
         {
             this.Service = services;
             this.PartNumberService = PartNumberService;
             this.componentTypeService = componentTypeService;
             this.projectService = projectService;
             this.deviceService = deviceService;
+            this.userService = userService;
         }
 
         public IActionResult Index()
@@ -46,11 +48,12 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             switch (type)
             {
                 case 1://项目
-                    var list1 = await projectService.GetListAsync();
+                    var list1 = await userService.GetRightProjects(UserId);
                     var projectList = list1.ToList();
                     if (projectList.Count > 0)
                         projectList.Insert(0, new Project() { Name = "全部", Id = "-1" });
                     var result1 = projectList.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
+
                     return Json(result1);
                 case 2://装置
                     var list2 = await deviceService.GetByParentId("ProjectId", parentId);
@@ -64,6 +67,30 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     if(list3.Count>0)
                         list3.Insert(0,new ComponentType(){ Desc = "全部",Id="-1"});
                     var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    return Json(result3);
+                case 4://编码库
+                    var projects =await userService.GetRightProjects(UserId);
+                    List<Catalog> catalogsAll = new List<Catalog>();
+                        
+                    foreach (var project in projects)
+                    {
+                        var catlogs = await projectService.GetRightCatalogs(project.Id);
+                        foreach (var catalog in catlogs)
+                        {
+                            if (catalogsAll.Where(c => c.Id == catalog.Id).FirstOrDefault() == null)
+                            {
+                                catalogsAll.Add(catalog);
+                            }
+                        }
+                    }
+                    catalogsAll = catalogsAll.OrderBy(c => c.Description).ToList();
+                    var result4 = catalogsAll.Select(c => new DropDownListItemDTO() { Text = c.Description, Value = c.Id });
+                    return Json(result4);
+                case 5://物资类型 根据编码库获取
+                    list3 = await componentTypeService.GetByParentId("CatalogId", parentId);
+                    if (list3.Count > 0)
+                        list3.Insert(0, new ComponentType() { Desc = "全部", Id = "-1" });
+                    result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
                     return Json(result3);
                 //case 4://物资编码
                 //    var list4 = await Service.GetByParentId("ComponentTypeId",parentId);
@@ -119,38 +146,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return null;
         }
 
-        /// <summary>
-        /// 物资编码查询
-        /// </summary>
-        /// <param name="code">物资编码</param>
-        /// <param name="page">第几页</param>
-        /// <param name="limit">每页显示的记录数</param>
-        /// <param name="componentTypeId">物资类型ID</param>
-        /// <param name="orderBy">排序列明</param>
-        /// <param name="orderByType">0升序，1降序</param>
-        /// <returns></returns>
-        public async Task<IActionResult> GetCommodityCodeDataList(string inputText, int page, int limit,string componentTypeId,List<AttributeModel> compenentCodeIds,string orderBy,int orderByType=0)
-        {
-            DataPage dataPage = new DataPage();
-            dataPage.PageNo = page;
-            dataPage.PageSize = limit;
-            //attrName = HttpUtility.UrlDecode(attrName);
-            //attrValue = HttpUtility.UrlDecode(attrValue);
-            CommodityCodeSerachCondition condition = new CommodityCodeSerachCondition();
-            //condition.AttrName = attrName;
-            //if (!string.IsNullOrEmpty(attrValue))
-            //{
-            //    condition.AttrValue = attrValue.Split(',').ToList();
-            //}
-            condition.ComponentTypeId = componentTypeId;
-            condition.CompenetAttributes = compenentCodeIds;
-            condition.Page = dataPage;
-            condition.InputText = inputText;
-            condition.OrderBy = orderBy;
-            condition.OrderByType = orderByType;
-            var list = await this.Service.GetCommodityCodeDataList(condition);
-            return ConvertListResult(list, dataPage);
-        }
+  
         /// <summary>
         ///【 物资编码】属性
         /// </summary>

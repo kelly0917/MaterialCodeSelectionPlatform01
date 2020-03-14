@@ -14,18 +14,32 @@
         height: 20px;
         overflow: hidden;
     }
-    .checkboxContent:hover {
-        height: auto;
-    }
+
+        .checkboxContent:hover {
+            height: auto;
+        }
+
     .layui-form-label {
         width: 140px;
     }
+
     .layui-form-item .layui-inline {
         /* margin-bottom: 5px; */
         margin-right: 10px;
     }
+
     .layui-form-item {
         margin-bottom: 0px;
+    }
+
+    .attributeContent {
+        height: 1px;
+        overflow:hidden;
+    }
+
+
+    .layui-float-rigth {
+        float: right;
     }
 </style>
 
@@ -37,12 +51,18 @@
 <div class="layui-form" action="" id="searchForm">
     <div class="layui-form-item search">
         <div class="layui-inline layui-float-left">
+            <label class="layui-form-label">编码库：</label>
+            <div class="layui-input-inline">
+                <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+            </div>
+        </div>
+        <div class="layui-inline layui-float-left" style="display: none;">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
                 <select lay-search id="selProject" name="selProject" lay-filter="selProject"></select>
             </div>
         </div>
-        <div class="layui-inline layui-float-left">
+        <div class="layui-inline layui-float-left" style="display: none;">
             <label class="layui-form-label">装置：</label>
             <div class="layui-input-inline">
                 <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
@@ -51,40 +71,47 @@
         <div class="layui-inline layui-float-left">
             <label class="layui-form-label">物资类型：</label>
             <div class="layui-input-inline">
-                <input type="text" name="txtCode" class="layui-input" id="txtCode" style="width:500px" />
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" lay-filter="txtCode" style="width:200px" />
             </div>
         </div>
-        <div class="layui-inline layui-float-rigth" style="float:right">
+
+        <button class="layui-btn layui-btn-normal layui-float-right" lay-filter="search" id="btnChangeProject" onclick="openProjectAgain()">切换项目</button>
+
+        <div class="layui-inline layui-float-right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
         </div>
-        <div class="layui-inline layui-float-rigt" style="float:right">
+        <div class="layui-inline layui-float-right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
         </div>
-        <div class="layui-inline layui-float-rigt" style="float:right">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        <div class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="search()">搜索</button>
         </div>
-
-
     </div>
+
+
     @*物资类型*@
     <div class="layui-form-item search">
-        <div class="layui-inline" id="divCPContainer">
+        <div class="layui-inline layui-col-sm9" id="divCPContainer">
             <label class="layui-form-label">物资类型：</label>
             <div class="layui-input-inline" id="divsel200">
                 <select lay-search name="sel200" lay-filter="cpType"></select>
             </div>
         </div>
-       
+        <div class="layui-inline" style="float: right">
+            <label class="layui-form-label" style="width: auto">当前项目：</label>
+            <label class="layui-form-label" style="width: auto; padding-left: 0; padding-right: 0; color: green;" id="lbProject"></label>
+            <label class="layui-form-label" style="width: auto">当前装置：</label>
+            <label class="layui-form-label" style="width: auto;padding-left: 0; padding-right: 0;color: green;" id="lbDevice"></label>
+        </div>
     </div>
     @*属性值列表*@
-    <div class="layui-form-item search" id="divAttrContainer">
+    <div class="layui-form-item search attributeContent" id="divAttrContainer">
 
 
     </div>
 
-
-
 </div>
+
 
 <div style="display: none" id="divReplaceSel">
     <div class="layui-input-inline" id="divsel{i}" index="{i}">
@@ -100,7 +127,7 @@
     <table class="layui-table" id="projectDevice">
         <colgroup>
             <col>
-            <col >
+            <col>
             <col width="80">
             <col width="80">
             <col width="80">
@@ -150,6 +177,7 @@
 <script type="text/javascript">
     var componentTypeId = "";
     var userInputText = "";//用户搜索的内容
+    var oldTableHeight = 580;
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -160,14 +188,20 @@
             var order = "";
             var orderType = 0;
             window.loadData = function (parms) {
-                
+
                 var cpIds = [];
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
                     var attrName = $(checks[i]).attr("AttrName");
-                  
+
                     var attrValue = $(checks[i]).attr("title");
                     cpIds.push({AttrName:attrName,AttrValue:attrValue});
+                }
+                var catalogId = $("#selCatalog").val();
+
+                if (catalogId == "") {
+                    layer.msg("请选择编码库！", { icon: 5 });
+                    return;
                 }
 
                 table.render({
@@ -175,7 +209,7 @@
                     autoSort: false,
                     method:'post',
                     // url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
-                    url: '/CommodityCodeSelect/GetCommodityCodeDataList?order='+order+'&orderType='+orderType+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                    url: '/CommodityCodeSelect2/GetCommodityCodeDataList?order='+order+'&orderType='+orderType+'&catalogId='+catalogId+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
                     ,where: {compenentCodeIds:cpIds}
                     , page: true //开启分页
                     , limit: 15
@@ -187,10 +221,11 @@
                          { field: 'right', title: '操作', width: 200, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
-                   
-
+                    complete: function() {
+                        oldTableHeight = $(".layui-table-body").height();
+                    }
                 });
-                //监听排序事件 
+                //监听排序事件
                 table.on('sort(useruv)', function(obj){ //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
                     console.log(obj.field); //当前排序的字段名
                     console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
@@ -205,7 +240,7 @@
                     //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
                     table.reload('testReload', {
                         initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
-                        ,  url: '/CommodityCodeSelect/GetCommodityCodeDataList?orderBy='+order+'&orderByType='+orderType+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                        ,   url: '/CommodityCodeSelect2/GetCommodityCodeDataList?order='+order+'&orderType='+orderType+'&catalogId='+catalogId+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
                     });
 
                 });
@@ -223,21 +258,6 @@
                             area: ["600px;", "500px;"]
                         });
 
-                    } else if (obj.event === 'delete') {
-                        layer.confirm('确定删除吗', function (index) {
-                            $.ajax({
-                                url: '/Device/DeleteById?id=' + data.Id + "&" + Math.random(),
-                                dataType: "json",
-                                success: function (data) {
-                                    if (data.Success) {
-                                        layer.msg("删除成功");
-                                        loadData();
-                                    } else {
-                                        layer.msg("删除失败", { icon: 5 });
-                                    }
-                                }
-                            });
-                        });
                     } else if (obj.event === 'select') {
                         if ($("#selProject").val() == null || $("#selProject").val() == "-1") {
                             layer.msg('请选择项目！');
@@ -264,11 +284,38 @@
             }
             openProject();//打开最近【项目】【装置】
 
+            
+
+            window.openProjectAgain = function() {
+                winIndex= layer.open({
+                    type: 1,
+                    title: '打开最近工作...',
+                    area: ['800px', '600px'],
+                    minHeight:'200px',
+                    content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                   
+                });
+            }
+
+
             var defaultValue = "@ViewData["projectId"]";
             //select 控件加载完再初始化table
             $("select[name=projectId]").dropdownlist({
                 url: "/Device/GetProjectList" + "?pt=" + Math.random(), defaultValue: defaultValue, complete: function () {
-                    loadData();
+                    //loadData();
+                }
+            });
+            //编码库
+            $("select[name=selCatalog]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "first", complete: function () {
+                    var value = $("select[name=selCatalog]").val();
+                    //物资分类
+                    $("select[name=sel200]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=5&parentId="+value+"&pt=" + Math.random(), defaultValue: "-1", complete: function () {
+                            form.render();
+                            bindEvent();
+                        }
+                    });
                 }
             });
             //项目
@@ -284,6 +331,7 @@
             form.on('select(selProject)',
                 function(data1) {
                     var value = data1.value;
+                    debugger;
                     $("select[name=selDevice]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
@@ -292,6 +340,12 @@
                             //}
                         }
                     });
+                    //编码库
+                    $("select[name=selCatalog]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId="+value+"&pt=" + Math.random(), defaultValue: "first", complete: function () {
+                        }
+                    });
+
                 });
             form.on('select(selProject2)',
                 function(data1) {
@@ -306,75 +360,44 @@
                     });
                 });
 
+            $("#txtCode").on("input", function (e) {
+           
+                if ($("#txtCode").val() == "") {
+                    loadCompenetType($("#selCatalog").val());
+                    clearAttr();
+                    clearTableData();
+                }
+            });
+            //编码库改变
+            form.on('select(selCatalog)',
+                function (data1) {
+                    var value = data1.value;
+                    loadCompenetType(value);
+                    clearAttr();
+                    $("#txtCode").val("");
+                    clearTableData();
+                });
+
+
+
+
+
             form.render();
 
 
-            //==============打开【最近项目，装置】==================
-
-            function openProject() {
-                $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?id=&pt=" + Math.random(), function (result) {
-                    if (!result.success) {
-                        layer.msg(result.message);
-                    }
-                    else {
-                        if (result.data.length >= 0) {
-                            var tr= "";
-                            for (var i = 0; i < result.data.length; i++) {
-                                var ent = result.data[i];
-
-                                tr += "<tr>";
-                                tr += "<td><a onclick=projectClick('"+ ent.id +"','"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
-                                tr += "<td>" + ent.deviceName + "</td>";
-                                tr += "<td>" + (ent.revision == null ? "" : ent.revision) + "</td>";
-                                tr += "<td>"+ent.version+"</td>";
-                                tr += "<td>"+ent.checkStatusName+"</td>";
-                                tr += "<td>" + ent.timeString + "</td>";
-                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('"+ ent.id +"','" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
-                                tr += " </tr>";
-                            }
-                            $("#trody").append(tr);
-                            winIndex= layer.open({
-                                type: 1,
-                                title: '打开最近工作...',
-                                area: ['800px', '600px'],
-                                minHeight:'200px',
-                                content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                                //,btn: ['按钮一', '按钮二', '按钮三']
-                                //,yes: function(index, layero){
-                                //  //按钮【按钮一】的回调
-                                //}
-                                //,btn2: function(index, layero){
-                                //  //按钮【按钮二】的回调
-
-                                //    return false; 开启该代码可禁止点击该按钮关闭
-                                //}
-                                //,btn3: function(index, layero){
-                                //  //按钮【按钮三】的回调
-
-                                //  //return false 开启该代码可禁止点击该按钮关闭
-                                //}
-                                //,cancel: function(){
-                                //  //右上角关闭回调
-
-                                //  //return false 开启该代码可禁止点击该按钮关闭
-                                //}
-                            });
-                        }
-                    }
-                });
-
+            window.clearTableData = function() {
+                userInputText="清空列表数据";
+                loadData();
+             
             }
-            //==============打开【最近项目，装置】end==================
 
-
-
-            //物资分类
-            $("select[name=sel200]").dropdownlist({
-                url: "/CommodityCodeSelect/GetDropDownData?type=3&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: "-1", complete: function () {
-                    form.render();
-                    bindEvent();
+            window.resetUserInput = function() {
+                if (userInputText == "清空列表数据") {
+                    userInputText = "";
                 }
-            });
+            }
+
+            
             var index = 200;
             var ddlCp = $("#divReplaceSel").html();
 
@@ -469,6 +492,12 @@
                 });
             }
 
+
+            window.clearAttr = function() {
+                $(".attributeContent").height("1px");
+                $("#divAttrContainer").html('');
+            }
+           
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
@@ -501,6 +530,27 @@
                             }
                             $("#divAttrContainer").html(result);
                             form.render();
+                            search();
+
+                            var attrHeight = 210;
+                            if (data.Data.length < 3) {
+                                attrHeight = data.Data.length * 70;
+                            }
+                            $(".attributeContent").height(attrHeight+"px")
+                            var sumHeight = parent.document.documentElement.clientHeight;
+                           
+                            $(".attributeContent .checkboxContent").unbind("hover");
+                            $(".attributeContent .checkboxContent").hover(function() {
+                                $(".attributeContent").height("auto");
+                                var attrHeight = $(".attributeContent").height();
+                                console.log(attrHeight);
+                                $(".layui-table-body").height(sumHeight -attrHeight- 320);
+                                $(".layui-table-body").css("min-height","200px");
+                            },function (){
+                                    $(".attributeContent").height(attrHeight + "px");
+                                    $(".layui-table-body").height(oldTableHeight);
+                            });
+
                         }
                     },
                     error: function (errorData) {
@@ -524,11 +574,14 @@
 
 
             window.search = function () {
+         
                 var cpIds = new Array();
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
                     cpIds.push($(checks[i]).attr("Id"));
                 }
+                resetUserInput();
+                loadData();
             }
         });
     var winIndex = 0;
@@ -536,6 +589,7 @@
     function selectProjectDevice() {
         var projectId = $("#selProject2").val();
         var deviceId = $("#selDevice2").val();
+
         $("#selProject").html($("#selProject2").html());
         $("#selDevice").html($("#selDevice2").html());
 
@@ -543,7 +597,74 @@
         $("#selDevice").val(deviceId);
         layui.form.render('select');
         layer.close(winIndex);
+
+        //编码库
+        $("select[name=selCatalog]").dropdownlist({
+            url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId="+$("#selProject2").val()+"&pt=" + Math.random(), defaultValue: "first", complete: function () {
+            }
+        });
+
+
+        $("#lbProject").html($("#selProject2").find("option:selected").text());
+        $("#lbDevice").html($("#selDevice2").find("option:selected").text());
     }
+    //==============打开【最近项目，装置】==================
+
+            function openProject(){
+                $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?id=&pt=" + Math.random(), function (result) {
+                    if (!result.success) {
+                        layer.msg(result.message);
+                    }
+                    else {
+                        if (result.data.length >= 0) {
+                            var tr= "";
+                            for (var i = 0; i < result.data.length; i++) {
+                                var ent = result.data[i];
+
+                                tr += "<tr>";
+                                tr += "<td><a onclick=projectClick('"+ ent.id +"','"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
+                                tr += "<td>" + ent.deviceName + "</td>";
+                                tr += "<td>" + (ent.revision == null ? "" : ent.revision) + "</td>";
+                                tr += "<td>"+ent.version+"</td>";
+                                tr += "<td>"+ent.checkStatusName+"</td>";
+                                tr += "<td>" + ent.timeString + "</td>";
+                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('"+ ent.id +"','" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
+                                tr += " </tr>";
+                            }
+                            $("#trody").append(tr);
+                            winIndex= layer.open({
+                                type: 1,
+                                title: '打开最近工作...',
+                                area: ['800px', '600px'],
+                                minHeight:'200px',
+                                content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                //,btn: ['按钮一', '按钮二', '按钮三']
+                                //,yes: function(index, layero){
+                                //  //按钮【按钮一】的回调
+                                //}
+                                //,btn2: function(index, layero){
+                                //  //按钮【按钮二】的回调
+
+                                //    return false; 开启该代码可禁止点击该按钮关闭
+                                //}
+                                //,btn3: function(index, layero){
+                                //  //按钮【按钮三】的回调
+
+                                //  //return false 开启该代码可禁止点击该按钮关闭
+                                //}
+                                //,cancel: function(){
+                                //  //右上角关闭回调
+
+                                //  //return false 开启该代码可禁止点击该按钮关闭
+                                //}
+                            });
+                        }
+                    }
+                });
+
+            }
+            //==============打开【最近项目，装置】end==================
+
     //==============确定【项目】【装置】end==================
     //==============选择【项目】【装置】==================
     function projectClick(id,projectId, deviceId) {
@@ -618,6 +739,7 @@
     //页面加载
     $("#txtCode").autocomplete({
         source: function (request, response) {
+      
             var name = $.ui.autocomplete.escapeRegex(request.term);
             userInputText = name;
             response($.grep(source(name), function (item) {
@@ -631,8 +753,8 @@
                 var compenentTypeId = selectIds[index];
                 loadCompenetType(compenentTypeId);
                 loadAttr(compenentTypeId);
+                
 
-                loadData();
             }, 100);
         }
     });
@@ -643,13 +765,15 @@
     function source(name) {
         console.log(name);
         var desc = name;
-        var projectId = $("select[name=selProject]").val();
+        var catalogId = $("select[name=selCatalog]").val();
         var result = new Array();
+
+        
         $.ajax({
             url: "/CommodityCodeSelect2/GetCompenetTypeByMCDesc?desc=" +
                 encodeURIComponent(desc) +
-                "&projectId=" +
-                projectId,
+                "&catalogId=" +
+                catalogId,
             type: "get",
             async: false,
             dataType: "json",

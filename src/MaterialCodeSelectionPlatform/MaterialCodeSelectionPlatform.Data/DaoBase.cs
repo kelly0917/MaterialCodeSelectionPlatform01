@@ -194,5 +194,27 @@ namespace MaterialCodeSelectionPlatform.Data
             return result;
         }
 
+
+        /// <summary>
+        /// 通过某父Id获取列表数据
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual async Task<List<TEntity>> GetByColumnValuess(string columns, string values)
+        {
+            List<IConditionalModel> conModels = new List<IConditionalModel>();
+            var columnsList = columns.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var valuesList = values.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            for (var i = 0; i < columnsList.Length; i++)
+            {
+                conModels.Add(new ConditionalModel() { FieldName = columnsList[i], ConditionalType = ConditionalType.Equal, FieldValue = valuesList[i] });
+            }
+          
+
+            var result = await Db.Queryable<TEntity>().Where(conModels).ToListAsync();
+            return result;
+        }
     }
 }

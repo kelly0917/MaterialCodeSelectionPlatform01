@@ -83,7 +83,13 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         Task<List<TEntity>> GetByParentId(string parentName, string value);
 
-
+        /// <summary>
+        /// 通过几列获取数据
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetByColumnValuess(string columns, string values);
     }
 
     /// <summary>

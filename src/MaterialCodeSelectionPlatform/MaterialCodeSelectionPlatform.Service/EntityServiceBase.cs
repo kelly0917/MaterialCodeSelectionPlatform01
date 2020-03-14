@@ -176,5 +176,18 @@ namespace MaterialCodeSelectionPlatform.Service
         {
             return await Dao.GetByParentId(parentName, value);
         }
+
+        /// <summary>
+        /// 通过几列获取数据
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public async Task<List<TEntity>> GetByColumnValuess(string columns, string values)
+        {
+            return await Dao.GetByColumnValuess(columns, values);
+        }
+
+
     }
 }
