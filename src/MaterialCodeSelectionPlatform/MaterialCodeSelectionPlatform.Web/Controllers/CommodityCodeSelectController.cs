@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using MaterialCodeSelectionPlatform.Domain.DTO;
+using Newtonsoft.Json;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
@@ -356,16 +357,25 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 var result = await Service.GetUserMaterialTakeReport(mtoId, revision,this.UserId, projectid, deviceid,1);
                 if (result != null && result.Count > 0)
                 {
+                    result.ForEach(a =>
+                    a.PartNumberReportDetailList = a.PartNumberReportDetailList?.OrderBy(c=>c.T_Code).ThenBy(c=>c.C_Code).ThenBy(c=>c.P_Code).ToList()
+                    );
                    
+
                     var ent = result.FirstOrDefault();
                     var projectCode = ent.ProjectCode;
                     var deviceCode = ent.DeviceCode;
+                    var version = ent.Version;
                     var saveDir = Directory.GetCurrentDirectory() + "\\ReportDownload\\" + projectCode + "\\" + deviceCode + "\\";
+                    var jsonDir = Directory.GetCurrentDirectory() + "\\ReportJson\\" + projectCode + "\\" + deviceCode + "\\";
                     if (!Directory.Exists(saveDir))
                     {
                         Directory.CreateDirectory(saveDir);
-                    }                   
-                    var saveFilePath = $"{saveDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                    }
+                    //项目、用户、装置、Version、Revision
+                    var saveFilePath = $"{saveDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{version}_{UserName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                    var jsonFilePath = $"{jsonDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{version}_{UserName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
+                    saveJson(jsonFilePath,result);
                     var newPath = ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
                     var file = DownLoad(newPath);
                     return file;
@@ -380,6 +390,20 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 return Json(new DataResult() { Success = false, Message = e.Message });
             }
+        }
+        private void saveJson(string path, List<PartNumberReport> result)
+        {
+           
+            var jasonString = JsonConvert.SerializeObject(result, Formatting.Indented);
+            var saveDir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(saveDir))
+            {
+                Directory.CreateDirectory(saveDir);
+            }
+            System.IO.StreamWriter sw = new System.IO.StreamWriter(path, true, System.Text.Encoding.Default);
+            sw.Write(jasonString);
+            sw.Close();
+            sw.Dispose();
         }
         /// <summary>
         /// 删除
