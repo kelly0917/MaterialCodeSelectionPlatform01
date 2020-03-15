@@ -60,7 +60,6 @@
         layui.form.render('select');
 
 
-        settings.complete();
     }
 
     $(document).ready(function () {
