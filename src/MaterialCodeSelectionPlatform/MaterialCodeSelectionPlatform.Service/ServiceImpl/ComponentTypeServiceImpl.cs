@@ -9,12 +9,12 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <summary>
         /// 根据物资编码描述，获取对应的类型列表
         /// </summary>
-        /// <param name="projectId"></param>
+        /// <param name="catalogId"></param>
         /// <param name="desc"></param>
         /// <returns></returns>
-        public async Task<List<ComponentTypeCount>> GetByCommodityCodeDesc(string projectId, string desc)
+        public async Task<List<ComponentTypeCount>> GetByCommodityCodeDesc(string catalogId, string desc)
         {
-            return await _ComponentTypeDao.GetByCommodityCodeDesc(projectId, desc);
+            return await _ComponentTypeDao.GetByCommodityCodeDesc(catalogId, desc);
         }
 
         /// <summary>

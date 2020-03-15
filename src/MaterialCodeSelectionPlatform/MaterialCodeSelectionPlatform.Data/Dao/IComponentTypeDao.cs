@@ -10,10 +10,10 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 根据物资编码描述，获取对应的类型列表
         /// </summary>
-        /// <param name="projectId"></param>
+        /// <param name="catalogId"></param>
         /// <param name="desc"></param>
         /// <returns></returns>
-        Task<List<ComponentTypeCount>> GetByCommodityCodeDesc(string projectId, string desc);
+        Task<List<ComponentTypeCount>> GetByCommodityCodeDesc(string catalogId, string desc);
 
         /// <summary>
         /// 获取物资类型的物资编码获取对应的属性和属性值

@@ -83,6 +83,14 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <returns></returns>
         Task<List<TEntity>> GetByParentId(string parentName, string value);
 
+        /// <summary>
+        /// 通过几列获取数据
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        Task<List<TEntity>> GetByColumnValuess(string columns, string values);
+
         ///// <summary>
         ///// 获取实体对象集合
         ///// </summary>

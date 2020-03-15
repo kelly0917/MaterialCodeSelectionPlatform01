@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using MaterialCodeSelectionPlatform.Domain.DTO;
 
 namespace MaterialCodeSelectionPlatform.Domain
@@ -43,6 +44,8 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 排序类型，0升序，1降序
         /// </summary>
         public int OrderByType { get; set; }
+
+        public string CatelogId { get; set; }
 
 
     }
