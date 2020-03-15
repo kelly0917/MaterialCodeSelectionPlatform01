@@ -100,7 +100,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         public async Task<IActionResult> GetProjectList()
         {
             var result =await projectService.GetListAsync();
-            var list = result.Select(c => new DropDownListItemDTO() {Text = c.Name, Value = c.Id});
+            var list = result.Where(c=>c.CreateUserId==UserId&&c.Status==0)?.Select(c => new DropDownListItemDTO() {Text = c.Name, Value = c.Id});
             return Json(list);
         }
 
