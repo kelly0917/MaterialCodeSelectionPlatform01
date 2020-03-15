@@ -46,10 +46,6 @@
         float: right;
         margin-left: 10px;
     }
-
-
-
-    
 </style>
 
 <link href="~/js/jquery-ui.css" rel="stylesheet" />
@@ -126,11 +122,11 @@
     </div>
 
 
-    
+
     @*属性值列表*@
     <div class="layui-form-item search attributeContent" id="divAttrContainer">
     </div>
-  
+
 </div>
 
 
@@ -254,7 +250,7 @@
                             $("#divTable").find(".layui-table-view").first().css("position", "absolute");
                             $("#divTable").find(".layui-table-view").first().css("top", 10 + attrHeight);
                         }
-                        
+
                     }
                 });
                 //监听排序事件
@@ -393,7 +389,7 @@
                 });
             form.on('checkbox(attrCheck)', function(data) {
                 search();
-            });  
+            });
             $("#txtCode").on("input", function (e) {
 
                 if ($("#txtCode").val() == "") {
@@ -577,7 +573,7 @@
                             form.render();
                             search();
 
-                           
+
                             if (data.Data.length < 3) {
                                 attrHeight = data.Data.length * 65;
                             } else {
@@ -586,12 +582,12 @@
                             $(".attributeContent").height(attrHeight + "px");
                             isopenAttr = false;
 
-                            
+
 
                             //$(".attributeContent .checkboxContent").unbind("hover");
                             //$(".attributeContent .checkboxContent").hover(function() {
                             //    $(".attributeContent").height("auto");
-                               
+
                             //},function (){
                             //        $(".attributeContent").height(attrHeight + "px");
                             //        //$(".layui-table-body").height(oldTableHeight);
@@ -604,7 +600,7 @@
                     }
                 });
             }
-     
+
             window.changeAttrHeight = function() {
                 if (isopenAttr) {
                     $(".attributeContent").height(attrHeight + "px");
@@ -612,7 +608,7 @@
                 } else {
                     $(".attributeContent").height("auto");
                     $("#divMore").html("收起属性");
-               
+
                 }
                 isopenAttr = !isopenAttr;
             }
@@ -629,7 +625,7 @@
 
 
             window.search = function () {
-             
+
                 var cpIds = new Array();
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
@@ -764,11 +760,11 @@
         });
         layer.close(winIndex);
 
-        
-   
 
 
-     
+
+
+
     }
     //==============选择【项目】【装置】end==================
     //==============打开【拷贝】==================
@@ -826,21 +822,23 @@
 
             var name = $.ui.autocomplete.escapeRegex(request.term);
             userInputText = name;
-            response($.grep(source(name), function (item) {
-                return item;
-            }));
-        },
-        select: function (data) {
             setTimeout(function () {
-                var index = selectList.indexOf($("#txtCode").val());
-                //当前选中的Id
-                var compenentTypeId = selectIds[index];
-                loadCompenetType(compenentTypeId);
-                loadAttr(compenentTypeId);
+                response($.grep(source(name), function (item) {
+                    return item;
+                }));
+            }, 800);
+
+    select: function (data) {
+        setTimeout(function () {
+            var index = selectList.indexOf($("#txtCode").val());
+            //当前选中的Id
+            var compenentTypeId = selectIds[index];
+            loadCompenetType(compenentTypeId);
+            loadAttr(compenentTypeId);
 
 
-            }, 100);
-        }
+        }, 100);
+    }
     });
 
     var selectList = new Array();
@@ -848,10 +846,10 @@
     //利用ajax根据输入的到数据库查找 相当于
     function source(name) {
         console.log(name);
+
         var desc = name;
         var catalogId = $("select[name=selCatalog]").val();
         var result = new Array();
-
 
         $.ajax({
             url: "/CommodityCodeSelect2/GetCompenetTypeByMCDesc?desc=" +
@@ -874,4 +872,6 @@
         return result;
     }
 </script>
+
+
 
