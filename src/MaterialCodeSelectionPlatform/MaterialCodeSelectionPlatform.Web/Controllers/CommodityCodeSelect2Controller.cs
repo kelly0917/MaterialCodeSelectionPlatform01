@@ -6,6 +6,7 @@ using MaterialCodeSelectionPlatform.Web.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -13,6 +14,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using log4net;
 using MaterialCodeSelectionPlatform.Domain.DTO;
 using MaterialCodeSelectionPlatform.Utilities;
 
@@ -24,6 +26,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         private IComponentTypeService componentTypeService;
         private IProjectService projectService;
         private IDeviceService deviceService;
+        private ILog log = LogHelper.GetLogger<CommodityCodeSelect2Controller>();
         public CommodityCodeSelect2Controller(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService)
         {
             this.Service = services;
@@ -45,10 +48,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> GetCompenetTypeByMCDesc(string desc, string catalogId)
         {
+            log.Debug($"开始搜索 {desc} 的数据,编码库：{catalogId}");
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             desc = desc.Replace(@"\\\", "PRPRPR").Replace("\\", "").Replace("PRPRPR", @"\\\");
             var result = await componentTypeService.GetByCommodityCodeDesc(catalogId, desc);
 
             result = result.OrderByDescending(c => c.Count).Take(15).ToList();
+            log.Debug($"完成搜索 {desc} 的数据,编码库：{catalogId},耗时：{watch.ElapsedMilliseconds}毫秒");
             return ConvertSuccessResult(result);
         }
 
@@ -137,7 +145,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             //{
             //    condition.AttrValue = attrValue.Split(',').ToList();
             //}
-
+            
             inputText = inputText.Replace(@"\\\", "PRPRPR").Replace("\\", "").Replace("PRPRPR", @"\\\");
             condition.ComponentTypeId = componentTypeId;
             condition.CompenetAttributes = compenentCodeIds;
