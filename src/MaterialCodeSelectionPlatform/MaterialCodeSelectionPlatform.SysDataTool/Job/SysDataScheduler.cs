@@ -43,9 +43,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool
                 }
                 IJobDetail job = JobBuilder.Create<SysDataJob>().WithIdentity("SysDataJob", "groupa").Build();
 
-                ITrigger trigger = TriggerBuilder.Create().WithIdentity("sysdatatrigger", "groupa").StartNow()
+                ITrigger trigger = TriggerBuilder.Create().WithIdentity("sysdatatrigger", "groupa")
                       //.WithSimpleSchedule(b => b.WithIntervalInSeconds((int)time).RepeatForever())
-                      .WithCronSchedule(ConfigurationManager.AppSettings["jobExp"])
+                      .WithCronSchedule(ConfigurationManager.AppSettings["jobExp"]).StartNow()
                     .Build();
                 scheduler.ScheduleJob(job, trigger);
 

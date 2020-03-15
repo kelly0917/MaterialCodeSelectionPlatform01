@@ -45,6 +45,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> GetCompenetTypeByMCDesc(string desc, string catalogId)
         {
+            desc = desc.Replace(@"\\\", "PRPRPR").Replace("\\", "").Replace("PRPRPR", @"\\\");
             var result = await componentTypeService.GetByCommodityCodeDesc(catalogId, desc);
 
             result = result.OrderByDescending(c => c.Count).Take(15).ToList();
@@ -136,6 +137,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             //{
             //    condition.AttrValue = attrValue.Split(',').ToList();
             //}
+
+            inputText = inputText.Replace(@"\\\", "PRPRPR").Replace("\\", "").Replace("PRPRPR", @"\\\");
             condition.ComponentTypeId = componentTypeId;
             condition.CompenetAttributes = compenentCodeIds;
             condition.Page = dataPage;
