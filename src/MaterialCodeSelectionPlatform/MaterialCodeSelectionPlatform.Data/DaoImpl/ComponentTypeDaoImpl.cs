@@ -29,7 +29,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 JoinType.Inner, t.Id == c.ComponentTypeId
             }).Where((t, c) => t.CatalogId == catalogId);
 
-            var descList = desc.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var descList = desc.Split(@"\ ", StringSplitOptions.RemoveEmptyEntries);
             foreach (var s in descList)
             {
                 query = query.Where((t, c) => SqlFunc.Contains(c.CN_LongDesc, s));
