@@ -24,7 +24,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         private IProjectService projectService;
         private IDeviceService deviceService;
         private IUserService userService;
-        public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService,IProjectService projectService,IDeviceService deviceService,IUserService userService)
+        public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService, IUserService userService)
         {
             this.Service = services;
             this.PartNumberService = PartNumberService;
@@ -44,7 +44,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// 获取所有物资类型
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> GetDropDownData(int type,string parentId)
+        public async Task<IActionResult> GetDropDownData(int type, string parentId)
         {
             switch (type)
             {
@@ -64,28 +64,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     var result2 = list2.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
                     return Json(result2);
                 case 3://物资类型
-                    var list3 = await componentTypeService.GetByParentId("ParentId",parentId);
-                    if(list3.Count>0)
-                        list3.Insert(0,new ComponentType(){ Desc = "全部",Id="-1"});
+                    var list3 = await componentTypeService.GetByParentId("ParentId", parentId);
+                    if (list3.Count > 0)
+                        list3.Insert(0, new ComponentType() { Desc = "全部", Id = "-1" });
                     var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
                     return Json(result3);
                 case 4://编码库
-                    var projects =await userService.GetRightProjects(UserId);
-                    List<Catalog> catalogsAll = new List<Catalog>();
-                        
-                    foreach (var project in projects)
-                    {
-                        var catlogs = await projectService.GetRightCatalogs(project.Id);
-                        foreach (var catalog in catlogs)
-                        {
-                            if (catalogsAll.Where(c => c.Id == catalog.Id).FirstOrDefault() == null)
-                            {
-                                catalogsAll.Add(catalog);
-                            }
-                        }
-                    }
-                    catalogsAll = catalogsAll.OrderBy(c => c.Description).ToList();
-                    var result4 = catalogsAll.Select(c => new DropDownListItemDTO() { Text = c.Description, Value = c.Id });
+                    var catlogs = await projectService.GetRightCatalogs(parentId);
+                    catlogs = catlogs.OrderBy(c => c.Description).ToList();
+                    var result4 = catlogs.Select(c => new DropDownListItemDTO() { Text = c.Description, Value = c.Id });
                     return Json(result4);
                 case 5://物资类型 根据编码库获取
                     list3 = await componentTypeService.GetByParentId("CatalogId", parentId);
@@ -133,7 +120,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             DataPage dataPage = new DataPage();
             dataPage.PageNo = 1;
             dataPage.PageSize = 10000;
-            
+
             return ConvertListResult(list, dataPage);
         }
 
@@ -147,14 +134,14 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return null;
         }
 
-  
+
         /// <summary>
         ///【 物资编码】属性
         /// </summary>
         /// <param name="id">物资编码Id</param>
         /// <returns></returns>
         public async Task<ActionResult> AttrList(string id)
-        {           
+        {
             var list = await this.Service.GetAttributeList(id);
             return View(list);
         }
@@ -176,7 +163,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="projectId">项目Id</param>
         /// <param name="deviceId">装置Id</param>
         /// <returns></returns>
-        public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId,string projectId, string deviceId)
+        public async Task<ActionResult> CommodityCodePartNumberList(string commodityCodeId, string userId, string projectId, string deviceId)
         {
             ViewData["commodityCodeId"] = commodityCodeId;
             ViewData["projectId"] = projectId;
@@ -193,7 +180,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="deviceId">装置ID</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> SaveMaterialTakeOffDetail(List<PartNumberDto> list,string commodityCodeId,string projectId, string deviceId)
+        public async Task<IActionResult> SaveMaterialTakeOffDetail(List<PartNumberDto> list, string commodityCodeId, string projectId, string deviceId)
         {
             PartNumberCondition condition = new PartNumberCondition();
             condition.UserId = this.UserId;
@@ -214,7 +201,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             try
             {
                 var result = await Service.SaveMaterialTakeOffDetail(condition);
-                return ConvertJsonResult("更新成功",true);
+                return ConvertJsonResult("更新成功", true);
             }
             catch (Exception e)
             {
@@ -243,7 +230,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// </summary>
         /// <returns></returns>
         public async Task<ActionResult> GetUserMaterialTakeOff()
-        {          
+        {
             try
             {
                 var result = await Service.GetUserMaterialTakeOff(this.UserId);
@@ -251,7 +238,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             }
             catch (Exception e)
             {
-                return ConvertJsonResult("失败", false,e.Message,e);
+                return ConvertJsonResult("失败", false, e.Message, e);
             }
         }
         /// <summary>
@@ -267,12 +254,12 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             {
                 var dirPath = Directory.GetCurrentDirectory() + "\\ReportTemplates\\";
                 NameValueCollection fileList = new NameValueCollection();
-                getTemplate(dirPath,ref fileList);
+                getTemplate(dirPath, ref fileList);
                 ViewData["mtoId"] = mtoId;
                 ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
-                var result = await Service.GetUserMaterialTakeReport(mtoId,"",this.UserId, projectid, deviceid,0);
+                var result = await Service.GetUserMaterialTakeReport(mtoId, "", this.UserId, projectid, deviceid, 0);
                 return View(result);
             }
             catch (Exception e)
@@ -280,7 +267,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return View();
             }
         }
-        public async Task<ActionResult> CopyIndex(string projectId,string deviceId)
+        public async Task<ActionResult> CopyIndex(string projectId, string deviceId)
         {
             try
             {
@@ -308,11 +295,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="mtoId"></param>
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
-        public async Task<IActionResult> CopyMaterialTakeOff(string mtoId,string projectId,string deviceId, int type)
+        public async Task<IActionResult> CopyMaterialTakeOff(string mtoId, string projectId, string deviceId, int type)
         {
             try
             {
-                var n = await Service.CopyMaterialTakeOff(mtoId, this.UserId, projectId, deviceId,type);
+                var n = await Service.CopyMaterialTakeOff(mtoId, this.UserId, projectId, deviceId, type);
                 if (n > 0)
                 {
                     return ConvertSuccessResult(null, "删除成功");
@@ -335,7 +322,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="deviceid">装置ID</param>
         /// <param name="templatePath">模板路径</param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadExcelReport(string revision,string mtoId, string projectid, string deviceid,string templatePath)
+        public async Task<IActionResult> DownloadExcelReport(string revision, string mtoId, string projectid, string deviceid, string templatePath)
         {
             try
             {
@@ -348,9 +335,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 //$Revision$为手动输入的Revision字段
                 //yyyyMMddhhmmss为时间戳
                 templatePath = HttpUtility.UrlDecode(templatePath);
-               
+
                 var excelName = Path.GetFileNameWithoutExtension(templatePath);
-                var result = await Service.GetUserMaterialTakeReport(mtoId, revision,this.UserId, projectid, deviceid,1);
+                var result = await Service.GetUserMaterialTakeReport(mtoId, revision, this.UserId, projectid, deviceid, 1);
                 if (result != null && result.Count > 0)
                 {
                     result.ForEach(a =>
@@ -412,11 +399,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 var n = await Service.DeleteById(id);
                 if (n > 0)
                 {
-                    return ConvertSuccessResult(null,"删除成功");
+                    return ConvertSuccessResult(null, "删除成功");
                 }
                 else
                 {
-                    return ConvertFailResult(null,"删除失败");
+                    return ConvertFailResult(null, "删除失败");
                 }
             }
             catch (Exception e)
@@ -424,7 +411,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return Json(new DataResult() { Success = false, Message = e.Message });
             }
         }
-        private void getTemplate(string dirPath,ref NameValueCollection fileList)
+        private void getTemplate(string dirPath, ref NameValueCollection fileList)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dirPath);
             var files = dirInfo.GetFiles().Where(c => Path.GetExtension(c.FullName)?.ToLower() == ".xlsx").ToList();
@@ -433,15 +420,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 foreach (var file in files)
                 {
                     var name = $"{dirInfo.Name}\\{file.Name}";
-                    fileList.Add(name,file.FullName);
+                    fileList.Add(name, file.FullName);
                 }
             }
-            var dirList = dirInfo.GetDirectories().Where(c=>c.Name.ToLower()!= "download").ToList();
+            var dirList = dirInfo.GetDirectories().Where(c => c.Name.ToLower() != "download").ToList();
             if (dirList != null && dirList.Count > 0)
             {
                 foreach (var dir in dirList)
                 {
-                    getTemplate(dir.FullName,ref fileList);
+                    getTemplate(dir.FullName, ref fileList);
                 }
             }
         }

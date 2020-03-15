@@ -331,7 +331,7 @@
             form.on('select(selProject)',
                 function(data1) {
                     var value = data1.value;
-                    debugger;
+                    
                     $("select[name=selDevice]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
@@ -368,9 +368,12 @@
                     clearTableData();
                 }
             });
+
+      
             //编码库改变
             form.on('select(selCatalog)',
                 function (data1) {
+                    
                     var value = data1.value;
                     loadCompenetType(value);
                     clearAttr();
@@ -597,10 +600,16 @@
         $("#selDevice").val(deviceId);
         layui.form.render('select');
         layer.close(winIndex);
-
+        
         //编码库
         $("select[name=selCatalog]").dropdownlist({
-            url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId="+$("#selProject2").val()+"&pt=" + Math.random(), defaultValue: "first", complete: function () {
+            url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject2").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
+                var value = $("select[name=selCatalog]").val();
+                
+                loadCompenetType(value);
+                clearAttr();
+                $("#txtCode").val("");
+                clearTableData();
             }
         });
 
