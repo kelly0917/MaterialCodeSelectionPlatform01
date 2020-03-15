@@ -392,8 +392,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             }
         }
         private void saveJson(string path, List<PartNumberReport> result)
-        {
-           
+        {           
             var jasonString = JsonConvert.SerializeObject(result, Formatting.Indented);
             var saveDir = Path.GetDirectoryName(path);
             if (!Directory.Exists(saveDir))
