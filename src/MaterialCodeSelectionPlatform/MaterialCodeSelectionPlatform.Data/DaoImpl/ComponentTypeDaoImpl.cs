@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MaterialCodeSelectionPlatform.Domain.DTO;
@@ -23,10 +24,21 @@ namespace MaterialCodeSelectionPlatform.Data
                 return new List<ComponentTypeCount>();
             }
 
-            var list = await Db.Queryable<ComponentType, CommodityCode>((t, c) => new object[]
-                {
-                    JoinType.Inner, t.Id == c.ComponentTypeId
-                }).Where((t, c)=>t.CatalogId == catalogId).Where((t, c) => SqlFunc.Contains(c.CN_LongDesc, desc)).GroupBy((t, c) => t.Id).GroupBy((t, c) => t.Code).GroupBy((t, c) => t.Desc)
+            var query = Db.Queryable<ComponentType, CommodityCode>((t, c) => new object[]
+            {
+                JoinType.Inner, t.Id == c.ComponentTypeId
+            }).Where((t, c) => t.CatalogId == catalogId);
+
+            var descList = desc.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            foreach (var s in descList)
+            {
+                query = query.Where((t, c) => SqlFunc.Contains(c.CN_LongDesc, s));
+            }
+
+            var list =await query
+                .GroupBy((t, c) => t.Id)
+                .GroupBy((t, c) => t.Code)
+                .GroupBy((t, c) => t.Desc)
 
                 .Select((t, c) => new ComponentTypeCount { Count = SqlFunc.AggregateCount(t.Id), ComponentTypeId = t.Id, ComponentTypeCode = t.Code, ComponentTypeDesc = t.Desc }).ToListAsync();
 

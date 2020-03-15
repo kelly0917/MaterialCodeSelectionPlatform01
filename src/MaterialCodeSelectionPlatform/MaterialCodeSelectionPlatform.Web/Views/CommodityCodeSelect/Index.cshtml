@@ -37,7 +37,7 @@
         top: 110px;
         height: 10px;
         overflow: hidden;
-        z-index: 1000;
+        z-index: 10;
     }
 
 
@@ -128,8 +128,6 @@
     
     @*属性值列表*@
     <div class="layui-form-item search attributeContent" id="divAttrContainer">
-        <div class="layui-icon layadmin-tabs-control layui-icon-template-1 layui-float-right" style="cursor: pointer" onclick="changeAttrHeight()">展开更多</div>
-
     </div>
   
 </div>
@@ -203,6 +201,8 @@
     var componentTypeId = "";
     var userInputText = "";//用户搜索的内容
     var oldTableHeight = 580;
+    var isopenAttr = false;
+    var attrHeight = 0;
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -245,8 +245,15 @@
                          { field: 'right', title: '操作', width: 200, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
-                    complete: function() {
-                        oldTableHeight = $(".layui-table-body").height();
+                    done: function () {
+                        if (attrHeight == 0) {
+                            $("#divTable").find(".layui-table-view").first().css("position", null);
+                            $("#divTable").find(".layui-table-view").first().css("top", null);
+                        } else {
+                            $("#divTable").find(".layui-table-view").first().css("position", "absolute");
+                            $("#divTable").find(".layui-table-view").first().css("top", 10 + attrHeight);
+                        }
+                        
                     }
                 });
                 //监听排序事件
@@ -399,7 +406,6 @@
             //编码库改变
             form.on('select(selCatalog)',
                 function (data1) {
-
                     var value = data1.value;
                     loadCompenetType(value);
                     clearAttr();
@@ -435,10 +441,13 @@
             window.loadCompenetType = function (compenentTypeId) {
                 $("#divCPContainer").html('');
                 realDDP(compenentTypeId);
+                //清空属性
+                clearAttr();
             };
 
             //加载下一层
             window.loadChildCType = function (sel) {
+                clearTableData();
                 var name = sel.elem.name;
                 var ind = name.replace("sel", "") * 1.0;
                 //移除子选项
@@ -446,7 +455,7 @@
                     var div = $("select[name=sel" + i + "]").parent().remove();
                 }
                 //清空属性
-                $("#divAttrContainer").html('');
+                clearAttr();
                 index = ind - 1;
                 var value = sel.value;
                 //加载下一层
@@ -526,7 +535,7 @@
             window.clearAttr = function() {
                 $(".attributeContent").height("1px");
                 $("#divAttrContainer").html('');
-
+                attrHeight = 0;
                 $("#divTable").find(".layui-table-view").first().css("position", null);
                 $("#divTable").find(".layui-table-view").first().css("top",null);
             }
@@ -540,7 +549,7 @@
                 componentTypeId = ctId;
                 var divcheboxStart = ' <div class="layui-input-block checkboxContent">';
 
-                $("#divAttrContainer").html('');
+                clearAttr();
                 $.ajax({
                     url: "/CommodityCodeSelect2/GetAttributeByTypeId?compenentTypeId=" + ctId,
                     type: 'get',
@@ -569,13 +578,14 @@
 
                            
                             if (data.Data.length < 3) {
-                                attrHeight = data.Data.length * 70;
+                                attrHeight = data.Data.length * 65;
+                            } else {
+                                attrHeight = 195;
                             }
                             $(".attributeContent").height(attrHeight + "px");
                             isopenAttr = false;
 
-                            $("#divTable").find(".layui-table-view").first().css("position", "absolute");
-                            $("#divTable").find(".layui-table-view").first().css("top", 10 + attrHeight);
+                            
 
                             //$(".attributeContent .checkboxContent").unbind("hover");
                             //$(".attributeContent .checkboxContent").hover(function() {
@@ -593,8 +603,7 @@
                     }
                 });
             }
-            var isopenAttr = false;
-            var attrHeight = 210;
+     
             window.changeAttrHeight = function() {
                 if (isopenAttr) {
                     $(".attributeContent").height(attrHeight + "px");
@@ -619,7 +628,7 @@
 
 
             window.search = function () {
-
+             
                 var cpIds = new Array();
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
