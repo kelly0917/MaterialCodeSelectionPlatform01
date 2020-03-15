@@ -83,7 +83,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 }
 
 
-                var descList = condition.InputText.Split(@"\ ", StringSplitOptions.RemoveEmptyEntries);
+                var descList = condition.InputText.Split(@" ", StringSplitOptions.RemoveEmptyEntries);
                 foreach (var s in descList)
                 {
                     query = query.Where((a, b) => a.CN_LongDesc.Contains(s));
