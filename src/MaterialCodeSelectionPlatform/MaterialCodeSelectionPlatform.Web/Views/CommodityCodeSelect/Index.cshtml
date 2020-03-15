@@ -34,7 +34,7 @@
 
     .attributeContent {
         height: 1px;
-        overflow:hidden;
+        overflow: hidden;
     }
 
 
@@ -50,60 +50,71 @@
 <script type="text/javascript" src="~/lib/usteel-search/search.js?t=@DateTime.Now"></script>
 <div class="layui-form" action="" id="searchForm">
     <div class="layui-form-item search">
-        <div class="layui-inline layui-float-left">
-            <label class="layui-form-label">编码库：</label>
-            <div class="layui-input-inline">
-                <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+        <div class="layui-inline layui-col-sm10">
+            <div class="layui-inline layui-col-sm2">
+                <label class="layui-form-label">物资类型：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+                </div>
             </div>
-        </div>
-        <div class="layui-inline layui-float-left" style="display: none;">
-            <label class="layui-form-label">项目：</label>
-            <div class="layui-input-inline">
-                <select lay-search id="selProject" name="selProject" lay-filter="selProject"></select>
-            </div>
-        </div>
-        <div class="layui-inline layui-float-left" style="display: none;">
-            <label class="layui-form-label">装置：</label>
-            <div class="layui-input-inline">
-                <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
-            </div>
-        </div>
-        <div class="layui-inline layui-float-left">
-            <label class="layui-form-label">物资类型：</label>
-            <div class="layui-input-inline">
-                <input type="text" name="txtCode" class="layui-input" id="txtCode" lay-filter="txtCode" style="width:200px" />
-            </div>
-        </div>
-
-        <button class="layui-btn layui-btn-normal layui-float-right" lay-filter="search" id="btnChangeProject" onclick="openProjectAgain()">切换项目</button>
-
-        <div class="layui-inline layui-float-right">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
-        </div>
-        <div class="layui-inline layui-float-right">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
-        </div>
-        <div class="layui-inline layui-float-right">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="search()">搜索</button>
-        </div>
-    </div>
-
-
-    @*物资类型*@
-    <div class="layui-form-item search">
-        <div class="layui-inline layui-col-sm9" id="divCPContainer">
-            <label class="layui-form-label">物资类型：</label>
-            <div class="layui-input-inline" id="divsel200">
-                <select lay-search name="sel200" lay-filter="cpType"></select>
+            <div class="layui-inline layui-col-sm9" id="divCPContainer">
+                <div class="layui-input-inline" id="divsel200">
+                    <select lay-search name="sel200" lay-filter="cpType"></select>
+                </div>
             </div>
         </div>
         <div class="layui-inline" style="float: right">
-            <label class="layui-form-label" style="width: auto">当前项目：</label>
-            <label class="layui-form-label" style="width: auto; padding-left: 0; padding-right: 0; color: green;" id="lbProject"></label>
-            <label class="layui-form-label" style="width: auto">当前装置：</label>
-            <label class="layui-form-label" style="width: auto;padding-left: 0; padding-right: 0;color: green;" id="lbDevice"></label>
+            @*<div class="layui-inline layui-float-left">
+                <label class="layui-form-label">编码库：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+                </div>
+            </div>*@
+            <div class="layui-inline layui-float-left" style="display: none;">
+                <label class="layui-form-label">项目：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selProject" name="selProject" lay-filter="selProject"></select>
+                </div>
+            </div>
+            <div class="layui-inline layui-float-left" style="display: none;">
+                <label class="layui-form-label">装置：</label>
+                <div class="layui-input-inline">
+                    <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
+                </div>
+            </div>
+           
+
+            <button class="layui-btn layui-btn-normal layui-float-right" lay-filter="search" id="btnChangeProject" onclick="openProjectAgain()">切换项目</button>
+
+            <div class="layui-inline layui-float-right">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
+            </div>
+            <div class="layui-inline layui-float-right">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
+            </div>
+            <div class="layui-inline layui-float-right">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="search()">搜索</button>
+
+            </div>
         </div>
     </div>
+
+
+    @*材料描述*@
+<div class="layui-form-item search">
+    <div class="layui-inline layui-float-left">
+        <label class="layui-form-label">材料描述：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="txtCode" class="layui-input" id="txtCode" lay-filter="txtCode" style="width: 622px" />
+        </div>
+    </div>
+    <div class="layui-inline" style="float: right">
+        <label class="layui-form-label" style="width: auto">当前项目：</label>
+        <label class="layui-form-label" style="width: auto; padding-left: 0; padding-right: 0; color: green;" id="lbProject"></label>
+        <label class="layui-form-label" style="width: auto">当前装置：</label>
+        <label class="layui-form-label" style="width: auto;padding-left: 0; padding-right: 0;color: green;" id="lbDevice"></label>
+    </div>
+</div>
     @*属性值列表*@
     <div class="layui-form-item search attributeContent" id="divAttrContainer">
 
@@ -284,7 +295,7 @@
             }
             openProject();//打开最近【项目】【装置】
 
-            
+
 
             window.openProjectAgain = function() {
                 winIndex= layer.open({
@@ -293,7 +304,7 @@
                     area: ['800px', '600px'],
                     minHeight:'200px',
                     content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                   
+
                 });
             }
 
@@ -331,7 +342,7 @@
             form.on('select(selProject)',
                 function(data1) {
                     var value = data1.value;
-                    
+
                     $("select[name=selDevice]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: "-1", complete: function () {
 
@@ -361,7 +372,7 @@
                 });
 
             $("#txtCode").on("input", function (e) {
-           
+
                 if ($("#txtCode").val() == "") {
                     loadCompenetType($("#selCatalog").val());
                     clearAttr();
@@ -369,11 +380,11 @@
                 }
             });
 
-      
+
             //编码库改变
             form.on('select(selCatalog)',
                 function (data1) {
-                    
+
                     var value = data1.value;
                     loadCompenetType(value);
                     clearAttr();
@@ -391,7 +402,7 @@
             window.clearTableData = function() {
                 userInputText="清空列表数据";
                 loadData();
-             
+
             }
 
             window.resetUserInput = function() {
@@ -400,7 +411,7 @@
                 }
             }
 
-            
+
             var index = 200;
             var ddlCp = $("#divReplaceSel").html();
 
@@ -477,7 +488,8 @@
                                     if (data.Success) {
                                         realDDP(data.Data);
                                     } else {
-                                        var last = '<label class="layui-form-label" >物资类型：</label>';
+                                        //var last = '<label class="layui-form-label" >物资类型：</label>';
+                                        var last = '';
                                         $("#divCPContainer").prepend(last);
                                         form.render();
                                         bindEvent();
@@ -500,7 +512,7 @@
                 $(".attributeContent").height("1px");
                 $("#divAttrContainer").html('');
             }
-           
+
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
@@ -541,7 +553,7 @@
                             }
                             $(".attributeContent").height(attrHeight+"px")
                             var sumHeight = parent.document.documentElement.clientHeight;
-                           
+
                             $(".attributeContent .checkboxContent").unbind("hover");
                             $(".attributeContent .checkboxContent").hover(function() {
                                 $(".attributeContent").height("auto");
@@ -577,7 +589,7 @@
 
 
             window.search = function () {
-         
+
                 var cpIds = new Array();
                 var checks = $("input[type=checkbox]:checked");
                 for (var i = 0; i < checks.length; i++) {
@@ -600,12 +612,12 @@
         $("#selDevice").val(deviceId);
         layui.form.render('select');
         layer.close(winIndex);
-        
+
         //编码库
         $("select[name=selCatalog]").dropdownlist({
             url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject2").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
                 var value = $("select[name=selCatalog]").val();
-                
+
                 loadCompenetType(value);
                 clearAttr();
                 $("#txtCode").val("");
@@ -748,7 +760,7 @@
     //页面加载
     $("#txtCode").autocomplete({
         source: function (request, response) {
-      
+
             var name = $.ui.autocomplete.escapeRegex(request.term);
             userInputText = name;
             response($.grep(source(name), function (item) {
@@ -762,7 +774,7 @@
                 var compenentTypeId = selectIds[index];
                 loadCompenetType(compenentTypeId);
                 loadAttr(compenentTypeId);
-                
+
 
             }, 100);
         }
@@ -777,7 +789,7 @@
         var catalogId = $("select[name=selCatalog]").val();
         var result = new Array();
 
-        
+
         $.ajax({
             url: "/CommodityCodeSelect2/GetCompenetTypeByMCDesc?desc=" +
                 encodeURIComponent(desc) +
