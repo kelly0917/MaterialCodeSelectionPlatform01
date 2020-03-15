@@ -34,8 +34,9 @@ namespace MaterialCodeSelectionPlatform.Web.Utilities
                 using (var conn = new LdapConnection())
                 {
                     conn.Connect(Host, Port);
-                    conn.Bind(Domain + "\\" + DomainAdminUser, DomainAdminPassword);//这里用户名或密码错误会抛出异常LdapException
                     log.Debug("域服务端连接完成！");
+                    conn.Bind(Domain + "\\" + DomainAdminUser, DomainAdminPassword);//这里用户名或密码错误会抛出异常LdapException
+                    log.Debug("域用户管理员账号密码验证完成！");
                     var entities =
                         conn.Search(BaseDC, LdapConnection.ScopeSub,
                             $"sAMAccountName={username}",//注意一个多的空格都不能打，否则查不出来
