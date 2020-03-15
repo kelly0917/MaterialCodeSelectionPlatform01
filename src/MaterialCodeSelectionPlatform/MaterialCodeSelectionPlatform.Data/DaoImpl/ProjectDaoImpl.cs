@@ -22,10 +22,10 @@ namespace MaterialCodeSelectionPlatform.Data
         {
             var query = Db.Queryable<Project>();
 
-            if (searchCondition.UserId.IsNotNullAndNotEmpty())
-            {
-                query = query.Where(c => c.CreateUserId==searchCondition.UserId);
-            }
+            //if (searchCondition.UserId.IsNotNullAndNotEmpty())
+            //{
+            //    query = query.Where(c => c.CreateUserId==searchCondition.UserId);
+            //}
             if (searchCondition.Name.IsNotNullAndNotEmpty())
             {
                 query = query.Where(c => c.Name.Contains(searchCondition.Name));
