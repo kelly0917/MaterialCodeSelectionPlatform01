@@ -25,7 +25,7 @@
 
     .layui-form-item .layui-inline {
         /* margin-bottom: 5px; */
-        margin-right: 10px;
+        /*margin-right: 10px;*/
     }
 
     .layui-form-item {
@@ -38,9 +38,12 @@
     }
 
 
-    .layui-float-rigth {
+    .layui-float-right {
         float: right;
+        margin-left: 10px;
     }
+
+    
 </style>
 
 <link href="~/js/jquery-ui.css" rel="stylesheet" />
@@ -51,13 +54,13 @@
 <div class="layui-form" action="" id="searchForm">
     <div class="layui-form-item search">
         <div class="layui-inline layui-col-sm10">
-            <div class="layui-inline layui-col-sm2">
-                <label class="layui-form-label">物资类型：</label>
-                <div class="layui-input-inline">
-                    <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
-                </div>
+
+            <label class="layui-form-label">物资类型：</label>
+            <div class="layui-input-inline">
+                <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
             </div>
-            <div class="layui-inline layui-col-sm9" id="divCPContainer">
+
+            <div class="layui-inline" id="divCPContainer">
                 <div class="layui-input-inline" id="divsel200">
                     <select lay-search name="sel200" lay-filter="cpType"></select>
                 </div>
@@ -65,11 +68,11 @@
         </div>
         <div class="layui-inline" style="float: right">
             @*<div class="layui-inline layui-float-left">
-                <label class="layui-form-label">编码库：</label>
-                <div class="layui-input-inline">
-                    <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
-                </div>
-            </div>*@
+                    <label class="layui-form-label">编码库：</label>
+                    <div class="layui-input-inline">
+                        <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+                    </div>
+                </div>*@
             <div class="layui-inline layui-float-left" style="display: none;">
                 <label class="layui-form-label">项目：</label>
                 <div class="layui-input-inline">
@@ -82,7 +85,7 @@
                     <select lay-search id="selDevice" name="selDevice" lay-filter="selDevice"></select>
                 </div>
             </div>
-           
+
 
             <button class="layui-btn layui-btn-normal layui-float-right" lay-filter="search" id="btnChangeProject" onclick="openProjectAgain()">切换项目</button>
 
@@ -101,20 +104,20 @@
 
 
     @*材料描述*@
-<div class="layui-form-item search">
-    <div class="layui-inline layui-float-left">
-        <label class="layui-form-label">材料描述：</label>
-        <div class="layui-input-inline">
-            <input type="text" name="txtCode" class="layui-input" id="txtCode" lay-filter="txtCode" style="width: 622px" />
+    <div class="layui-form-item search">
+        <div class="layui-inline layui-float-left">
+            <label class="layui-form-label">材料描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="txtCode" class="layui-input" id="txtCode" lay-filter="txtCode" style="width: 622px" />
+            </div>
+        </div>
+        <div class="layui-inline" style="float: right">
+            <label class="layui-form-label" style="width: auto">当前项目：</label>
+            <label class="layui-form-label" style="width: auto; padding-left: 0; padding-right: 0; color: green;" id="lbProject"></label>
+            <label class="layui-form-label" style="width: auto">当前装置：</label>
+            <label class="layui-form-label" style="width: auto;padding-left: 0; padding-right: 0;color: green;" id="lbDevice"></label>
         </div>
     </div>
-    <div class="layui-inline" style="float: right">
-        <label class="layui-form-label" style="width: auto">当前项目：</label>
-        <label class="layui-form-label" style="width: auto; padding-left: 0; padding-right: 0; color: green;" id="lbProject"></label>
-        <label class="layui-form-label" style="width: auto">当前装置：</label>
-        <label class="layui-form-label" style="width: auto;padding-left: 0; padding-right: 0;color: green;" id="lbDevice"></label>
-    </div>
-</div>
     @*属性值列表*@
     <div class="layui-form-item search attributeContent" id="divAttrContainer">
 
@@ -702,10 +705,33 @@
                 $("#selDevice").html(optionHtml);
                 $("#selDevice").val(deviceId);
                 layui.form.render('select');
+
+
+                //刷新编码库
+                $("#lbProject").html($("#selProject").find("option:selected").text());
+                $("#lbDevice").html($("#selDevice").find("option:selected").text());
+
+                //编码库
+                $("select[name=selCatalog]").dropdownlist({
+                    url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
+                        var value = $("select[name=selCatalog]").val();
+
+                        loadCompenetType(value);
+                        clearAttr();
+                        $("#txtCode").val("");
+                        clearTableData();
+                    }
+                });
             }
             layer.close(winIndex);
         });
         layer.close(winIndex);
+
+        
+   
+
+
+     
     }
     //==============选择【项目】【装置】end==================
     //==============打开【拷贝】==================
