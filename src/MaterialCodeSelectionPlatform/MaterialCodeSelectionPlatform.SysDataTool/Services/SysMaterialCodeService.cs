@@ -63,7 +63,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 CommonHelper.ExcuteSql(deleteSql, CacheData.SqlConn);
 
                 sql =
-                    $"select PART_NO,PART_ID,CATALOG_NO,COMMODITY_NO,SIZE_REF_NO from part where CATALOG_NO = {configModel.Code} ";
+                    $"select PART_NO,PART_ID,CATALOG_NO,COMMODITY_NO,SIZE_REF_NO from part where CATALOG_NO = {configModel.Code} and STAT =1";
                 DataTable table1 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 CacheData.SetDealProgress();
                 log.Debug(
