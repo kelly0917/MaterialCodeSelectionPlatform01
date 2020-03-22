@@ -74,7 +74,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 //如果传过来的是编码库Id
                 var result = await componentTypeService.GetByColumnValuess("CatalogId,ParentId", compenentTypeId+","+Guid.Empty.ToString());
 
-                var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc +" - "+ c.Code, Value = c.Id }).ToList();
                 list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
                 return Json(list);
             }
