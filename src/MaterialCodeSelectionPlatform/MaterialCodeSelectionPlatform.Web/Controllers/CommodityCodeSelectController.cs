@@ -67,7 +67,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     var list3 = await componentTypeService.GetByParentId("ParentId", parentId);
                     if (list3.Count > 0)
                         list3.Insert(0, new ComponentType() { Desc = "全部", Id = "-1" });
-                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc +"-"+c.Code, Value = c.Id }).ToList();
                     return Json(result3);
                 case 4://编码库
                     var catlogs = await projectService.GetRightCatalogs(parentId);
