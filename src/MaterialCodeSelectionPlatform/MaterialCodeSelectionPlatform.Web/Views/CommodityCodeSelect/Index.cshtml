@@ -827,18 +827,18 @@
                     return item;
                 }));
             }, 1000);
+        },
+        select: function (data) {
+            setTimeout(function () {
+                var index = selectList.indexOf($("#txtCode").val());
+                //当前选中的Id
+                var compenentTypeId = selectIds[index];
+                loadCompenetType(compenentTypeId);
+                loadAttr(compenentTypeId);
 
-    select: function (data) {
-        setTimeout(function () {
-            var index = selectList.indexOf($("#txtCode").val());
-            //当前选中的Id
-            var compenentTypeId = selectIds[index];
-            loadCompenetType(compenentTypeId);
-            loadAttr(compenentTypeId);
 
-
-        }, 100);
-    }
+            }, 100);
+        }
     });
 
     var selectList = new Array();
