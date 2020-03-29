@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -48,6 +49,22 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 //物资编码
                 var sql =
                     $"SELECT COMMODITY_NO,COMMODITY_ID,COMMODITY_CLASS_NO,CATALOG_NO FROM COMMODITY WHERE CATALOG_NO = {configModel.Code} AND APPROVAL_STATUS_NO =2  ";
+
+                var filterCataLogs = new List<string>() { "CPE_CAT".ToLower() };
+                if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["cpTypeFilter"]) == false)
+                {
+                    filterCataLogs = ConfigurationManager.AppSettings["cpTypeFilter"].ToLower()
+                        .Split(new string[] { ",", "，" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                }
+
+                if (filterCataLogs.Contains(configModel.Name.ToLower().Trim()))
+                {
+                    sql = string.Format(@"SELECT a.COMMODITY_NO,a.COMMODITY_ID,a.COMMODITY_CLASS_NO,a.CATALOG_NO FROM COMMODITY a
+                            inner join class b on a.COMMODITY_CLASS_NO = b.CLASS_NO
+                            WHERE a.CATALOG_NO = {0} and a.APPROVAL_STATUS_NO =2 and b.CLASS_ID like 'P%'", configModel.Code);
+                }
+
+
                 DataTable table = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 CacheData.SetDealProgress();
                 log.Debug(
@@ -64,6 +81,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
                 sql =
                     $"select PART_NO,PART_ID,CATALOG_NO,COMMODITY_NO,SIZE_REF_NO from part where CATALOG_NO = {configModel.Code} and STAT =1";
+
+
+
                 DataTable table1 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 CacheData.SetDealProgress();
                 log.Debug(
@@ -81,6 +101,16 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
                 sql =
                     $"select CATALOG_NO,INSTANCE_NO,CLASS_NO,ENTITY_PROPERTY_NO,PROPERTY_VALUE from instance_property_value where CATALOG_NO  = {configModel.Code} ";
+
+                
+                if (filterCataLogs.Contains(configModel.Name.ToLower().Trim()))
+                {
+                    sql = string.Format(@"select a.CATALOG_NO,a.INSTANCE_NO,a.CLASS_NO,a.ENTITY_PROPERTY_NO,a.PROPERTY_VALUE from instance_property_value  a
+                                        inner join class b on a.CLASS_NO = b.CLASS_NO 
+                                        where a.CATALOG_NO  = {0} and b.CLASS_ID like 'P%'", configModel.Code);
+                }
+
+
                 DataTable table2 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 CacheData.SetDealProgress();
                 log.Debug(
@@ -98,6 +128,9 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
 
                 sql =
                     $"SELECT ENTITY_PROPERTY_NO,ENTITY_PROPERTY_ID,CATALOG_NO FROM ENTITY_PROPERTY WHERE CATALOG_NO ={configModel.Code} ";
+
+
+
                 DataTable table3 = CommonHelper.GetDataFromOracle(sql, configModel.ConnectionString);
                 CacheData.SetDealProgress();
                 log.Debug(
