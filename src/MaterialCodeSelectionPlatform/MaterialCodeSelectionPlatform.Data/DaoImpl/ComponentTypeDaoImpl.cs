@@ -23,7 +23,6 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 return new List<ComponentTypeCount>();
             }
-
             var query = Db.Queryable<ComponentType, CommodityCode>((t, c) => new object[]
             {
                 JoinType.Inner, t.Id == c.ComponentTypeId
