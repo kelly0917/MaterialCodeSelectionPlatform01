@@ -65,10 +65,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     return Json(result2);
                 case 3://物资类型
                     var list3 = await componentTypeService.GetByParentId("ParentId", parentId);
+                    list3 = list3.OrderBy(c => c.Code).ToList();
+                    //if (list3.Count > 0)
+                    //    list3.Insert(0, new ComponentType() { Desc = "全部", Id = "-1" });
+
+                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Code + " - " + c.Desc, Value = c.Id }).ToList();
+
                     if (list3.Count > 0)
-                        list3.Insert(0, new ComponentType() { Desc = "全部", Id = "-1" });
-                    var result3 = list3.Select(c => new DropDownListItemDTO() { Text = c.Desc +" - " + c.Code, Value = c.Id }).ToList();
-                    return Json(result3);
+                        result3.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
+                        return Json(result3);
                 case 4://编码库
                     var catlogs = await projectService.GetRightCatalogs(parentId);
                     catlogs = catlogs.OrderBy(c => c.Description).ToList();
