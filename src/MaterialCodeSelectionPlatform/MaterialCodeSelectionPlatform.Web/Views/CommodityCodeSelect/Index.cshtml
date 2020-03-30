@@ -11,13 +11,13 @@
         width: 100px;
     }*/
     .checkboxContent {
-        height: 20px;
+        height: auto
         overflow: hidden;
     }
 
-        .checkboxContent:hover {
-            height: auto;
-        }
+        /*.checkboxContent:hover {
+            height: 20px;;
+        }*/
 
     .layui-form-label {
         width: 140px;
@@ -548,7 +548,7 @@
 
                 clearAttr();
                 $.ajax({
-                    url: "/CommodityCodeSelect2/GetAttributeByTypeId?compenentTypeId=" + ctId,
+                    url: "/CommodityCodeSelect2/GetAttributeByTypeId?compenentTypeId=" + ctId +"&userInputText="+encodeURIComponent(userInputText),
                     type: 'get',
                     dataType: 'json',
                     success: function (data) {

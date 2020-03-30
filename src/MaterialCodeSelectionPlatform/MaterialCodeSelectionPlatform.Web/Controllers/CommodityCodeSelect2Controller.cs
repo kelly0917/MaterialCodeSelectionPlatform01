@@ -117,9 +117,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return ConvertSuccessResult(currentCompType.ParentId);
         }
 
-        public async Task<IActionResult> GetAttributeByTypeId(string compenentTypeId)
+        public async Task<IActionResult> GetAttributeByTypeId(string compenentTypeId,string userInputText)
         {
-            var list = await componentTypeService.GetAttributeByCompenetType(compenentTypeId);
+            var list = await componentTypeService.GetAttributeByCompenetType(compenentTypeId, userInputText);
             return ConvertSuccessResult(list);
         }
 

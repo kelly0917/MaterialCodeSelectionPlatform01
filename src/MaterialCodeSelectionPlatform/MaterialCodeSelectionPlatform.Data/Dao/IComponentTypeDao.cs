@@ -20,7 +20,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="compenentTypeId"></param>
         /// <returns></returns>
-        Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId);
+        Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId, string userInputText);
 
     }
 }
