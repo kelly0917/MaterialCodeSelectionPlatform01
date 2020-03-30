@@ -50,10 +50,24 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="compenentTypeId"></param>
         /// <returns></returns>
-        public async Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId)
+        public async Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId, string userInputText)
         {
-            var list =await Db.Queryable<CommodityCodeAttribute>().Where(c => c.ComponentTypeId == compenentTypeId).Where(c=>c.AttributeValue != null).Where(c => c.AttributeValue != "")
-                .ToListAsync();
+
+
+            var query =  Db.Queryable<CommodityCodeAttribute, CommodityCode>((c, a) => new object[]
+                {
+                    JoinType.Inner, c.CommodityCodeId == a.Id
+                }).Where((c, a) => c.ComponentTypeId == compenentTypeId).Where((c, a) => c.AttributeValue != null)
+                .Where((c, a) => c.AttributeValue != "");
+
+
+                  if (string.IsNullOrEmpty(userInputText) == false)
+                  {
+                      userInputText = userInputText.Trim();
+                      query = query.Where((c, a) => a.CN_LongDesc.Contains(userInputText));
+                  }
+
+            var list =await query.ToListAsync();
 
             List<ComAttrModel> comAttrModels = new List<ComAttrModel>();
             var attributes = list.Select(c => c.AttributeName).Distinct().ToList();

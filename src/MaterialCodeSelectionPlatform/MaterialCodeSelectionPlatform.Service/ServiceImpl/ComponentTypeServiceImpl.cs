@@ -22,9 +22,9 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="compenentTypeId"></param>
         /// <returns></returns>
-        public async Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId)
+        public async Task<List<ComAttrModel>> GetAttributeByCompenetType(string compenentTypeId, string userInputText)
         {
-            return await _ComponentTypeDao.GetAttributeByCompenetType(compenentTypeId);
+            return await _ComponentTypeDao.GetAttributeByCompenetType(compenentTypeId, userInputText);
         }
     }
 }
