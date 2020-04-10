@@ -55,7 +55,7 @@ namespace MaterialCodeSelectionPlatform.SysDataTool.Services
                 stopwatch.Start();
                 log.Debug($"开始同步物资编码类别！编码库为:{configModel.Name}");
                 //and approval_status_no =2
-                var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO,c.CATALOG_ID  from class a inner join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO inner join CATALOG c on a.CATALOG_NO = c.CATALOG_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no = 3 ";
+                var sql = $"select  a.CLASS_NO,a.CLASS_ID,a.CATALOG_NO,a.SEQ_NO,a.DESCR,a.PARENT_CLASS_NO,a.CAN_INSTANTIATE,a.UNIT_ID,b.DRAW_DISCIPLINE_ID as DRAW_DISCIPLINE_NO,a.APPROVAL_STATUS_NO,c.CATALOG_ID  from class a left join DRAW_DISCIPLINE b on a.DRAW_DISCIPLINE_NO = b.DRAW_DISCIPLINE_NO inner join CATALOG c on a.CATALOG_NO = c.CATALOG_NO where a.catalog_no = {configModel.Code}   and a.cat_entity_type_no = 3 ";
 
                 var filterCataLogs = new List<string>() {"CPE_CAT".ToLower()};
                 if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["cpTypeFilter"])==false)
