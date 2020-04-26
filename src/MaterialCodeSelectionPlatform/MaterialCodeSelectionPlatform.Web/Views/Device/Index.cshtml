@@ -56,6 +56,7 @@
 
 <script type="text/javascript">
 
+
     layui.use(['form', 'table', 'layer', 'jquery', 'upload'],
         function () {
             var form = layui.form;
@@ -64,6 +65,8 @@
             var $ = layui.jquery;
             var upload = layui.upload; 
             form.render();
+            var order = "";
+            var orderType = 0;
             //执行实例
             var uploadInst = upload.render({
                 elem: '#btnUpload' //绑定元素
@@ -94,21 +97,39 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + "&" + Math.random()//数据接口
+                    elem: '#test', height: 'full-80', url: '/Device/GetDataList' + para + '&order='+order+'&orderType='+orderType+"&" + Math.random()//数据接口
                     , page: true //开启分页
                     , limit: 20
                     , limits: [20, 50, 100]
                     , cols: [[ //表头
                         { field: 'ProjectName', title: '项目名称' },
                         { field: 'ProjectCode', title: '项目代码' },
-                        { field: 'Name', title: '装置名称' }
-                        , { field: 'Code', title: '装置代码' }
+                        { field: 'Name', title: '装置名称' ,sort: true}
+                        , { field: 'Code', title: '装置代码' ,sort: true}
                         , { field: 'right', title: '操作', width: 460, templet: "#barDemo",align:'center' }
                     ]]
                     , id: 'testReload',
                    
                 });
+                //监听排序事件
+                table.on('sort(useruv)', function(obj){ //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                    console.log(obj.field); //当前排序的字段名
+                    console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+                    console.log(this); //当前排序的 th 对象
+                    order = obj.field;
+                    if (obj.type == 'desc') {
+                        orderType = 1;
+                    } else {
+                        orderType = 0;
+                    }
+                    //尽管我们的 table 自带排序功能，但并没有请求服务端。
+                    //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+                    table.reload('testReload', {
+                        initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                        ,   url: '/CommodityCodeSelect2/GetCommodityCodeDataList?order='+order+'&orderType='+orderType+'&catalogId='+catalogId+'&inputText='+encodeURIComponent(userInputText)+'&componentTypeId=' + componentTypeId + "&" + Math.random() + parms//数据接口
+                    });
 
+                });
                 //监听工具条
                 table.on('tool(useruv)', function (obj) {
                     var data = obj.data;

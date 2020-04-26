@@ -53,7 +53,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="page"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public async Task<IActionResult> GetDataList(string name, string code, string projectId, int page, int limit)
+        public async Task<IActionResult> GetDataList(string name, string code, string projectId, int page, int limit, string orderBy, int orderByType = 0)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
@@ -67,6 +67,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             deviceSearchCondition.Page = dataPage;
             deviceSearchCondition.Code = code;
             deviceSearchCondition.Name = name;
+            deviceSearchCondition.OrderBy = orderBy;
+            deviceSearchCondition.OrderByType = orderByType;
             deviceSearchCondition.ProjectId = projectId;
             var list = await Service.GetDataList(deviceSearchCondition);
             return ConvertListResult(list, dataPage);
