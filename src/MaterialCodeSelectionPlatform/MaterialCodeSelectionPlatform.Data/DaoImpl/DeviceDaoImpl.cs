@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MaterialCodeSelectionPlatform.Domain;
 using MaterialCodeSelectionPlatform.Domain.Entities;
@@ -36,6 +37,44 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 query = query.Where((d, p) => d.ProjectId == searchCondition.ProjectId);
             }
+            if (string.IsNullOrEmpty(searchCondition.OrderBy))
+            {
+                query = query.OrderBy((d, p) => d.LastModifyTime, OrderByType.Desc);
+            }
+            else
+            {
+                //升序
+                if (searchCondition.OrderByType == 0)
+                {
+                    if (searchCondition.OrderBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((d, p) => d.Code, OrderByType.Asc);
+                    }
+                    else if (searchCondition.OrderBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((d, p) =>d.Name, OrderByType.Asc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((d, p) => d.LastModifyTime, OrderByType.Desc);
+                    }
+                }
+                else
+                {
+                    if (searchCondition.OrderBy.Equals("Code", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((d, p) => d.Code, OrderByType.Desc);
+                    }
+                    else if (searchCondition.OrderBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((d, p) => d.Name, OrderByType.Desc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((d, p) => d.LastModifyTime, OrderByType.Desc);
+                    }
+                }
+            }
 
             var total = 0;
             var data = await query.Select((d, p) =>new Device()
@@ -55,6 +94,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 LastModifyUserId = d.LastModifyUserId
             }).ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
 
+       
             searchCondition.Page.RecordCount = data.Value;
             return data.Key;
         }
