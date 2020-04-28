@@ -486,8 +486,9 @@
 
             window.realDDP = function (ctId) {
                 index = index + 1;
+                var catalogId = $("select[name=selCatalog]").val();
                 $.ajax({
-                    url: "/CommodityCodeSelect2/GetCompenetById?compenentTypeId=" + ctId,
+                    url: "/CommodityCodeSelect2/GetCompenetById?compenentTypeId=" + ctId +"&catalogId="+catalogId,
                     type: 'get',
                     dataTyp: 'json',
                     success: function (data) {
@@ -863,7 +864,7 @@
                 if (dealResult(data)) {
                     for (var i = 0; i < data.Data.length; i++) {
                         selectIds[i] = data.Data[i].ComponentTypeId;
-                        result[i] = data.Data[i].ComponentTypeDesc + "(" + data.Data[i].Count + ")";
+                        result[i] =data.Data[i].ComponentTypeCode +"-"+ data.Data[i].ComponentTypeDesc + "(" + data.Data[i].Count + ")";
                     }
                 }
             }

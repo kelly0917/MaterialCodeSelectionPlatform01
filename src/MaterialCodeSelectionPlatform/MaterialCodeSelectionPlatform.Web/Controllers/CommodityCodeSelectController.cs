@@ -61,7 +61,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     var deviceList = list2.ToList();
                     if (deviceList.Count > 0)
                         deviceList.Insert(0, new Device() { Name = "全部", Id = "-1" });
-                    var result2 = list2.Select(c => new DropDownListItemDTO() { Text = c.Name, Value = c.Id }).ToList();
+                    var result2 = list2.Select(c => new DropDownListItemDTO()
+                        {Text = c.Code + "-" + c.Name, Value = c.Id}).ToList();
                     return Json(result2);
                 case 3://物资类型
                     var list3 = await componentTypeService.GetByParentId("ParentId", parentId);
