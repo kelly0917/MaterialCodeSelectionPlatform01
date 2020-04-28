@@ -64,8 +64,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// 获取当前平级的物资类型
         /// </summary>
         /// <param name="compenentTypeId"></param>
+        /// <param name="catalogId"></param>
         /// <returns></returns>
-        public async Task<IActionResult> GetCompenetById(string compenentTypeId)
+        public async Task<IActionResult> GetCompenetById(string compenentTypeId,string catalogId)
         {
 
             var currentCompType = await componentTypeService.GetAsync(compenentTypeId);
@@ -81,11 +82,22 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             }
             else
             {
-                var result = await componentTypeService.GetByParentId("ParentId", currentCompType.ParentId);
+                if (catalogId.IsNotNullAndNotEmpty())
+                {
+                    var result = await componentTypeService.GetByColumnValuess("ParentId,CatalogId", currentCompType.ParentId + ","+ catalogId);
 
-                var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
-                list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
-                return Json(list);
+                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
+                    return Json(list);
+                }
+                else
+                {
+                    var result = await componentTypeService.GetByParentId("ParentId", currentCompType.ParentId);
+
+                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
+                    return Json(list);
+                }
             }
            
 
