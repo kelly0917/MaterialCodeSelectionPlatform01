@@ -309,7 +309,7 @@ namespace MaterialCodeSelectionPlatform.Data
             FROM PartNumber a
             LEFT JOIN ComponentType c ON a.ComponentTypeId =c.Id AND c.Status=0
             LEFT JOIN CommodityCode d ON d.Id=a.CommodityCodeId
-            LEFT JOIN (SELECT a. *
+            LEFT JOIN (SELECT DISTINCT a.DesignQty,a.PartNumberId
 			             FROM MaterialTakeOffDetail a
 			             WHERE MaterialTakeOffId = (SELECT TOP 1 Id
 			                                         FROM MaterialTakeOff
