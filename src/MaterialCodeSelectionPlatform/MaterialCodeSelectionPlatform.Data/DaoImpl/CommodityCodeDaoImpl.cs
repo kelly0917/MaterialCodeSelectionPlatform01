@@ -71,8 +71,8 @@ namespace MaterialCodeSelectionPlatform.Data
             #endregion
             List<string> commodityCodeIdList = new List<string>();
 
-           
-            
+
+
             var query = Db.Queryable<CommodityCode, ComponentType>((a, b) => new object[] { JoinType.Left, a.ComponentTypeId == b.Id });
 
             if (condition.InputText.IsNotNullAndNotEmpty())
@@ -87,16 +87,16 @@ namespace MaterialCodeSelectionPlatform.Data
                 foreach (var s in descList)
                 {
                     query = query.Where((a, b) => a.CN_LongDesc.Contains(s));
-                  
+
                 }
 
-               
-            
+
+
             }
 
             query = query.Where((a, b) => a.Status == 0);
 
-           
+
             if (condition.ComponentTypeId.IsNotNullAndNotEmpty())
             {
                 query = query.Where((a, b) => a.ComponentTypeId == condition.ComponentTypeId);
@@ -116,7 +116,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
                 var attrbuteNames = condition.CompenetAttributes.Select(c => c.AttrName).Distinct().ToList();
 
-                
+
 
                 foreach (var attrbuteName in attrbuteNames)
                 {
@@ -128,9 +128,9 @@ namespace MaterialCodeSelectionPlatform.Data
                         var values = condition.CompenetAttributes.Where(c => c.AttrName == attrbuteName)
                             .Select(c => c.AttrValue).Distinct().ToList();
 
-                        var list  = await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c=>c.CommodityCodeId).ToListAsync();
+                        var list = await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c => c.CommodityCodeId).ToListAsync();
                         var oldList = commodityCodeIdList.ToList();
-                        commodityCodeIdList = list.Where(c=> oldList.Contains(c)).Distinct().ToList();
+                        commodityCodeIdList = list.Where(c => oldList.Contains(c)).Distinct().ToList();
                     }
                     else
                     {
@@ -140,10 +140,10 @@ namespace MaterialCodeSelectionPlatform.Data
                         var values = condition.CompenetAttributes.Where(c => c.AttrName == attrbuteName)
                             .Select(c => c.AttrValue).Distinct().ToList();
 
-                        var list  =await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c=>c.CommodityCodeId).ToListAsync();
+                        var list = await queryC.Where(c => c.AttributeName == attrbuteName && values.Contains(c.AttributeValue)).Select(c => c.CommodityCodeId).ToListAsync();
                         commodityCodeIdList = list.Distinct().ToList();
                     }
-                    
+
                 }
 
 
@@ -161,9 +161,9 @@ namespace MaterialCodeSelectionPlatform.Data
                 query = query.Where((a, b) => commodityCodeIdList.Contains(a.Id));
             }
 
-            
 
-       
+
+
 
             //if (condition.Code.IsNotNullAndNotEmpty())
             //{
@@ -207,7 +207,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     }
                 }
             }
-         
+
             var total = 0;
             var data = await query.Select((a, b) => (new CommodityCodeDto { Id = a.Id, Desc = b.Desc, Code = a.Code, CN_ShortDesc = a.CN_ShortDesc })).ToPageListAsync(condition.Page.PageNo, condition.Page.PageSize, total);
             condition.Page.RecordCount = data.Value;
@@ -295,7 +295,7 @@ namespace MaterialCodeSelectionPlatform.Data
             */
             #endregion
             List<PartNumberReport> list = new List<PartNumberReport>();
-            var sql = $@" SELECT c.[Desc] ComponentTypeName, b.DesignQty ,a.id, a.Code P_Code
+            var sql = $@" SELECT c.[Desc] ComponentTypeName,c.Unit T_Unit, b.DesignQty ,a.id, a.Code P_Code
             ,a.CN_ShortDesc P_CN_ShortDesc
             ,a.EN_ShortDesc P_EN_ShortDesc
             ,a.RU_ShortDesc P_RU_ShortDesc
@@ -305,8 +305,10 @@ namespace MaterialCodeSelectionPlatform.Data
             ,a.EN_SizeDesc P_CN_SizeDesc
             ,a.EN_SizeDesc P_EN_SizeDesc
             ,a.RU_SizeDesc P_RU_SizeDesc
+            ,d.CN_ShortDesc C_CN_ShortDesc
             FROM PartNumber a
             LEFT JOIN ComponentType c ON a.ComponentTypeId =c.Id AND c.Status=0
+            LEFT JOIN CommodityCode d ON d.Id=a.CommodityCodeId
             LEFT JOIN (SELECT a. *
 			             FROM MaterialTakeOffDetail a
 			             WHERE MaterialTakeOffId = (SELECT TOP 1 Id
@@ -364,7 +366,7 @@ namespace MaterialCodeSelectionPlatform.Data
                         mto.CheckStatus = 1;
                         Db.Updateable(mto).ExecuteCommand();
                         var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
-                         //新增明细（保持最新）
+                                                                                                                                                                            //新增明细（保持最新）
                         addMaterialTakeOffDetail(condtion.PartNumberDtoList, listDetail, partIds, projectId, deviceId, userId, commodityCode, mto);
                     }
                 }
@@ -392,12 +394,12 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
         {
-         
+
             if (detailList != null && detailList.Count > 0)
             {
                 var mtoId = detailList.FirstOrDefault().MaterialTakeOffId;
                 var ids = detailList.Select(c => c.Id).ToList();
-                var dbList =await Db.Queryable<MaterialTakeOffDetail>().Where(c=>c.Status==0 && c.MaterialTakeOffId==mtoId).ToListAsync();
+                var dbList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
                 foreach (var ent in detailList)
                 {
                     var model = dbList.Where(c => c.Id == ent.Id).SingleOrDefault();
@@ -418,7 +420,7 @@ namespace MaterialCodeSelectionPlatform.Data
                         await Db.Insertable<MaterialTakeOffDetail>(ent).ExecuteCommandAsync();
                     }
                 }
-            }           
+            }
             return detailList;
         }
         /// <summary>
@@ -452,45 +454,55 @@ namespace MaterialCodeSelectionPlatform.Data
         {
             var value = Db.Updateable<CommodityCode>().UpdateColumns(it => new { it.Hits }).ReSetValue(it => it.Hits == (it.Hits + 1)).Where(it => it.Id == commodityCode.Id).ExecuteCommand();
             var partNumberList = Db.Queryable<PartNumber>().In(partIds).ToList();
+            var materialTakeOffDetailList = Db.Queryable<MaterialTakeOffDetail>().Where(c => partIds.Contains(c.PartNumberId)).ToList();
             if (partNumberList != null && partNumberList.Count > 0)
             {
                 foreach (var ent in partNumberList)
                 {
-                    #region 物资汇总明细表
-                    MaterialTakeOffDetail detail = new MaterialTakeOffDetail();
-                    detail.Id = Guid.NewGuid().ToString();
-                    detail.MaterialTakeOffId = mto.Id;
-                    detail.CommodityCodeId = ent.CommodityCodeId;
-                    detail.PartNumberId = ent.Id;//采购码Id
-                    //detail.CN_CommodityShortDesc = commodityCode.CN_ShortDesc;//物资编码短描述_中文
-                    //detail.EN_CommodityShortDesc = commodityCode.EN_ShortDesc;//物资编码短描述_英文
-                    //detail.RU_CommodityShortDesc = commodityCode.RU_ShortDesc;//物资编码短描述_俄文
-                    //detail.CN_CommodityLongDesc = commodityCode.CN_LongDesc;//物资编码长描述_中文
-                    //detail.EN_CommodityLongDesc = commodityCode.EN_LongDesc;//物资编码长描述_英文
-                    //detail.RU_CommodityLongDesc = commodityCode.RU_LongDesc;//物资编码长描述_俄文
+                    var detail = materialTakeOffDetailList.Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == ent.CommodityCodeId && c.PartNumberId == ent.Id && c.ProjectId == projectId && c.DeviceId == deviceId).FirstOrDefault();
+                    if (detail != null)
+                    {
+                        detail.DesignQty = list.Where(c => c.Id == ent.Id).FirstOrDefault().DesignQty;//数量
+                        var temp2 = Db.Updateable<MaterialTakeOffDetail>(detail).ExecuteCommand();
+                    }
+                    else
+                    {
+                        #region 物资汇总明细表
+                        detail = new MaterialTakeOffDetail();
+                        detail.Id = Guid.NewGuid().ToString();
+                        detail.MaterialTakeOffId = mto.Id;
+                        detail.CommodityCodeId = ent.CommodityCodeId;
+                        detail.PartNumberId = ent.Id;//采购码Id
+                                                     //detail.CN_CommodityShortDesc = commodityCode.CN_ShortDesc;//物资编码短描述_中文
+                                                     //detail.EN_CommodityShortDesc = commodityCode.EN_ShortDesc;//物资编码短描述_英文
+                                                     //detail.RU_CommodityShortDesc = commodityCode.RU_ShortDesc;//物资编码短描述_俄文
+                                                     //detail.CN_CommodityLongDesc = commodityCode.CN_LongDesc;//物资编码长描述_中文
+                                                     //detail.EN_CommodityLongDesc = commodityCode.EN_LongDesc;//物资编码长描述_英文
+                                                     //detail.RU_CommodityLongDesc = commodityCode.RU_LongDesc;//物资编码长描述_俄文
 
-                    //detail.CN_PartNumberShortDesc = ent.CN_ShortDesc;//采购码短描述_中文
-                    //detail.EN_PartNumberShortDesc = ent.EN_ShortDesc;//采购码短描述_英文
-                    //detail.RU_PartNumberShortDesc = ent.RU_ShortDesc;//采购码短描述_俄文
-                    //detail.CN_PartNumberLongDesc = ent.CN_LongDesc;//采购码长描述_中文
-                    //detail.EN_PartNumberLongDesc = ent.EN_LongDesc;//采购码长描述_英文
-                    //detail.RU_PartNumberLongDesc = ent.RU_LongDesc;//采购码长描述_俄文
+                        //detail.CN_PartNumberShortDesc = ent.CN_ShortDesc;//采购码短描述_中文
+                        //detail.EN_PartNumberShortDesc = ent.EN_ShortDesc;//采购码短描述_英文
+                        //detail.RU_PartNumberShortDesc = ent.RU_ShortDesc;//采购码短描述_俄文
+                        //detail.CN_PartNumberLongDesc = ent.CN_LongDesc;//采购码长描述_中文
+                        //detail.EN_PartNumberLongDesc = ent.EN_LongDesc;//采购码长描述_英文
+                        //detail.RU_PartNumberLongDesc = ent.RU_LongDesc;//采购码长描述_俄文
 
-                    //detail.CN_SizeDesc = ent.CN_SizeDesc;//尺寸描述_中文
-                    //detail.EN_SizeDesc = ent.EN_SizeDesc;//尺寸描述_英文
-                    //detail.RU_SizeDesc = ent.RU_SizeDesc;//尺寸描述_俄文
-                    detail.ProjectId = projectId;//所属项目
-                    detail.DeviceId = deviceId;//所属装置
-                    detail.DesignQty = list.Where(c => c.Id == ent.Id).FirstOrDefault().DesignQty;//数量
-                    detail.Flag = 0;
-                    detail.Status = 0;
-                    detail.CreateUserId = userId;
-                    detail.CreateTime = DateTime.Now;
-                    detail.LastModifyUserId = userId;
-                    detail.LastModifyTime = DateTime.Now;
-                    var temp2 = Db.Insertable<MaterialTakeOffDetail>(detail).ExecuteCommand();
+                        //detail.CN_SizeDesc = ent.CN_SizeDesc;//尺寸描述_中文
+                        //detail.EN_SizeDesc = ent.EN_SizeDesc;//尺寸描述_英文
+                        //detail.RU_SizeDesc = ent.RU_SizeDesc;//尺寸描述_俄文
+                        detail.ProjectId = projectId;//所属项目
+                        detail.DeviceId = deviceId;//所属装置
+                        detail.DesignQty = list.Where(c => c.Id == ent.Id).FirstOrDefault().DesignQty;//数量
+                        detail.Flag = 0;
+                        detail.Status = 0;
+                        detail.CreateUserId = userId;
+                        detail.CreateTime = DateTime.Now;
+                        detail.LastModifyUserId = userId;
+                        detail.LastModifyTime = DateTime.Now;
+                        var temp2 = Db.Insertable<MaterialTakeOffDetail>(detail).ExecuteCommand();
+                        #endregion
+                    }
                     listDetail.Add(detail);
-                    #endregion
                 }
             }
         }
@@ -585,7 +597,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="deviceid">装置Id</param>
         /// <param name="downLoad">【0：查看】【1：下载】</param>
         /// <returns></returns>
-        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId,string revision, string userId, string projectid, string deviceid, int downLoad)
+        public async Task<List<PartNumberReport>> GetUserMaterialTakeReport(string mtoId, string revision, string userId, string projectid, string deviceid, int downLoad)
         {
             #region SQL 
             /*
@@ -642,7 +654,7 @@ namespace MaterialCodeSelectionPlatform.Data
                                 INNER JOIN ComponentType d ON d.Id=c.ComponentTypeId
                                 INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
                                 WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=@MaterialTakeOffId ORDER BY e.code,c.code ";
-            var partNumberList = Db.Ado.SqlQuery<PartNumberReportDetail>(sql, new { MaterialTakeOffId =mtoEntity.Id });
+            var partNumberList = Db.Ado.SqlQuery<PartNumberReportDetail>(sql, new { MaterialTakeOffId = mtoEntity.Id });
             var resut = from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
@@ -676,7 +688,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId ).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
                     if (ent.CheckStatus == 1)
@@ -697,8 +709,8 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="id">id</param>
         /// <returns></returns>
         public async Task<int> DeleteById(string id)
-        {           
-           var n= await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.Id == id).ExecuteCommandAsync();
+        {
+            var n = await Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.Id == id).ExecuteCommandAsync();
             return n;
         }
         /// <summary>
@@ -710,13 +722,13 @@ namespace MaterialCodeSelectionPlatform.Data
         ///  <param name="deviceId">当前的装置ID</param>
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
-        public async Task<int> CopyMaterialTakeOff(string mtoId,string userId,string projectId,string deviceId, int type)
+        public async Task<int> CopyMaterialTakeOff(string mtoId, string userId, string projectId, string deviceId, int type)
         {
             var num = 0;
-            var dbMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id==mtoId).SingleAsync();
+            var dbMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id == mtoId).SingleAsync();
             var dbMtoDetailList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
 
-            var ownMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId==userId&&c.ProjectId== projectId && c.DeviceId== deviceId).SingleAsync();
+            var ownMto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectId && c.DeviceId == deviceId).SingleAsync();
             if (ownMto == null)
             {
                 #region 全新
@@ -780,7 +792,7 @@ namespace MaterialCodeSelectionPlatform.Data
                             #region 如果自己有明细，那就追加或叠加数量
                             foreach (var ent in dbMtoDetailList)
                             {
-                                var newEntity = ownDetailList.Where(c => c.Status == 0&& c.PartNumberId == ent.PartNumberId).FirstOrDefault();
+                                var newEntity = ownDetailList.Where(c => c.Status == 0 && c.PartNumberId == ent.PartNumberId).FirstOrDefault();
                                 if (newEntity != null)
                                 {
                                     newEntity.DesignQty = newEntity.DesignQty + ent.DesignQty;//叠加数量
@@ -801,7 +813,7 @@ namespace MaterialCodeSelectionPlatform.Data
                             }
                             #endregion
                         }
-                        else 
+                        else
                         {
                             #region 自己没有明细，直拉追加
                             foreach (var ent in dbMtoDetailList)
@@ -825,4 +837,4 @@ namespace MaterialCodeSelectionPlatform.Data
         }
 
     }
-}
+} 

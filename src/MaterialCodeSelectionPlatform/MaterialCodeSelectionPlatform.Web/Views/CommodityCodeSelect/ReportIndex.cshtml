@@ -14,49 +14,53 @@
     <div class="layui-row">
         <div id="tbDiv" class="layui-form" style="padding-bottom:50px">
             @{
-                if (Model!=null&&Model.Count() > 0)
+                if (Model != null && Model.Count() > 0)
                 {
                     foreach (var report in Model)
                     {
 
-                    <table  class="layui-table">
-                        <colgroup>
-                            <col width="200">
-                            <col>
-                            <col width="80">
-                            <col width="80">
-                        </colgroup>
-                        <thead>
-                            <tr style="background-color:deepskyblue;color:white">
-                                <th colspan="4">@report.ComponentTypeName </th>
-                            </tr>
-                            <tr>
-                                <th>采购码 </th>
-                                <th>采购码中文长描述 </th>
-                                <th style="text-align:center">数量 </th>
-                                <th style="text-align:center">操作 </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var ent in report.PartNumberReportDetailList)
-                            {
-                                var txtId = $"txt_{ent.Id}";
-                                <tr>
-                                    <td style="padding-bottom:2px; padding-top:2px">@ent.P_Code</td>
-                                    <td  style="padding-bottom:2px; padding-top:2px">@ent.P_CN_LongDesc</td>
-                                    <td class="layui-align-center"  style="padding-bottom:2px; padding-top:2px">
-                                        <input type="text" lay-verify="number" height="" onkeyup="clearNoNum(this)" id="@ent.Id"  materialtakeoffid="@ent.MaterialTakeOffId"  commoditycodeid="@ent.CommodityCodeId"  partnumberid="@ent.PartNumberId"  projectid="@ent.ProjectId"  deviceid="@ent.DeviceId"  designqty="@ent.DesignQty"  flag="@ent.Flag"  status="@ent.Status"  createuserid="@ent.CreateUserId"  createtime="@ent.CreateTime"  lastmodifyuserid="@ent.LastModifyUserId"  lastmodifytime ="@ent.LastModifyTime" value="@ent.DesignQty" class="layui-input" />
-                                    </td>
-                                    <td  style="padding-bottom:2px; padding-top:2px"> 
-                                        <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal  layui-btn-sm layui-float-right" style="margin:0px">删除</button>
-                                    </td>
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="200">
+                                <col>
+                                <col width="80">
+                                <col width="80">
+                                <col width="50">
+                            </colgroup>
+                            <thead>
+                                <tr style="background-color:deepskyblue;color:white">
+                                    <th colspan="5">@report.ComponentTypeName </th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                        }
+                                <tr>
+                                    <th>采购码 </th>
+                                    <th>采购码中文长描述 </th>
+                                    <th style="text-align:center">数量 </th>
+                                    <th style="text-align:center">单位 </th>
+                                    <th style="text-align:center">操作 </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ent in report.PartNumberReportDetailList)
+                                {
+                                    var txtId = $"txt_{ent.Id}";
+                                    <tr>
+                                        <td style="padding-bottom:2px; padding-top:2px">@ent.P_Code</td>
+                                        <td style="padding-bottom:2px; padding-top:2px">@ent.P_CN_LongDesc</td>
+                                        <td class="layui-align-center" style="padding-bottom:2px; padding-top:2px">
+                                            <input type="text" lay-verify="number" height="" onkeyup="clearNoNum(this)" id="@ent.Id" materialtakeoffid="@ent.MaterialTakeOffId" commoditycodeid="@ent.CommodityCodeId" partnumberid="@ent.PartNumberId" projectid="@ent.ProjectId" deviceid="@ent.DeviceId" designqty="@ent.DesignQty" flag="@ent.Flag" status="@ent.Status" createuserid="@ent.CreateUserId" createtime="@ent.CreateTime" lastmodifyuserid="@ent.LastModifyUserId" lastmodifytime="@ent.LastModifyTime" value="@ent.DesignQty" class="layui-input" />
+                                        </td>
+                                        <td style="padding-bottom:2px; padding-top:2px">@ent.T_Unit</td>
+                                        <td style="padding-bottom:2px; padding-top:2px">
+                                            <button type="button" id="btnDel" onclick="deleteOnclick('@ent.Id')" class="layui-btn layui-btn-normal  layui-btn-sm layui-float-right" style="margin:0px">删除</button>
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     }
                 }
+            }
 
         </div>
         <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
@@ -92,12 +96,12 @@
 
                     </div>
                 </div>
-              
+
             </div>
         </div>
 
 
-       
+
     </div>
 
 </form>
@@ -125,7 +129,7 @@
                 var deviceid = "@ViewData["deviceid"]";
                 var mtoId = "@ViewData["mtoId"]";
                 var revision = $("#txtRevision").val().trim();
-               
+
                 var txtList =$("#tbDiv input[type='text']");
                 var commodityCodeId = "@ViewData["commodityCodeId"]";
                 var projectId = "@ViewData["projectId"]";
@@ -136,16 +140,16 @@
                         if (txtList[i].value != "" && parseFloat(txtList[i].value) > 0) {
                             var obj = new Object();
                             obj.Id = txtList[i].id;
-                            obj.DesignQty = $("#" + obj.Id).val();                         
-                            obj.MaterialTakeOffId = $(txtList[i]).attr("materialtakeoffid"); 
-                             obj.CommodityCodeId = $(txtList[i]).attr("commoditycodeid"); 
-                             obj.PartNumberId = $(txtList[i]).attr("partnumberid"); 
-                             obj.ProjectId = $(txtList[i]).attr("projectid"); 
-                             obj.DeviceId = $(txtList[i]).attr("deviceid");                              
-                             obj.Flag = $(txtList[i]).attr("flag"); 
-                             obj.Status = $(txtList[i]).attr("status"); 
-                             obj.CreateUserId = $(txtList[i]).attr("createuserid"); 
-                             obj.CreateTime = $(txtList[i]).attr("createtime"); 
+                            obj.DesignQty = $("#" + obj.Id).val();
+                            obj.MaterialTakeOffId = $(txtList[i]).attr("materialtakeoffid");
+                             obj.CommodityCodeId = $(txtList[i]).attr("commoditycodeid");
+                             obj.PartNumberId = $(txtList[i]).attr("partnumberid");
+                             obj.ProjectId = $(txtList[i]).attr("projectid");
+                             obj.DeviceId = $(txtList[i]).attr("deviceid");
+                             obj.Flag = $(txtList[i]).attr("flag");
+                             obj.Status = $(txtList[i]).attr("status");
+                             obj.CreateUserId = $(txtList[i]).attr("createuserid");
+                             obj.CreateTime = $(txtList[i]).attr("createtime");
                              obj.LastModifyUserId = $(txtList[i]).attr("lastmodifyuserid");
                             obj.LastModifyTime = $(txtList[i]).attr("lastmodifytime");
                           //  alert(obj.DesignQty);
@@ -156,7 +160,7 @@
                   if (revision == null || revision == "") {
                     layer.msg("版本不能为空");
                     return;
-                }               
+                }
                 $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list }, function (data) {
                     if (data.success) {//更新数量成功
                         var templatePath = encodeURIComponent($("#selTemplate").val());
@@ -168,7 +172,7 @@
                          layer.msg(data.message);
                     }
                 });
-            
+
             });
           });
     function deleteOnclick(id) {
