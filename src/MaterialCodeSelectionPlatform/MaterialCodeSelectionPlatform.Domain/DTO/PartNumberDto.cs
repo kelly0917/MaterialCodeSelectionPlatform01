@@ -50,6 +50,14 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// </summary>
         public string ComponentTypeName { get; set; }
         /// <summary>
+        /// CommodityCode 的中文描述
+        /// </summary>
+        public string C_CN_ShortDesc { get; set; }
+        /// <summary>
+        ///CommodityType 单位
+        /// </summary>
+        public string T_Unit { get; set; }
+        /// <summary>
         /// 采购码
         /// </summary>
         public List<PartNumberReportDetail> PartNumberReportDetailList { get; set; }
@@ -91,7 +99,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 物资编码类型名称
         /// </summary>
         public string ComponentTypeName { get; set; }
-       
+
     }
     /// <summary>
     /// 采购码DTO
@@ -107,7 +115,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 装置Id
         /// </summary>
         public string DeviceId { get; set; }
-       
+
         /// <summary>
         /// 物资编码类型名称
         /// </summary>

@@ -12,53 +12,57 @@
     <input type="hidden" name="Id" value="@ViewData["id"]" />
     <div class="layui-row">
         <div class="layui-form" style="padding-bottom:50px">
-            @{ 
+            @{
                 foreach (var report in Model)
                 {
-                   
-                        <table class="layui-table">
-                            <colgroup>
-                                <col width="500">
-                                <col width="500">
-                                <col width="200">
-                            </colgroup>
-                            <thead>
-                                <tr style="background-color:deepskyblue;color:white">
-                                    <th colspan="3">@report.ComponentTypeName </th>                                   
-                                </tr>
+
+                    <table class="layui-table">
+                        <colgroup>
+                            <col width="500">
+                            <col width="500">
+                            <col width="200">
+                            <col width="80">
+                        </colgroup>
+                        <thead>
+                            <tr style="background-color:deepskyblue;color:white">
+                                <th colspan="4">@report.ComponentTypeName   @report.PartNumberReportDetailList.FirstOrDefault()?.C_CN_ShortDesc  </th>
+                            </tr>
+                            <tr>
+                                <th>采购码 </th>
+                                <th>尺寸 </th>
+                                <th>数量 </th>
+                                <th>单位 </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ent in report.PartNumberReportDetailList)
+                            {
+                                var txtId = $"txt_{ent.Id}";
                                 <tr>
-                                    <th>采购码 </th>
-                                    <th>尺寸 </th>
-                                    <th>数量 </th>
+                                    <td>@ent.P_Code</td>
+                                    <td>@ent.P_CN_SizeDesc</td>
+                                    <td>
+                                        <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@txtId" name="@txtId" value="@ent.DesignQty" commoditycodeid="@ent.CommodityCodeId" placeholder="请输入数量" autocomplete="off" class="layui-input" />
+                                    </td>
+                                    <td>@ent.T_Unit</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ent in report.PartNumberReportDetailList)
-                                {
-                                    var txtId = $"txt_{ent.Id}";
-                                    <tr>
-                                        <td>@ent.P_Code</td>
-                                        <td>@ent.P_CN_SizeDesc</td>
-                                        <td>
-                                            <input type="text" lay-verify="number" onkeyup="clearNoNum(this)" id="@txtId" name="@txtId" value="@ent.DesignQty" commoditycodeid="@ent.CommodityCodeId" placeholder="请输入数量" autocomplete="off" class="layui-input" />
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                            }
+                        </tbody>
+                    </table>
                 }
             }
-         
+
         </div>
         <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
-            <button type="button" id="btnUpdate" class="layui-btn layui-btn-normal layui-float-right"  style="margin:5px">更新物料表</button>
+            <button type="button" id="btnUpdate" class="layui-btn layui-btn-normal layui-float-right" style="margin:5px">更新物料表</button>
         </div>
     </div>
 
 </form>
 
 <script src="~/js/jsencrypt.min.js"></script>
-<script type="text/javascript">   
+<script type="text/javascript">
+
     function clearNoNum(obj){ 
         obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
         obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
@@ -95,10 +99,10 @@
                     }
                 }
                 //alert(JSON.stringify(list));
-                $.post("/CommodityCodeSelect/SaveMaterialTakeOffDetail", { list: list,commodityCodeId:commodityCodeId,projectId:projectId,deviceId:deviceId}, function (data) {                
+                $.post("/CommodityCodeSelect/SaveMaterialTakeOffDetail", { list: list,commodityCodeId:commodityCodeId,projectId:projectId,deviceId:deviceId}, function (data) {
                     layer.msg(data.message);
                   //  window.location.reload();
-                });    
+                });
             });
         });
 </script>
