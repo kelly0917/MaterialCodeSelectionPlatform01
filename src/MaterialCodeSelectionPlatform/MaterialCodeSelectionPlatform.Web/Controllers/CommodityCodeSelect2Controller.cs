@@ -86,7 +86,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 {
                     var result = await componentTypeService.GetByColumnValuess("ParentId,CatalogId", currentCompType.ParentId + ","+ catalogId);
 
-                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Code + " - " + c.Desc, Value = c.Id }).ToList();
                     list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
                     return Json(list);
                 }
@@ -94,7 +94,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 {
                     var result = await componentTypeService.GetByParentId("ParentId", currentCompType.ParentId);
 
-                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Desc, Value = c.Id }).ToList();
+                    var list = result.Select(c => new DropDownListItemDTO() { Text = c.Code + " - " + c.Desc, Value = c.Id }).ToList();
                     list.Insert(0, new DropDownListItemDTO() { Text = "全部", Value = "-1" });
                     return Json(list);
                 }
