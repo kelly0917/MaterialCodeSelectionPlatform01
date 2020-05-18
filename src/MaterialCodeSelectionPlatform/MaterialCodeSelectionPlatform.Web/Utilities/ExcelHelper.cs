@@ -395,7 +395,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             catch (Exception ex)
             {
                 log.LogError(ex);
-                throw new Exception(ex.Message,ex);
+                return null;
             }
         }
         /// <summary>
@@ -422,57 +422,23 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             int cellCount = titleRow.Cells.Count;//一行最后一个cell的编号 即总的列数
             //var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
             if (dataList != null && dataList.Count > 0)
-            {               
-              //  ICellStyle style = workbook.CreateCellStyle();
-             
-                //style.BorderBottom = BorderStyle.Thin;
-                //style.BorderLeft = BorderStyle.Thin;
-                //style.BorderRight = BorderStyle.Thin;
-                //style.BorderTop = BorderStyle.Thin;
+            {
+                startRow = startRow + 1;//移下一行填充数据
+                ICellStyle style = workbook.CreateCellStyle();
+                style.BorderBottom = BorderStyle.Thin;
+                style.BorderLeft = BorderStyle.Thin;
+                style.BorderRight = BorderStyle.Thin;
+                style.BorderTop = BorderStyle.Thin;
                 foreach (var item in dataList)
-                { 
-                    
+                {
                     Type t = item.GetType();
-                    //IRow row = sheet.CreateRow(startRow++);
-                    var rowIndex = startRow++;//移下一行填充数据
-                    IRow row = sheet.GetRow(rowIndex);
-                    if (row == null)
-                    {
-                        row = sheet.CreateRow(rowIndex);
-                    }
-                    //row.Height = 999;
+                    IRow row = sheet.CreateRow(startRow++);
                     for (var i = 0; i < cellCount; i++)
                     {
-                        ICellStyle style = null;
-                        // var cell = row.CreateCell(i);
-                        var cell = row.GetCell(i);
-                        if (cell != null)
-                        {
-                            style = workbook.CreateCellStyle();
-                            style.CloneStyleFrom(cell.CellStyle);//复制原本的样式
-                        }
-                        else
-                        {                          
-                            cell = row.CreateCell(i);
-                           var styleCell=row.Cells.FirstOrDefault();
-                            if (styleCell != null)
-                            {
-                                style = workbook.CreateCellStyle();
-                                style.CloneStyleFrom(styleCell.CellStyle);//复制其中一列的样式
-                            }
-                        }
+                        var cell = row.CreateCell(i);
+                        cell.CellStyle = style;
                         if (dict.ContainsKey(i.ToString()))
                         {
-
-                            if (style == null)
-                            {
-                                style= workbook.CreateCellStyle();
-                                style.BorderBottom = BorderStyle.Thin;
-                                style.BorderLeft = BorderStyle.Thin;
-                                style.BorderRight = BorderStyle.Thin;
-                                style.BorderTop = BorderStyle.Thin;
-                            }
-                            cell.CellStyle = style;
                             PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
                             if (propertyInfo != null)
                             {
@@ -482,13 +448,9 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                             {
                                 cell.SetCellValue(seqNo++);
                             }
-                          
                         }
                         else
                         {
-                          
-                            if (style != null)
-                                cell.CellStyle = style;
                             cell.SetCellValue("");
                         }
                     }
@@ -555,30 +517,24 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                     {
                         if (refName.RefersToFormula.IndexOf(":") < 0)
                         {
-                            if (refName.RefersToFormula.IndexOf("!") > -1)
+                            var refstr = refName.RefersToFormula.Split('!')[1];
+                            var rowIndex = int.Parse(refstr.Split('$')[2]);
+                            var cellIndex = ColumnToIndex(refstr.Split('$')[1]);
+                            var key = $"{cellIndex}";
+                            if (!dic.ContainsKey(key))
                             {
-                                var refstr = refName.RefersToFormula.Split('!')[1];//=次页!$C$5
-                                if (!string.IsNullOrEmpty(refstr))
-                                {
-                                    var rowIndex = int.Parse(refstr.Split('$')[2]);
-                                    var cellIndex = ColumnToIndex(refstr.Split('$')[1]);
-                                    var key = $"{cellIndex}";
-                                    if (!dic.ContainsKey(key))
-                                    {
-                                        dic.Add(key, refName.NameName.ToLower());
-                                        //dic.Add(key, refName.NameName.ToLower().Replace("p_",""));//去掉固定的标识 
-                                    }
-                                    if (startRow < rowIndex)
-                                    {
-                                        startRow = rowIndex;
-                                    }
-                                }
+                                dic.Add(key, refName.NameName.ToLower());
+                                //dic.Add(key, refName.NameName.ToLower().Replace("p_",""));//去掉固定的标识 
+                            }
+                            if (startRow < rowIndex)
+                            {
+                                startRow = rowIndex;
                             }
                         }
                     }
                 }
             }
-          //  startRow = startRow>0? startRow - 1:startRow;//实际行，EXCEL从0开始
+            startRow = startRow>0? startRow - 1:startRow;//实际行，EXCEL从0开始
             return dic;
         }
         /// <summary>
@@ -617,8 +573,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             for (var i = 0; i < count; i++)
             {
                 var name = workbook.GetNameAt(i);
-                if (name.SheetIndex==-1) continue;
-                if (!string.IsNullOrEmpty(sheetName))
+                // if (name.SheetIndex==-1) continue;
+                if (!string.IsNullOrEmpty(sheetName) && name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
                 {
                     if (name.SheetName == sheetName)
                     {
@@ -630,7 +586,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 }
                 else
                 {
-                    if (name.RefersToFormula.IndexOf(":") < 0)
+                    if (name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
                     {
                         nameList.Add(name);
                     }
