@@ -573,8 +573,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             for (var i = 0; i < count; i++)
             {
                 var name = workbook.GetNameAt(i);
-                // if (name.SheetIndex==-1) continue;
-                if (!string.IsNullOrEmpty(sheetName) && name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
+                // if (name.SheetIndex==-1) continue;name.IsDeleted == false不一定存在
+                if (!string.IsNullOrEmpty(sheetName) && name.RefersToFormula.IndexOf("!$") > -1)
                 {
                     if (name.SheetName == sheetName)
                     {
@@ -586,7 +586,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 }
                 else
                 {
-                    if (name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
+                    if ( name.RefersToFormula.IndexOf("!$") > -1)
                     {
                         nameList.Add(name);
                     }
