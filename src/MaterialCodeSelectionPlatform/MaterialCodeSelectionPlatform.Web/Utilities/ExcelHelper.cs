@@ -398,6 +398,193 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 return null;
             }
         }
+        //插入
+        private static void InsertRow(ISheet sheet, int insertRowIndex, int insertRowCount, IRow formatRow)
+        {
+            sheet.ShiftRows(insertRowIndex, sheet.LastRowNum, insertRowCount, true, false);
+            for (int i = insertRowIndex; i < insertRowIndex + insertRowCount; i++)
+            {
+                IRow targetRow = null;
+                ICell sourceCell = null;
+                ICell targetCell = null;
+                targetRow = sheet.CreateRow(i);
+                for (int m = formatRow.FirstCellNum; m < formatRow.LastCellNum; m++)
+                {
+                    sourceCell = formatRow.GetCell(m);
+                    if (sourceCell == null)
+                    {
+                        continue;
+                    }
+                    targetCell = targetRow.CreateCell(m);
+                    targetCell.CellStyle = sourceCell.CellStyle;
+                    targetCell.SetCellType(sourceCell.CellType);
+
+                }
+            }
+        }
+        private static void CopyRow(IWorkbook workbook, ISheet worksheet, int sourceRowNum, int startRowIndex, int insertCount)
+        {
+            // Get the source / new row
+            var newRow = worksheet.GetRow(startRowIndex);
+            var sourceRow = worksheet.GetRow(sourceRowNum);
+
+            // If the row exist in destination, push down all rows by 1 else create a new row
+            if (newRow != null)
+            {
+                worksheet.ShiftRows(startRowIndex, worksheet.LastRowNum, insertCount);
+            }
+            else
+            {
+                newRow = worksheet.CreateRow(startRowIndex);
+            }
+
+            // Loop through source columns to add to new row
+            for (int i = 0; i < sourceRow.LastCellNum; i++)
+            {
+                // Grab a copy of the old/new cell
+                var oldCell = sourceRow.GetCell(i);
+                var newCell = newRow.CreateCell(i);
+
+                // If the old cell is null jump to next cell
+                if (oldCell == null)
+                {
+                    newCell = null;
+                    continue;
+                }
+
+                // Copy style from old cell and apply to new cell
+                var newCellStyle = workbook.CreateCellStyle();
+                newCellStyle.CloneStyleFrom(oldCell.CellStyle); ;
+                newCell.CellStyle = newCellStyle;
+
+                // If there is a cell comment, copy
+                if (newCell.CellComment != null) newCell.CellComment = oldCell.CellComment;
+
+                // If there is a cell hyperlink, copy
+                if (oldCell.Hyperlink != null) newCell.Hyperlink = oldCell.Hyperlink;
+
+                // Set the cell data type
+                newCell.SetCellType(oldCell.CellType);
+
+                // Set the cell data value
+                switch (oldCell.CellType)
+                {
+                    case CellType.Blank:
+                        newCell.SetCellValue(oldCell.StringCellValue);
+                        break;
+                    case CellType.Boolean:
+                        newCell.SetCellValue(oldCell.BooleanCellValue);
+                        break;
+                    case CellType.Error:
+                        newCell.SetCellErrorValue(oldCell.ErrorCellValue);
+                        break;
+                    case CellType.Formula:
+                        newCell.SetCellFormula(oldCell.CellFormula);
+                        break;
+                    case CellType.Numeric:
+                        newCell.SetCellValue(oldCell.NumericCellValue);
+                        break;
+                    case CellType.String:
+                        newCell.SetCellValue(oldCell.RichStringCellValue);
+                        break;
+                    case CellType.Unknown:
+                        newCell.SetCellValue(oldCell.StringCellValue);
+                        break;
+                }
+            }
+
+            // If there are are any merged regions in the source row, copy to new row
+            for (int i = 0; i < worksheet.NumMergedRegions; i++)
+            {
+                CellRangeAddress cellRangeAddress = worksheet.GetMergedRegion(i);
+                if (cellRangeAddress.FirstRow == sourceRow.RowNum)
+                {
+                    CellRangeAddress newCellRangeAddress = new CellRangeAddress(newRow.RowNum,
+                                                                                (newRow.RowNum +
+                                                                                 (cellRangeAddress.FirstRow -
+                                                                                  cellRangeAddress.LastRow)),
+                                                                                cellRangeAddress.FirstColumn,
+                                                                                cellRangeAddress.LastColumn);
+                    worksheet.AddMergedRegion(newCellRangeAddress);
+                }
+            }
+
+        }
+        /// <summary>
+        /// 复制行格式并插入指定行数
+        /// </summary>
+        /// <param name="sheet">当前sheet</param>
+        /// <param name="startRowIndex">起始行位置</param>
+        /// <param name="sourceRowIndex">模板行位置</param>
+        /// <param name="insertCount">插入行数</param>
+        public static void CopyRow(ISheet sheet, int startRowIndex, int sourceRowIndex, int insertCount)
+        {
+            IRow sourceRow =sheet.GetRow(sourceRowIndex);
+            int sourceCellCount = sourceRow.Cells.Count;
+
+            //1. 批量移动行,清空插入区域
+            sheet.ShiftRows(startRowIndex, //开始行
+                            sheet.LastRowNum, //结束行
+                            insertCount, //插入行总数
+                            true,        //是否复制行高
+                            false        //是否重置行高
+                            );
+
+            int startMergeCell = -1; //记录每行的合并单元格起始位置
+            for (int i = startRowIndex; i < startRowIndex + insertCount; i++)
+            {
+                IRow targetRow = null;
+                ICell sourceCell = null;
+                ICell targetCell = null;
+
+                targetRow = sheet.CreateRow(i);
+                targetRow.Height = sourceRow.Height;//复制行高
+
+                for (int cellIndex = sourceRow.FirstCellNum; cellIndex < sourceRow.LastCellNum; cellIndex++)
+                {
+                    sourceCell = sourceRow.GetCell(cellIndex);
+                    if (sourceCell == null)
+                        continue;
+                    targetCell = targetRow.CreateCell(cellIndex);
+                    targetCell.CellStyle = sourceCell.CellStyle;//赋值单元格格式
+                    targetCell.SetCellType(sourceCell.CellType);
+
+                }
+
+                //以下为复制模板行的单元格合并格式.
+                //var mergeCells = GetMergeCells(sheet);
+                //var sourceRowMgergeCells = mergeCells.Where(c => c.FirstRow == sourceRowIndex && c.LastRow == sourceRowIndex).ToList();
+                //if (sourceRowMgergeCells != null && sourceRowMgergeCells.Count > 0)
+                //{
+                //    for (var k = startRowIndex; k < startRowIndex + insertCount; k++)
+                //    {
+                //        foreach (var mgerge in sourceRowMgergeCells)
+                //        {
+                //            sheet.AddMergedRegion(new CellRangeAddress(k, k, mgerge.FirstCol, mgerge.LastCol));
+                //        }
+                //    }
+                //}
+
+                ////if (sourceCell.IsMergedCell)
+                ////{
+                ////    if (startMergeCell <= 0)
+                ////        startMergeCell = cellIndex;
+                ////    else if (startMergeCell > 0 && sourceCellCount == cellIndex + 1)
+                ////    {
+                ////        sheet.AddMergedRegion(new CellRangeAddress(i, i, startMergeCell, cellIndex));
+                ////        startMergeCell = -1;
+                ////    }
+                ////}
+                ////else
+                ////{
+                ////    if (startMergeCell >= 0)
+                ////    {
+                ////        sheet.AddMergedRegion(new CellRangeAddress(i, i, startMergeCell, cellIndex - 1));
+                ////        startMergeCell = -1;
+                ////    }
+                ////}
+            }
+        }
         /// <summary>
         /// 创建明细记录
         /// </summary>
@@ -411,34 +598,52 @@ namespace MaterialCodeSelectionPlatform.Web.Common
         /// <param name="seqNo">序号开始的索引 </param>
         private static void createRowValue<T>(List<T>  dataList,IWorkbook workbook, ISheet sheet,Dictionary<string,string> dict, int titleRowIndex,int startRow,ref int seqNo)
         {
-
             //var referenceNameList = GeReferencetNameList(workbook, sheet.SheetName);//引用字段列表
             if (titleRowIndex == 0)
             {
                 titleRowIndex = startRow;
             }
+            var mergeRowIndex = startRow + 2;
+            var mergeCells = GetMergeCells(sheet);
             IRow titleRow = sheet.GetRow(titleRowIndex);
             int rowCount = sheet.LastRowNum;//总行数
             int cellCount = titleRow.Cells.Count;//一行最后一个cell的编号 即总的列数
-            //var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
+                                                 //var dict = GetRefColumnDic(referenceNameList, sheet.SheetName, ref startRow);
+
             if (dataList != null && dataList.Count > 0)
             {
-                startRow = startRow + 1;//移下一行填充数据
-                ICellStyle style = workbook.CreateCellStyle();
-                style.BorderBottom = BorderStyle.Thin;
-                style.BorderLeft = BorderStyle.Thin;
-                style.BorderRight = BorderStyle.Thin;
-                style.BorderTop = BorderStyle.Thin;
+                startRow = startRow + 1;//移下一行填充数据             
+                IRow styleRow = sheet.GetRow(startRow);
+              
+               CopyRow(sheet, startRow+1, startRow, dataList.Count-1);              
+
                 foreach (var item in dataList)
                 {
                     Type t = item.GetType();
-                    IRow row = sheet.CreateRow(startRow++);
+                    IRow row = sheet.GetRow(startRow++);
                     for (var i = 0; i < cellCount; i++)
                     {
-                        var cell = row.CreateCell(i);
-                        cell.CellStyle = style;
+                        ICellStyle style = null;
+                        var styleCell = styleRow.GetCell(i);
+                        var cell = row.GetCell(i);
+                        if (cell != null)
+                        {
+                            //style = workbook.CreateCellStyle();
+                            //style.CloneStyleFrom(styleCell.CellStyle);//复制原本的样式
+                        }
+                        else
+                        {
+                            cell = row.CreateCell(i);
+                            //if (styleCell != null)
+                            //{
+                            //    style = workbook.CreateCellStyle();
+                            //    style.CloneStyleFrom(styleCell.CellStyle);//复制其中一列的样式
+                            //}
+                        }
                         if (dict.ContainsKey(i.ToString()))
                         {
+
+                            //cell.CellStyle = style;
                             PropertyInfo propertyInfo = t.GetProperties().FirstOrDefault(w => w.Name.ToLower() == dict[i.ToString()].ToString());
                             if (propertyInfo != null)
                             {
@@ -448,10 +653,33 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                             {
                                 cell.SetCellValue(seqNo++);
                             }
+
                         }
                         else
                         {
+
+                            //if (style != null)
+                            //    cell.CellStyle = style;
                             cell.SetCellValue("");
+                        }
+                    }
+
+                }
+
+                //以下为复制模板行的单元格合并格式.
+                var sourceRowIndex = mergeRowIndex;
+                //sheet.AddMergedRegion(new CellRangeAddress(7, 7, 1, 3));
+                //sheet.AddMergedRegion(new CellRangeAddress(7, 7, 4, 6));
+                //sheet.AddMergedRegion(new CellRangeAddress(7, 7, 7, 9));
+                var sourceRowMgergeCells = mergeCells.Where(c => c.FirstRow == sourceRowIndex && c.LastRow == sourceRowIndex).ToList();
+                if (sourceRowMgergeCells != null && sourceRowMgergeCells.Count > 0)
+                {
+                    var mgergeRowCount = sourceRowIndex+ dataList.Count - 1;
+                    for (var k = sourceRowIndex; k < mgergeRowCount; k++)
+                    {
+                        foreach (var mgerge in sourceRowMgergeCells)
+                        {
+                            sheet.AddMergedRegion(new CellRangeAddress(k, k, mgerge.FirstCol, mgerge.LastCol));
                         }
                     }
                 }
@@ -573,8 +801,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             for (var i = 0; i < count; i++)
             {
                 var name = workbook.GetNameAt(i);
-                // if (name.SheetIndex==-1) continue;
-                if (!string.IsNullOrEmpty(sheetName) && name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
+                // if (name.SheetIndex==-1) continue;name.IsDeleted == false不一定存在
+                if (!string.IsNullOrEmpty(sheetName) && name.RefersToFormula.IndexOf("!$") > -1)
                 {
                     if (name.SheetName == sheetName)
                     {
@@ -586,7 +814,7 @@ namespace MaterialCodeSelectionPlatform.Web.Common
                 }
                 else
                 {
-                    if (name.IsDeleted == false && name.RefersToFormula.IndexOf("!$") > -1)
+                    if ( name.RefersToFormula.IndexOf("!$") > -1)
                     {
                         nameList.Add(name);
                     }
@@ -635,5 +863,38 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             } while (index > 0);
             return column;
         }
+        /// <summary>
+        /// 获取所有的合并单元格
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <returns></returns>
+        public static List<MergeCell> GetMergeCells(ISheet sheet)
+        {
+            List<MergeCell> list = new List<MergeCell>();
+           var count = sheet.NumMergedRegions;
+            if (count > 0)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    var cell = sheet.GetMergedRegion(i);
+                    if (cell != null)
+                    {
+                        list.Add(new MergeCell() {FirstRow=cell.FirstRow,LastRow=cell.LastRow,FirstCol=cell.FirstColumn,LastCol=cell.LastColumn });
+                    }
+                }
+            }
+            return list;
+        }
+    }
+    /// <summary>
+    /// 合并单元格
+    /// </summary>
+    public class MergeCell
+    {
+        public int FirstRow { get; set; }
+        public int LastRow { get; set; }
+        public int FirstCol{ get; set; }
+        public int LastCol { get; set; }
+
     }
 }
