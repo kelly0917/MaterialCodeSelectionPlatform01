@@ -1,0 +1,175 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<style>
+    .layui-form-label {
+        width: 150px !important;
+    }
+</style>
+
+
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label">项目：</label>
+            <div class="layui-input-inline">
+                <select name="projectId" lay-search lay-filter="selProject"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">装置：</label>
+            <div class="layui-input-inline">
+                <select name="deviceId" lay-search></select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label">元件类型代码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="componentTypeCode" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">元件类型描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="componentTypeDesc" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">物资编码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="commodityCode" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">采购码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="partNumberCode" class="layui-input"  />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item search">
+        <div class="layui-inline">
+            <label class="layui-form-label">采购码中文长描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="partNumberCNDesc" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">采购码英文长描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="partNumberENDesc" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px;">采购码饿文长描述：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="partNumberRUDesc" class="layui-input"  />
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
+        </div>
+        <div class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">余量</button>
+        </div>
+    </div>
+</div>
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+
+<script type="text/javascript">
+
+
+    layui.use(['form', 'table', 'layer', 'jquery', 'upload'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+            var upload = layui.upload;
+            form.render();
+            var order = "";
+            var orderType = 0;
+
+            window.loadData = function () {
+                var para = getSearchCondition("searchForm");
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/MaterialTakeOffManager/GetDataList' + para +  "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { type: 'checkbox' },
+                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:250 },
+                        { field: 'ComponentTypeDesc', title: '元件类型描述',width:250 },
+                        { field: 'PartNumberCNLongDesc', title: '采购码中文长描述'  }
+                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:250  }
+                        , { field: 'DesignQty', title: '设计量',width:150 }
+                        , { field: 'Allowance', title: '余量比例',width:150 }
+                        , { field: 'RoundUp', title: '余量',width:150}
+                    ]]
+                    , id: 'testReload',
+
+                });
+               
+            }
+            //刷新表格
+            window.flush = function () {
+                loadData();
+            }
+
+            loadData();
+            window.add = function () {
+
+                var checkStatus = table.checkStatus('testReload')
+                    , data = checkStatus.data;
+                if (data.length == 0) {
+                    layer.alert("请勾选需要设置余量的数据行");
+                    return;
+                }
+                
+                var detailIds = "";
+                for (var i = 0; i < data.length; i++) {
+                    detailIds += data[i].MaterialTakeOffDetailId + ",";
+                }
+                layer.open({
+                    type: 2,
+                    content: '/MaterialTakeOffManager/UpdatePage?detailIds=' + detailIds,
+                    title: '设置余量',
+                    area: ["540px;", "380px;"]//宽 高
+                });
+            }
+            var defaultProject = $.cookie('projectId');
+            var defaultDevice = $.cookie('deviceId');
+            //select 控件加载完再初始化table
+            $("select[name=projectId]").dropdownlist({
+                url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: defaultProject, complete: function () {
+                  
+                }
+            });
+
+            form.on('select(selProject)',
+                function(data1) {
+                    var value = data1.value;
+
+                    $("select[name=deviceId]").dropdownlist({
+                        url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: defaultDevice, complete: function () {
+                            loadData();
+                        }
+                    });
+                });
+           
+        });
+    //回车响应
+    $("body").keydown(
+        function (e) {
+            if (e.keyCode == 13) {
+                loadData();
+            }
+        });
+</script>
