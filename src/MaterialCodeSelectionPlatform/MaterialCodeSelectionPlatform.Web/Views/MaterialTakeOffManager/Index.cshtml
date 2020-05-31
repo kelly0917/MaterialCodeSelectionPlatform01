@@ -91,15 +91,12 @@
             var layer = layui.layer;
             var table = layui.table;
             var $ = layui.jquery;
-            var upload = layui.upload;
-            form.render();
-            var order = "";
-            var orderType = 0;
 
+            form.render();
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', height: 'full-80', url: '/MaterialTakeOffManager/GetDataList' + para +  "&" + Math.random()//数据接口
+                    elem: '#test', url: '/MaterialTakeOffManager/GetDataList' + para +  "&" + Math.random()//数据接口
                     , page: true //开启分页
                     , limit: 20
                     , limits: [20, 50, 100]
@@ -141,7 +138,7 @@
                     type: 2,
                     content: '/MaterialTakeOffManager/UpdatePage?detailIds=' + detailIds,
                     title: '设置余量',
-                    area: ["540px;", "380px;"]//宽 高
+                    area: ["540px;", "220px;"]//宽 高
                 });
             }
             var defaultProject = $.cookie('projectIdcd');
@@ -169,6 +166,10 @@
                 });
            
         });
+
+    $(function() {
+     
+    });
     //回车响应
     $("body").keydown(
         function (e) {
