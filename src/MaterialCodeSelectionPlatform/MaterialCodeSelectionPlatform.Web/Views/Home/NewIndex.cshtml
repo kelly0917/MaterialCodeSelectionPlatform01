@@ -125,19 +125,14 @@
                             </a>
                         </li>
 
-                        <li data-name="get" class="layui-nav-item" >
-                            <a href="javascript:;" lay-href="/MaterialTakeOffManager/Index" lay-tips="物料管理" lay-direction="2">
+                        <li data-name="get" class="layui-nav-item" style="display: none;">
+                            <a href="javascript:;" lay-href="/MaterialTakeOffManager/Index" lay-tips="管理料表" lay-direction="2">
                                 <i class="layui-icon layui-icon-auz"></i>
-                                <cite>物料管理</cite>
+                                <cite>管理料表</cite>
                             </a>
                         </li>
 
-                        @*<li data-name="get" class="layui-nav-item">
-            <a href="javascript:;" lay-href="/CommodityCodeSelect2/Index" lay-tips="Demo" lay-direction="2">
-                <i class="layui-icon layui-icon-auz"></i>
-                <cite>Demo</cite>
-            </a>
-        </li>*@
+                    
                     </ul>
 
                 </div>
@@ -220,11 +215,22 @@
                 
             //跳转页面
             window.locationPage = function (featureid) {
- 
-                var deviceLi = $("li[lay-id='/Device/Index']");
-                if (deviceLi.length > 0) {
-                    deviceLi.find("i").click();
+
+                switch (featureid) {
+                    case "装置管理":
+                        var deviceLi = $("li[lay-id='/Device/Index']");
+                        if (deviceLi.length > 0) {
+                            deviceLi.find("i").click();
+                        }
+                        break;
+                    case "管理料表":
+                        var mt = $("li[lay-id='/MaterialTakeOffManager/Index']");
+                        if (mt.length > 0) {
+                            mt.find("i").click();
+                        }
+                        break;
                 }
+                
                     
                 //$("li[lay-attr='/Device/Index']").remove();
                 var dom = $('a[lay-tips=' + featureid + ']');
@@ -232,12 +238,7 @@
                 dom.trigger('click');
                 //dom.attr("lay-href", url);
                   
-
             }
-
-
-
-
 
             window.changePwd = function () {
                 layer.open({

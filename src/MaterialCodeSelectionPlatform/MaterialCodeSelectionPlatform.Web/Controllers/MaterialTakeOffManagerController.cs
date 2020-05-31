@@ -20,10 +20,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         }
 
 
-        public IActionResult Index(string projectId, string deviceId)
+        public IActionResult Index()
         {
-            ViewData["projectId"] = projectId;
-            ViewData["deviceId"] = deviceId;
+        
             return View();
         }
 

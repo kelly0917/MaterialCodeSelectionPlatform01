@@ -205,6 +205,8 @@
     var oldTableHeight = 580;
     var isopenAttr = false;
     var attrHeight = 0;
+    var currentProjectId;
+    var currentDeviceId;
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -670,6 +672,8 @@
 
         $("#lbProject").html($("#selProject2").find("option:selected").text());
         $("#lbDevice").html($("#selDevice2").find("option:selected").text());
+        currentProjectId = $("#selProject2").find("option:selected").val();
+        currentDeviceId = $("#selDevice2").find("option:selected").val();
     }
     //==============打开【最近项目，装置】==================
 
@@ -879,7 +883,13 @@
     }
 
     function openMaterial() {
+        var projectId = currentProjectId;
+        var deviceId = currentDeviceId;
+        $.cookie('projectIdcd', projectId, { path: '/', secure: false });
+        $.cookie('deviceIdcd',deviceId,{ path: '/', secure: false });
+        //$.cookie('projectId', projectId);
 
+        parent.locationPage('管理料表');  
     }
 </script>
 
