@@ -140,15 +140,13 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		[Timestamp]
 		public virtual int? Version { get; set; }
-		public string Revision { get; set; }
-
-
-
-
+		
 		public virtual string ProjectId { get; set; }
 		
 		public virtual string DeviceId { get; set; }
-								}
+								
+		public virtual string Revision { get; set; }
+		}
 
     /// <summary>
     /// A class which represents the Project table.
@@ -253,13 +251,16 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		
 		public virtual string PartNumberId { get; set; }
 		
-		
 		public virtual string ProjectId { get; set; }
 		
 		public virtual string DeviceId { get; set; }
 		
 		public virtual double DesignQty { get; set; }
-								}
+								
+		public virtual double? Allowance { get; set; }
+		
+		public virtual int? RoundUpDigit { get; set; }
+		}
 
     /// <summary>
     /// A class which represents the Catalog table.
@@ -271,10 +272,8 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string Code { get; set; }
 		
 		public virtual string Name { get; set; }
-
-        public virtual string Description { get; set; }
-
-        public virtual string ConnectionString { get; set; }
+		
+		public virtual string ConnectionString { get; set; }
 		
 		public virtual string CN_COMM_DESC_SHORT { get; set; }
 		
@@ -307,7 +306,9 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string RU_SIZE_DESC { get; set; }
 		
 		public virtual string COMM_REPRESENT_TYPE { get; set; }
-								}
+								
+		public virtual string Description { get; set; }
+		}
 
     /// <summary>
     /// A class which represents the ComponentType table.

@@ -70,11 +70,11 @@
         </div>
         <div class="layui-inline" style="float: right">
             @*<div class="layui-inline layui-float-left">
-                    <label class="layui-form-label">编码库：</label>
-                    <div class="layui-input-inline">
-                        <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
-                    </div>
-                </div>*@
+            <label class="layui-form-label">编码库：</label>
+            <div class="layui-input-inline">
+                <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+            </div>
+        </div>*@
             <div class="layui-inline layui-float-left" style="display: none;">
                 <label class="layui-form-label">项目：</label>
                 <div class="layui-input-inline">
@@ -94,6 +94,11 @@
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看物料表</button>
             </div>
+
+            <div class="layui-inline layui-float-right">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openMaterial()">管理料表</button>
+            </div>
+
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
             </div>
@@ -200,6 +205,8 @@
     var oldTableHeight = 580;
     var isopenAttr = false;
     var attrHeight = 0;
+    var currentProjectId;
+    var currentDeviceId;
     layui.use(['form', 'table', 'layer', 'jquery'],
         function () {
             var form = layui.form;
@@ -665,6 +672,8 @@
 
         $("#lbProject").html($("#selProject2").find("option:selected").text());
         $("#lbDevice").html($("#selDevice2").find("option:selected").text());
+        currentProjectId = $("#selProject2").find("option:selected").val();
+        currentDeviceId = $("#selDevice2").find("option:selected").val();
     }
     //==============打开【最近项目，装置】==================
 
@@ -871,6 +880,16 @@
         });
         selectList = result;
         return result;
+    }
+
+    function openMaterial() {
+        var projectId = currentProjectId;
+        var deviceId = currentDeviceId;
+        $.cookie('projectIdcd', projectId, { path: '/', secure: false });
+        $.cookie('deviceIdcd',deviceId,{ path: '/', secure: false });
+        //$.cookie('projectId', projectId);
+
+        parent.locationPage('管理料表');  
     }
 </script>
 

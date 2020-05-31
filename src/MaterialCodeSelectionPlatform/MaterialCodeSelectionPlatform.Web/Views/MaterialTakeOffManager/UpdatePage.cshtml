@@ -1,0 +1,99 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+
+    .layui-input-block {
+        margin-left: 150px;
+    }
+</style>
+<link href="~/css/formSelects-v4.css" rel="stylesheet" />
+<script src="~/js/script/md5.js"></script>
+<script src="~/js/jsencrypt.min.js"></script>
+<form class="layui-form layui-form-model" action="" id="fmAddOrEdit">
+    @Html.AntiForgeryToken()@*隐藏域，用于防CSRF攻击*@
+    <input type="hidden" name="Id" value="@ViewData["id"]" />
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">百分百：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Allowance" required lay-verify="required|number" placeholder="百分比" autocomplete="off" class="layui-input" maxlength="50">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">保留小数：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="RoundUpDigit" required lay-verify="required|number" placeholder="保留小数" autocomplete="off" class="layui-input" maxlength="50">
+                </div>
+            </div>
+         
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="save">保存</button>
+            <button type="reset" class="layui-btn layui-bg-blue layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script src="~/js/jsencrypt.min.js"></script>
+<script type="text/javascript">
+
+    layui.use(['form', 'upload', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var detailIds = "@ViewData["detailIds"]";
+
+     
+
+
+        form.render();
+        form.on('submit(save)', function (data) {
+
+
+            var submitdata =
+                "detailIds=" +
+                    detailIds +
+                    "&allowance=" +
+                    encodeURIComponent(($('[name=Allowance]').val())) +
+                    "&roundUpDigit=" +
+                    encodeURIComponent(($('[name=RoundUpDigit]').val()));
+
+
+            $.ajax({
+                url: "/MaterialTakeOffManager/SaveData?"+submitdata,
+                type: 'get',
+                dataType: 'json',
+                success: function (result) {
+                 
+                    if (dealResult(result)) {
+                        parent.loadData();
+                        parent.closeiframe("保存成功！");
+                    }
+                },
+                error: function (errorResult) {
+                    debugger;
+                }
+            });
+            return false;
+
+
+
+        });
+
+    });
+
+</script>
