@@ -1,2 +1,5 @@
 ALTER TABLE MaterialTakeOffDetail ADD Allowance FLOAT NULL;
 ALTER TABLE MaterialTakeOffDetail ADD RoundUpDigit int NULL;
+ALTER TABLE MaterialTakeOff add  Approver varchar(36) NULL ;
+ALTER TABLE MaterialTakeOff add  ApproveContent varchar(1000) NULL;
+ALTER TABLE MaterialTakeOff add  ApproveDate dateTime NULL;
