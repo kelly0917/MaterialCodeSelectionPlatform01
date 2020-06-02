@@ -48,7 +48,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="page"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public async Task<IActionResult> GetDataList(string projectId, string deviceId, string componentTypeCode, string componentTypeDesc, string partNumberCNDesc, string partNumberENDesc, string partNumberRUDesc, string commodityCode, string partNumberCode, int page, int limit)
+        public async Task<IActionResult> GetDataList(string projectId, string deviceId, string componentTypeCode, string componentTypeDesc, string partNumberCNDesc, string partNumberENDesc, string partNumberRUDesc, string commodityCode, string partNumberCode, int page, int limit, string orderBy, int orderByType = 0)
         {
             DataPage dataPage = new DataPage();
             dataPage.PageNo = page;
