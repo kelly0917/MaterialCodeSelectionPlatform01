@@ -12,7 +12,7 @@
 
 
 <div class="layui-form" action="" id="searchForm">
-    <div class="layui-form-item search">
+    <div class="layui-form-item search" style="display: none">
         <div class="layui-inline">
             <label class="layui-form-label">项目：</label>
             <div class="layui-input-inline">
@@ -83,7 +83,8 @@
 
 
 <script type="text/javascript">
-
+    var order = "";
+    var orderType = 0;
 
     layui.use(['form', 'table', 'layer', 'jquery', 'upload'],
         function () {
@@ -96,19 +97,19 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', url: '/MaterialTakeOffManager/GetDataList' + para +  "&" + Math.random()//数据接口
+                    elem: '#test', url: '/MaterialTakeOffManager/GetDataList' + para + '&order='+order+'&orderType='+orderType+'&' + Math.random()//数据接口
                     , page: true //开启分页
                     , limit: 20
                     , limits: [20, 50, 100]
                     , cols: [[ //表头
                         { type: 'checkbox' },
-                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:250 },
-                        { field: 'ComponentTypeDesc', title: '元件类型描述',width:250 },
-                        { field: 'PartNumberCNLongDesc', title: '采购码中文长描述'  }
-                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:250  }
-                        , { field: 'DesignQty', title: '设计量',width:150 }
-                        , { field: 'Allowance', title: '裕量比例',width:150 }
-                        , { field: 'RoundUp', title: '裕量',width:150}
+                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:250, sort: true },
+                        { field: 'ComponentTypeDesc', title: '元件类型描述',width:250, sort: true },
+                        { field: 'PartNumberCNLongDesc', title: '采购码中文长描述', sort: true  }
+                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:250 , sort: true }
+                        , { field: 'DesignQty', title: '设计量',width:150, sort: true }
+                        , { field: 'AllowanceStr', title: '裕量比例',width:150, sort: true }
+                        , { field: 'RoundUp', title: '裕量',width:150, sort: true}
                     ]]
                     , id: 'testReload',
 
@@ -119,6 +120,25 @@
             window.flush = function () {
                 loadData();
             }
+            //监听排序事件
+            table.on('sort(useruv)', function(obj){ //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                console.log(obj.field); //当前排序的字段名
+                console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+                console.log(this); //当前排序的 th 对象
+                order = obj.field;
+                if (obj.type == 'desc') {
+                    orderType = 1;
+                } else {
+                    orderType = 0;
+                }
+                //尽管我们的 table 自带排序功能，但并没有请求服务端。
+                //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+                table.reload('testReload', {
+                    initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                    ,   url: '/MaterialTakeOffManager/GetDataList' + para + '&order='+order+'&orderType='+orderType+'&' + Math.random()//数据接口
+                });
+
+            });
 
             loadData();
             window.add = function () {
