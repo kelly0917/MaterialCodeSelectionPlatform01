@@ -753,7 +753,8 @@
                 //刷新编码库
                 $("#lbProject").html($("#selProject").find("option:selected").text());
                 $("#lbDevice").html($("#selDevice").find("option:selected").text());
-
+                currentProjectId = $("#selProject").find("option:selected").val();
+                currentDeviceId = $("#selDevice").find("option:selected").val();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
                     url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -883,8 +884,10 @@
     }
 
     function openMaterial() {
+       
         var projectId = currentProjectId;
         var deviceId = currentDeviceId;
+ 
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
         $.cookie('deviceIdcd',deviceId,{ path: '/', secure: false });
         //$.cookie('projectId', projectId);

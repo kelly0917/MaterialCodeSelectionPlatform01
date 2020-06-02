@@ -102,6 +102,10 @@ namespace MaterialCodeSelectionPlatform.Data
                     {
                         query = query.OrderBy((a, b, c, d) => c.CN_SizeDesc, OrderByType.Asc);
                     }
+                    else if (condition.OrderBy.Equals("PartNumber", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.Code, OrderByType.Asc);
+                    }
                     else if (condition.OrderBy.Equals("RoundUpDigit", StringComparison.OrdinalIgnoreCase))
                     {
                         query = query.OrderBy((a, b, c, d) => d.RoundUpDigit, OrderByType.Asc);
@@ -137,6 +141,10 @@ namespace MaterialCodeSelectionPlatform.Data
                     {
                         query = query.OrderBy((a, b, c, d) => c.CN_SizeDesc, OrderByType.Desc);
                     }
+                    else if (condition.OrderBy.Equals("PartNumber", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.Code, OrderByType.Desc);
+                    }
                     else if (condition.OrderBy.Equals("RoundUpDigit", StringComparison.OrdinalIgnoreCase))
                     {
                         query = query.OrderBy((a, b, c, d) => d.RoundUpDigit, OrderByType.Desc);
@@ -155,6 +163,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 Allowance = d.Allowance,
                 ComponentTypeDesc = b.Desc,
                 DesignQty = d.DesignQty,
+                PartNumber= c.Code,
                 PartNumberCNLongDesc = c.CN_LongDesc,
                 PartNumberCNSizeDesc = c.CN_SizeDesc,
                 RoundUpDigit = d.RoundUpDigit,
