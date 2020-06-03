@@ -13,9 +13,9 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <summary>
         /// 搜索 物料管理
         /// </summary>
-        /// <param name="searchCondition"></param>
+        /// <param name="condition"></param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetailDto>> GetManagerList(MaterialTakeOffDetailSearchCondition searchCondition)
+        public async Task<List<MaterialTakeOffDetailDto>> GetManagerList(MaterialTakeOffDetailSearchCondition condition)
         {
             var query = Db.Queryable<CommodityCode, ComponentType, PartNumber, MaterialTakeOffDetail>((a, b, c, d) =>
                 new object[]
@@ -24,54 +24,154 @@ namespace MaterialCodeSelectionPlatform.Data
                     JoinType.Inner, a.Id == c.CommodityCodeId,
                     JoinType.Inner, c.Id == d.PartNumberId
                 }).Where((a, b, c, d) =>
-                d.ProjectId == searchCondition.ProjectId && d.DeviceId == searchCondition.DeviceId);
+                d.ProjectId == condition.ProjectId && d.DeviceId == condition.DeviceId);
 
 
-            if (searchCondition.CommodityCode.IsNotNullAndNotEmpty())
+            if (condition.CommodityCode.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => a.Code.Contains(searchCondition.CommodityCode));
+                query = query.Where((a, b, c, d) => a.Code.Contains(condition.CommodityCode));
 
             }
 
-            if (searchCondition.ComponentTypeCode.IsNotNullAndNotEmpty())
+            if (condition.ComponentTypeCode.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => b.Code.Contains(searchCondition.ComponentTypeCode));
+                query = query.Where((a, b, c, d) => b.Code.Contains(condition.ComponentTypeCode));
 
             }
 
-            if (searchCondition.ComponentTypeDesc.IsNotNullAndNotEmpty())
+            if (condition.ComponentTypeDesc.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => b.Desc.Contains(searchCondition.ComponentTypeDesc));
+                query = query.Where((a, b, c, d) => b.Desc.Contains(condition.ComponentTypeDesc));
 
             }
 
-            if (searchCondition.PartNumberCNDesc.IsNotNullAndNotEmpty())
+            if (condition.PartNumberCNDesc.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => c.CN_LongDesc.Contains(searchCondition.PartNumberCNDesc));
+                query = query.Where((a, b, c, d) => c.CN_LongDesc.Contains(condition.PartNumberCNDesc));
 
             }
 
-            if (searchCondition.PartNumberCode.IsNotNullAndNotEmpty())
+            if (condition.PartNumberCode.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => c.Code.Contains(searchCondition.PartNumberCode));
+                query = query.Where((a, b, c, d) => c.Code.Contains(condition.PartNumberCode));
 
             }
 
-            if (searchCondition.PartNumberENDesc.IsNotNullAndNotEmpty())
+            if (condition.PartNumberENDesc.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => c.EN_LongDesc.Contains(searchCondition.PartNumberENDesc));
+                query = query.Where((a, b, c, d) => c.EN_LongDesc.Contains(condition.PartNumberENDesc));
 
             }
 
-            if (searchCondition.PartNumberRUDesc.IsNotNullAndNotEmpty())
+            if (condition.PartNumberRUDesc.IsNotNullAndNotEmpty())
             {
-                query = query.Where((a, b, c, d) => c.RU_LongDesc.Contains(searchCondition.PartNumberRUDesc));
+                query = query.Where((a, b, c, d) => c.RU_LongDesc.Contains(condition.PartNumberRUDesc));
 
+            }
+
+            if (string.IsNullOrEmpty(condition.OrderBy))
+            {
+                query = query.OrderBy((a, b, c, d) => a.Hits, OrderByType.Desc);
+            }
+            else
+            {
+                //升序
+                if (condition.OrderByType == 0)
+                {
+                    if (condition.OrderBy.Equals("ComponentTypeCode", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Code, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("Allowance", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.Allowance, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("ComponentTypeDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Desc, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("DesignQty", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.DesignQty, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumberCNLongDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.CN_LongDesc, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumberCNSizeDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.CN_SizeDesc, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumber", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.Code, OrderByType.Asc);
+                    }
+                    else if (condition.OrderBy.Equals("RoundUpDigit", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.RoundUpDigit, OrderByType.Asc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Code, OrderByType.Asc);
+                    }
+                }
+                else
+                {
+                    if (condition.OrderBy.Equals("ComponentTypeCode", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Code, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("Allowance", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.Allowance, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("ComponentTypeDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Desc, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("DesignQty", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.DesignQty, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumberCNLongDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.CN_LongDesc, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumberCNSizeDesc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.CN_SizeDesc, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("PartNumber", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => c.Code, OrderByType.Desc);
+                    }
+                    else if (condition.OrderBy.Equals("RoundUpDigit", StringComparison.OrdinalIgnoreCase))
+                    {
+                        query = query.OrderBy((a, b, c, d) => d.RoundUpDigit, OrderByType.Desc);
+                    }
+                    else
+                    {
+                        query = query.OrderBy((a, b, c, d) => b.Code, OrderByType.Desc);
+                    }
+                }
             }
             var total = 0;
 
-            var data = await query.Select((a, b, c, d)=>new MaterialTakeOffDetailDto{ ComponentTypeCode=b.Code,Allowance = d.Allowance,ComponentTypeDesc = b.Desc,DesignQty = d.DesignQty,PartNumberCNLongDesc = c.CN_LongDesc,PartNumberCNSizeDesc = c.CN_SizeDesc,RoundUpDigit = d.RoundUpDigit,MaterialTakeOffDetailId = d.Id}).ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
-            searchCondition.Page.RecordCount = data.Value;
+            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDetailDto
+            {
+                ComponentTypeCode = b.Code,
+                Allowance = d.Allowance,
+                ComponentTypeDesc = b.Desc,
+                DesignQty = d.DesignQty,
+                PartNumber= c.Code,
+                PartNumberCNLongDesc = c.CN_LongDesc,
+                PartNumberCNSizeDesc = c.CN_SizeDesc,
+                RoundUpDigit = d.RoundUpDigit,
+                MaterialTakeOffDetailId = d.Id
+            }).ToPageListAsync(condition.Page.PageNo, condition.Page.PageSize, total);
+            condition.Page.RecordCount = data.Value;
+
+
             foreach (var materialTakeOffDetailDto in data.Key)
             {
                 if (materialTakeOffDetailDto.RoundUpDigit.HasValue && materialTakeOffDetailDto.Allowance.HasValue)
@@ -86,6 +186,11 @@ namespace MaterialCodeSelectionPlatform.Data
                     }
 
                 }
+
+                if (materialTakeOffDetailDto.Allowance.HasValue)
+                {
+                    materialTakeOffDetailDto.AllowanceStr = (materialTakeOffDetailDto.Allowance.Value * 100) + "%";
+                }
             }
             return data.Key;
         }
@@ -97,7 +202,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         public async Task<bool> UpdateMaterialTakeOffDetail(List<MaterialTakeOffDetail> materialTakeOffDetails)
         {
-            return await Task.FromResult(DbContext.UpdateRange(materialTakeOffDetails)) ;
+            return await Task.FromResult(DbContext.UpdateRange(materialTakeOffDetails));
         }
     }
 }

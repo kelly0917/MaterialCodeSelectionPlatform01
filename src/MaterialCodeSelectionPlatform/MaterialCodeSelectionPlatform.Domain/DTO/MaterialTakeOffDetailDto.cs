@@ -13,11 +13,15 @@
 
         public double? Allowance { get; set; }
 
+        public string AllowanceStr { get; set; }
+
         public int? RoundUpDigit { get; set; }
 
         public string MaterialTakeOffDetailId { get; set; }
 
 
         public double? RoundUp { get; set; }
+
+        public string PartNumber { get; set; }
     }
 }
