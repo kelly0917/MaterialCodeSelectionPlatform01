@@ -45,7 +45,7 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList);
+        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver);
         /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
@@ -79,5 +79,11 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
        Task<int> CopyMaterialTakeOff(string mtoId, string userId, string projectId, string deviceId, int type);
+        /// <summary>
+        /// 审批
+        /// </summary>
+        /// <param name="mto"></param>
+        /// <returns></returns>
+         Task<int> ApproveMto(MaterialTakeOff mto);
     }
 }

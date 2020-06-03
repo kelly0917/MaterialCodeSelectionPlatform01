@@ -67,7 +67,7 @@
             <div class="layui-form-item search">
                 <div class="layui-inline layui-float-left">
                     <label class="layui-form-label" style="width:130px">材料统计表模板：</label>
-                    <div class="layui-input-inline" style="width:400px">
+                    <div class="layui-input-inline" style="width:250px">
                         <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
                             @{
                                 var fileList = ViewData["fileList"] as NameValueCollection;
@@ -82,15 +82,34 @@
 
                         </select>
                     </div>
+
+                    <label class="layui-form-label" style="width:80px">审批人：</label>
+                    <div class="layui-input-inline" style="width:100px">
+                        <select lay-search id="selApprover" name="selApprover" lay-filter="selApprover">
+                            @{
+                                var users = ViewData["users"] as List<MaterialCodeSelectionPlatform.Domain.Entities.User>;
+                                if (users != null && users.Count > 0)
+                                {
+                                    foreach (var user in users)
+                                    {
+                                        <option value="@user.Id">@user.Name</option>
+                                    }
+                                }
+                            }
+
+                        </select>
+                    </div>
+
+
                     <label class="layui-form-label" style="width:50px">版本：</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="txtRevision" class="layui-input" />
+                    <div class="layui-input-inline" style="width:100px">
+                        <input type="text" id="txtRevision" class="layui-input" style="width:100px"/>
                     </div>
                     <div class="layui-inline layui-float-rigt" style="float:right">
                         @{
                             if (Model != null && Model.Count() > 0)
                             {
-                                <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px">生成物料表</button>
+                                <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px;">生成物料表</button>
                             }
                         }
 
@@ -161,7 +180,8 @@
                     layer.msg("版本不能为空");
                     return;
                 }
-                $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list }, function (data) {
+                 var approver = encodeURIComponent($("#selApprover").val());
+                $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list ,approver:approver}, function (data) {
                     if (data.success) {//更新数量成功
                         var templatePath = encodeURIComponent($("#selTemplate").val());
                         //导出报表

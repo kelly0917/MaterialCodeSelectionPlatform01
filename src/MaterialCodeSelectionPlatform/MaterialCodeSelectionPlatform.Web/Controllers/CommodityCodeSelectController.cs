@@ -24,6 +24,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         private IProjectService projectService;
         private IDeviceService deviceService;
         private IUserService userService;
+      
         public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService, IUserService userService)
         {
             this.Service = services;
@@ -219,11 +220,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        public async Task<IActionResult> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        public async Task<IActionResult> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList,string approver)
         {
             try
             {
-                var result = await Service.UpdateReportMaterialTakeOffDetail(detailList);
+                var result = await Service.UpdateReportMaterialTakeOffDetail(detailList, approver);
                 return ConvertJsonResult("更新成功", true);
             }
             catch (Exception e)
@@ -265,6 +266,16 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
+                UserSearchCondition userSearchCondition = new UserSearchCondition();
+                DataPage dataPage = new DataPage();
+                dataPage.PageNo = 1;
+                dataPage.PageSize = int.MaxValue;
+                userSearchCondition.Page = dataPage;
+                //userSearchCondition.Name = "";
+                userSearchCondition.Role = -1;
+                userSearchCondition.Status = 0;
+                var users = await userService.GetDataList(userSearchCondition);
+                ViewData["users"] = users;
                 var result = await Service.GetUserMaterialTakeReport(mtoId, "", this.UserId, projectid, deviceid, 0);
                 return View(result);
             }
@@ -436,6 +447,24 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 {
                     getTemplate(dir.FullName, ref fileList);
                 }
+            }
+        }
+        /// <summary>
+        /// 审批
+        /// </summary>
+        /// <param name="mto"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> ApproveMto(MaterialTakeOff mto)
+        {
+            try
+            {
+                mto.Approver = this.UserId;
+                var result = await Service.ApproveMto(mto);
+                return ConvertJsonResult("审批成功", true);
+            }
+            catch (Exception e)
+            {
+                return ConvertFailResult(null, e.ToString());
             }
         }
     }
