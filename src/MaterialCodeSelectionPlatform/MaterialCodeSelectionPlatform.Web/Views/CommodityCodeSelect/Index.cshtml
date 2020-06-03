@@ -11,11 +11,10 @@
         width: 100px;
     }*/
     .checkboxContent {
-        height: auto
-        overflow: hidden;
+        height: auto overflow: hidden;
     }
 
-        /*.checkboxContent:hover {
+    /*.checkboxContent:hover {
             height: 20px;;
         }*/
 
@@ -70,11 +69,11 @@
         </div>
         <div class="layui-inline" style="float: right">
             @*<div class="layui-inline layui-float-left">
-            <label class="layui-form-label">编码库：</label>
-            <div class="layui-input-inline">
-                <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
-            </div>
-        </div>*@
+                    <label class="layui-form-label">编码库：</label>
+                    <div class="layui-input-inline">
+                        <select lay-search id="selCatalog" name="selCatalog" lay-filter="selCatalog"></select>
+                    </div>
+                </div>*@
             <div class="layui-inline layui-float-left" style="display: none;">
                 <label class="layui-form-label">项目：</label>
                 <div class="layui-input-inline">
@@ -94,7 +93,9 @@
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看料表</button>
             </div>
-
+            <div id="divApprove" class="layui-inline layui-float-right">
+                <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openApprove()">审批</button>
+            </div>
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openMaterial()">裕量</button>
             </div>
@@ -147,7 +148,7 @@
 <div id="divTable">
     <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80}" id="tbCommodityCodeList" lay-filter="useruv"></table>
 </div>
-
+@*打开最近工作*@
 <div class="layui-form" action="" id="openShow" style="display:none">
     <table class="layui-table" id="projectDevice">
         <colgroup>
@@ -193,6 +194,40 @@
         </div>
     </div>
 </div>
+@*审批页面*@
+<div class="layui-form" action="" id="showApprove" style="display:none">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">版本号：</label>
+                <div class="layui-input-inline" style="width:300px;padding:10px">
+                    <input type="text" id="txtRevision" name="txtRevision" required lay-verify="required" placeholder="版本号" autocomplete="off" class="layui-input" maxlength="20">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审批意见：</label>
+                <div class="layui-input-inline" style="width:400px;padding:10px">
+                    <textarea class="layui-textarea" id="txtApproveContent"  name="txtApproveContent" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审批结果：</label>
+                <div class="layui-input-inline" style="width:300px;padding:10px;top:-10px">
+                    <input type="checkbox" name="switch" lay-skin="switch" value="1" style="width:50px">  <label class="layui-form-label">审批通过</label>
+                </div>               
+            </div>          
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right"  style="right:20px">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="okApprove" onclick="okApprove()">确定</button>
+            <button type="reset" class="layui-btn layui-bg-blue layui-btn-primary" onclick="closeApprove()">取消</button>
+        </div>
+    </div>
+</div>
+
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
     <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="select">选择</a>
@@ -695,7 +730,7 @@
                                 tr += "<td>"+ent.version+"</td>";
                                 tr += "<td>"+ent.checkStatusName+"</td>";
                                 tr += "<td>" + ent.timeString + "</td>";
-                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('"+ ent.id +"','" + ent.projectId + "','" + ent.deviceId + "')>选择</button></td>";
+                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.id + "','" + ent.projectId + "','" + ent.deviceId + "','" + ent.revision + "','" + ent.approver + "')>选择</button></td>";
                                 tr += " </tr>";
                             }
                             $("#trody").append(tr);
@@ -734,9 +769,16 @@
 
     //==============确定【项目】【装置】end==================
     //==============选择【项目】【装置】==================
-    function projectClick(id,projectId, deviceId) {
+    function projectClick(id, projectId, deviceId, revision, approver) {
+        if (approver != $("#txtUserId").val()) {
+            $("#divApprove").hide();
+        }
+        else {
+             $("#divApprove").show();
+        }
         $("#selProject").val(projectId);
         $("#txtMtoId").val(id);
+        $("#txtRevision").val(revision);
         layui.form.render('select');
         $.get("/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + projectId + "&pt=" + Math.random(), function (result) {
             //<option value="-1">全部</option>
@@ -806,6 +848,20 @@
         });
     }
     //==============打开【查看料表】end==================
+     //==============打开【审批界面】==================
+    window.openApprove = function() {
+                winApproveIndex= layer.open({
+                    type: 1,
+                    title: '审批意见',
+                    area: ['600px', '350px'],
+                    minHeight:'200px',
+                    content: $('#showApprove') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+
+                });
+    }
+    function closeApprove() {
+    }
+    //==============打开【查看料表】end==================
     //==============显示隐藏属性=========//
 
     function changeVisivility() {
@@ -821,6 +877,37 @@
         }
     }
     //============显示隐藏属性end==============//
+     //==============审批意见=========//
+
+    function okApprove() {
+      //  var isShow = $("#usteel-condition").is(":hidden");
+        var id=  $("#txtMtoId").val();
+        var revision = $("#txtRevision").val();
+        var approveContent = $("#txtApproveContent").val();
+        var approveStatus = $("#txtApproveStatus").val();
+         var value = 0;
+        $('input[name=switch]:checked').each(function(){
+    	    //这里用所选复选框或运算后的值
+            value = $(this).val();
+        });
+       // alert(revision + "|" + approveContent + "|" + value);
+        var mto = new Object();        
+        mto.Id = $("#txtMtoId").val();
+        mto.Revision = $("#txtRevision").val();
+        mto.ApproveContent = $("#txtApproveContent").val();
+         mto.ApproveStatus=value;
+        $.post("/CommodityCodeSelect/ApproveMto", { mto: mto }, function (data) {
+            debugger;
+                    if (data.success) {//更新数量成功
+                         layer.close(winApproveIndex);
+                    }
+                    else {
+                         layer.msg(data.message);
+            }
+               form.render();
+                });
+    }
+    //============审批意见 end==============//
 </script>
 
 
@@ -873,7 +960,7 @@
                 if (dealResult(data)) {
                     for (var i = 0; i < data.Data.length; i++) {
                         selectIds[i] = data.Data[i].ComponentTypeId;
-                        result[i] =data.Data[i].ComponentTypeCode +"-"+ data.Data[i].ComponentTypeDesc + "(" + data.Data[i].Count + ")";
+                        result[i] = data.Data[i].ComponentTypeCode + "-" + data.Data[i].ComponentTypeDesc + "(" + data.Data[i].Count + ")";
                     }
                 }
             }
@@ -886,10 +973,10 @@
         var projectId = currentProjectId;
         var deviceId = currentDeviceId;
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
-        $.cookie('deviceIdcd',deviceId,{ path: '/', secure: false });
+        $.cookie('deviceIdcd', deviceId, { path: '/', secure: false });
         //$.cookie('projectId', projectId);
 
-        parent.locationPage('管理料表');  
+        parent.locationPage('管理料表');
     }
 </script>
 

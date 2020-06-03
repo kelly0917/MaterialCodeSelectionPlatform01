@@ -392,13 +392,15 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver)
         {
 
             if (detailList != null && detailList.Count > 0)
             {
                 var mtoId = detailList.FirstOrDefault().MaterialTakeOffId;
                 var ids = detailList.Select(c => c.Id).ToList();
+                var mto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id == mtoId).FirstAsync();
+                bool change = false;
                 var dbList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
                 foreach (var ent in detailList)
                 {
@@ -407,10 +409,15 @@ namespace MaterialCodeSelectionPlatform.Data
                     {
                         if (ent.DesignQty == 0)
                         {
+                            change = true;
                             await Db.Deleteable<MaterialTakeOffDetail>(model).ExecuteCommandAsync();//如果是0就删除
                         }
                         else
                         {
+                            if (model.DesignQty != ent.DesignQty)
+                            {
+                                change = true;
+                            }
                             model.DesignQty = ent.DesignQty;
                             Db.Updateable<MaterialTakeOffDetail>(model).ExecuteCommand();
                         }
@@ -420,6 +427,17 @@ namespace MaterialCodeSelectionPlatform.Data
                         await Db.Insertable<MaterialTakeOffDetail>(ent).ExecuteCommandAsync();
                     }
                 }
+                #region 更新 MaterialTakeOff
+                if (!string.IsNullOrEmpty(approver))
+                {
+                    mto.Approver = approver;
+                }
+                if (change)
+                {
+                    mto.CheckStatus = 1;
+                }
+                Db.Updateable<MaterialTakeOff>(mto).ExecuteCommand();
+                #endregion
             }
             return detailList;
         }
@@ -835,6 +853,15 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             return num;
         }
-
+       /// <summary>
+       /// 审批
+       /// </summary>
+       /// <param name="mto"></param>
+       /// <returns></returns>
+        public async Task<int> ApproveMto(MaterialTakeOff mto)
+        {
+            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() { ApproveStatus =mto.ApproveStatus, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
+            return n;
+        }
     }
 } 
