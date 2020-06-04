@@ -880,14 +880,23 @@ namespace MaterialCodeSelectionPlatform.Data
         private double? getAllowanceQty(int? roundUpDigit,double? allowance,double designQty)
         {
             double? roundUp;
-            var d = 1 / Math.Pow(10, roundUpDigit.Value);
-            var oldValue = designQty * allowance.Value;
-            roundUp = Math.Round(oldValue, roundUpDigit.Value);
-
-            if (roundUp < oldValue)
+            if (allowance== null|| roundUpDigit == null)
             {
-                roundUp += d;
+                roundUp = 0;
             }
+            else
+            {
+                var d = 1 / Math.Pow(10, roundUpDigit.Value);
+                var oldValue = designQty * allowance.Value;
+                roundUp = Math.Round(oldValue, roundUpDigit.Value);
+
+                if (roundUp < oldValue)
+                {
+                    roundUp += d;
+                }
+            }
+        
+           
             return roundUp;
         }
     }
