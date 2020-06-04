@@ -681,7 +681,8 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 foreach (var part in partNumberList)
                 {
-                    part.AllowanceQty = getAllowanceQty(part.RoundUpDigit, part.Allowance, part.DesignQty);
+                    part.AllowanceQty = Utilities.ConvertHelper.ConvertFloatPointData(part.DesignQty, part.Allowance, part.RoundUpDigit);
+                     //   getAllowanceQty(part.RoundUpDigit, part.Allowance, part.DesignQty);
                 }
             }
             var resut = from p in partNumberList
