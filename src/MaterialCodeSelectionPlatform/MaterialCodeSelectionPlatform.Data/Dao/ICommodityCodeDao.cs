@@ -49,13 +49,13 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList);
+        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver);
         /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid);
+        Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid, string mtoId = "");
 
         /// <summary>
         /// 获取用户的物料表
@@ -85,5 +85,11 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="type">【0：追加拷贝】【1：覆盖拷贝】</param>
         /// <returns></returns>
         Task<int> CopyMaterialTakeOff(string mtoId, string userId, string projectId, string deviceId, int type);
+        /// <summary>
+        /// 审批
+        /// </summary>
+        /// <param name="mto"></param>
+        /// <returns></returns>
+        Task<int> ApproveMto(MaterialTakeOff mto);
     }
 }

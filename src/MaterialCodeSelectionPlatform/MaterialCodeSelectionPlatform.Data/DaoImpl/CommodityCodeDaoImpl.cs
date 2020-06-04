@@ -392,13 +392,15 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver)
         {
 
             if (detailList != null && detailList.Count > 0)
             {
                 var mtoId = detailList.FirstOrDefault().MaterialTakeOffId;
                 var ids = detailList.Select(c => c.Id).ToList();
+                var mto = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.Id == mtoId).FirstAsync();
+                bool change = false;
                 var dbList = await Db.Queryable<MaterialTakeOffDetail>().Where(c => c.Status == 0 && c.MaterialTakeOffId == mtoId).ToListAsync();
                 foreach (var ent in detailList)
                 {
@@ -407,10 +409,15 @@ namespace MaterialCodeSelectionPlatform.Data
                     {
                         if (ent.DesignQty == 0)
                         {
+                            change = true;
                             await Db.Deleteable<MaterialTakeOffDetail>(model).ExecuteCommandAsync();//如果是0就删除
                         }
                         else
                         {
+                            if (model.DesignQty != ent.DesignQty)
+                            {
+                                change = true;
+                            }
                             model.DesignQty = ent.DesignQty;
                             Db.Updateable<MaterialTakeOffDetail>(model).ExecuteCommand();
                         }
@@ -420,6 +427,17 @@ namespace MaterialCodeSelectionPlatform.Data
                         await Db.Insertable<MaterialTakeOffDetail>(ent).ExecuteCommandAsync();
                     }
                 }
+                #region 更新 MaterialTakeOff
+                if (!string.IsNullOrEmpty(approver))
+                {
+                    mto.Approver = approver;
+                }
+                if (change)
+                {
+                    mto.CheckStatus = 1;
+                }
+                Db.Updateable<MaterialTakeOff>(mto).ExecuteCommand();
+                #endregion
             }
             return detailList;
         }
@@ -529,7 +547,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid)
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid,string mtoId="")
         {
             #region SQL 
             /*
@@ -575,7 +593,11 @@ namespace MaterialCodeSelectionPlatform.Data
             string where = string.Empty;
             if (!string.IsNullOrEmpty(userid))
             {
-                where = " and a.CreateUserId=@CreateUserId";
+                where = " and (a.CreateUserId=@UserId or Approver= @UserId)";
+            }
+            if (!string.IsNullOrEmpty(mtoId))
+            {
+                where = " and (a.id=@mtoId )";
             }
             var sql = $@"SELECT
                             b.Name ProjectName,c.Name DeviceName,d.Name UserName,a.*
@@ -584,7 +606,7 @@ namespace MaterialCodeSelectionPlatform.Data
                             INNER JOIN device  c ON c.Id=a.DeviceId
                             LEFT JOIN [User] d ON d.Id=a.CreateUserId AND d.Status=0
                             WHERE a.Status=0 AND b.Status=0 AND c.Status=0 {where} ORDER BY a.LastModifyTime desc";
-            var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { CreateUserId = userid });
+            var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { UserId = userid, mtoId= mtoId });
             return list;
         }
         /// <summary>
@@ -624,7 +646,7 @@ namespace MaterialCodeSelectionPlatform.Data
             //{
             //    mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
             //}
-            mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
+            mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && (c.CreateUserId == userId|| c.Approver == userId) && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
 
             var sql = $@" SELECT c.Code P_Code
                                ,c.Code P_Code
@@ -655,6 +677,13 @@ namespace MaterialCodeSelectionPlatform.Data
                                 INNER JOIN CommodityCode e ON e.Id=a.CommodityCodeId
                                 WHERE a.Status=0 AND c.Status=0 AND d.Status=0 AND e.status=0 AND a.MaterialTakeOffId=@MaterialTakeOffId ORDER BY e.code,c.code ";
             var partNumberList = Db.Ado.SqlQuery<PartNumberReportDetail>(sql, new { MaterialTakeOffId = mtoEntity.Id });
+            if (partNumberList != null && partNumberList.Count > 0)
+            {
+                foreach (var part in partNumberList)
+                {
+                    part.AllowanceQty = getAllowanceQty(part.RoundUpDigit, part.Allowance, part.DesignQty);
+                }
+            }
             var resut = from p in partNumberList
                         group p by p.ComponentTypeName into g
                         orderby g.Key
@@ -670,16 +699,19 @@ namespace MaterialCodeSelectionPlatform.Data
                 var project = Db.Queryable<Project>().Where(c => c.Status == 0 && c.Id == projectid).Single();
                 var device = Db.Queryable<Device>().Where(c => c.Status == 0 && c.Id == deviceid).Single();
                 var user = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id == userId).Single();
+                var approver = Db.Queryable<User>().Where(c => c.Status == 0 && c.Id == mtoEntity.Approver).Single();
                 resutList.ForEach(c =>
                 {
                     c.ProjectName = project?.Name;
                     c.ProjectCode = project?.Code;
                     c.DeviceName = device?.Name;
                     c.DeviceCode = device?.Code;
-                    c.Revision = revision;
+                    c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
                     c.Version = mtoEntity.Version;
                     c.DeviceRemark = device?.Remark;
                     c.UserName = user?.Name;
+                    c.Approver = approver?.Name;
+                    c.ApproveContent = mtoEntity.ApproveContent;
                     c.DateTime = DateTime.Now.ToString("yyyy-MM-dd");
 
                 });
@@ -688,13 +720,13 @@ namespace MaterialCodeSelectionPlatform.Data
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid &&( it.CreateUserId == userId || it.Approver == userId)).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
-                    if (ent.CheckStatus == 1)
-                    {
-                        ent.CheckStatus = 2;
-                    }
+                    //if (ent.CheckStatus == 1)
+                    //{
+                    //    ent.CheckStatus = 2;
+                    //}
                     ent.LastModifyTime = DateTime.Now;
                     ent.Version = ent.Version + 1;
                     ent.Revision = revision;
@@ -835,6 +867,28 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             return num;
         }
+       /// <summary>
+       /// 审批
+       /// </summary>
+       /// <param name="mto"></param>
+       /// <returns></returns>
+        public async Task<int> ApproveMto(MaterialTakeOff mto)
+        {           
+            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
+            return n;
+        }
+        private double? getAllowanceQty(int? roundUpDigit,double? allowance,double designQty)
+        {
+            double? roundUp;
+            var d = 1 / Math.Pow(10, roundUpDigit.Value);
+            var oldValue = designQty * allowance.Value;
+            roundUp = Math.Round(oldValue, roundUpDigit.Value);
 
+            if (roundUp < oldValue)
+            {
+                roundUp += d;
+            }
+            return roundUp;
+        }
     }
 } 

@@ -146,7 +146,12 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string DeviceId { get; set; }
 								
 		public virtual string Revision { get; set; }
-		}
+		
+		public virtual string Approver { get; set; }
+		public virtual string ApproveContent { get; set; }
+		public virtual DateTime? ApproveDate { get; set; }
+		//public virtual int ApproveStatus { get; set; }
+	}
 
     /// <summary>
     /// A class which represents the Project table.

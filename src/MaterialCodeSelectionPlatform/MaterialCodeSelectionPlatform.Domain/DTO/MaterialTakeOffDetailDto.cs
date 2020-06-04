@@ -21,5 +21,7 @@
 
 
         public float? RoundUp { get; set; }
+
+        public string PartNumber { get; set; }
     }
 }

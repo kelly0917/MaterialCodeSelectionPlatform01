@@ -71,18 +71,18 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver)
         {
-            return await _CommodityCodeDao.UpdateReportMaterialTakeOffDetail(detailList);
+            return await _CommodityCodeDao.UpdateReportMaterialTakeOffDetail(detailList,approver);
         }
         /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid)
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid, string mtoId = "")
         {
-            return await _CommodityCodeDao.GetUserMaterialTakeOff(userid);
+            return await _CommodityCodeDao.GetUserMaterialTakeOff(userid,mtoId);
         }
         /// <summary>
         /// 获取用户的物料表
@@ -122,6 +122,15 @@ namespace MaterialCodeSelectionPlatform.Service
         public async Task<int> CopyMaterialTakeOff(string mtoId, string userId, string projectId, string deviceId, int type)
         {
             return await _CommodityCodeDao.CopyMaterialTakeOff(mtoId, userId, projectId, deviceId, type);
+        }
+        /// <summary>
+        /// 审批
+        /// </summary>
+        /// <param name="mto"></param>
+        /// <returns></returns>
+        public async Task<int> ApproveMto(MaterialTakeOff mto)
+        {
+            return await _CommodityCodeDao.ApproveMto(mto);
         }
     }
 }

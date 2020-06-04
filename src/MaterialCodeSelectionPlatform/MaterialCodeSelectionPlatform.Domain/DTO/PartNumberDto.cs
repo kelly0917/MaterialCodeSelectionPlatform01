@@ -1,4 +1,5 @@
 ﻿using MaterialCodeSelectionPlatform.Domain.Entities;
+using SqlSugar;
 using System.Collections.Generic;
 
 namespace MaterialCodeSelectionPlatform.Domain
@@ -44,6 +45,16 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 装置描述
         /// </summary>
         public string DeviceRemark { get; set; }
+
+        /// <summary>
+        /// 审批人
+        /// </summary>
+        public string Approver { get; set; }
+
+        /// <summary>
+        /// 审批意见
+        /// </summary>
+        public string ApproveContent { get; set; }
 
         /// <summary>
         /// 物资编码类型名称
@@ -99,6 +110,11 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 物资编码类型名称
         /// </summary>
         public string ComponentTypeName { get; set; }
+        /// <summary>
+        /// 余量值
+        /// </summary>
+        [SugarColumn(IsIgnore =true)]
+        public double? AllowanceQty { get; set; }
 
     }
     /// <summary>

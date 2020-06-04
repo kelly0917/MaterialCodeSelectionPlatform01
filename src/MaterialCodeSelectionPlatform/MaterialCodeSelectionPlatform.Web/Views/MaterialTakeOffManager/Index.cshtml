@@ -75,7 +75,7 @@
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
         <div class="layui-inline layui-float-right">
-            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">裕量</button>
+            <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">设置裕量</button>
         </div>
     </div>
 </div>
@@ -103,13 +103,14 @@
                     , limits: [20, 50, 100]
                     , cols: [[ //表头
                         { type: 'checkbox' },
-                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:250, sort: true },
-                        { field: 'ComponentTypeDesc', title: '元件类型描述',width:250, sort: true },
+                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:200, sort: true },
+                        { field: 'ComponentTypeDesc', title: '元件类型描述', width: 200, sort: true },
+                        { field: 'PartNumber', title: '采购码', width: 200, sort: true },
                         { field: 'PartNumberCNLongDesc', title: '采购码中文长描述', sort: true  }
-                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:250 , sort: true }
-                        , { field: 'DesignQty', title: '设计量',width:150, sort: true }
-                        , { field: 'AllowanceStr', title: '裕量比例',width:150, sort: true }
-                        , { field: 'RoundUp', title: '裕量',width:150, sort: true}
+                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:200 , sort: true }
+                        , { field: 'DesignQty', title: '设计量',width:100, sort: true }
+                        , { field: 'AllowanceStr', title: '裕量比例',width:100, sort: true }
+                        , { field: 'RoundUp', title: '裕量',width:100, sort: true}
                     ]]
                     , id: 'testReload',
 
@@ -163,6 +164,7 @@
             }
             var defaultProject = $.cookie('projectIdcd');
             var defaultDevice = $.cookie('deviceIdcd');
+           
             //select 控件加载完再初始化table
             $("select[name=projectId]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: defaultProject, complete: function () {
