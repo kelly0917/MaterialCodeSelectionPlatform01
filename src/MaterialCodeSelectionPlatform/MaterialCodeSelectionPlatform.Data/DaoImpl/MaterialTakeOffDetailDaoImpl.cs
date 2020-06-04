@@ -167,9 +167,9 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 if (materialTakeOffDetailDto.RoundUpDigit.HasValue && materialTakeOffDetailDto.Allowance.HasValue)
                 {
-                    var d = 1 / Math.Pow(10, materialTakeOffDetailDto.RoundUpDigit.Value);
-                    var oldValue = materialTakeOffDetailDto.DesignQty * materialTakeOffDetailDto.Allowance.Value;
-                    materialTakeOffDetailDto.RoundUp = Math.Round(oldValue, materialTakeOffDetailDto.RoundUpDigit.Value);
+                    float d = (float)(1.0 / Math.Pow(10, materialTakeOffDetailDto.RoundUpDigit.Value));
+                    float oldValue = (float)(materialTakeOffDetailDto.DesignQty * materialTakeOffDetailDto.Allowance.Value);
+                    materialTakeOffDetailDto.RoundUp = (float)Math.Round(oldValue, materialTakeOffDetailDto.RoundUpDigit.Value);
 
                     if (materialTakeOffDetailDto.RoundUp < oldValue)
                     {

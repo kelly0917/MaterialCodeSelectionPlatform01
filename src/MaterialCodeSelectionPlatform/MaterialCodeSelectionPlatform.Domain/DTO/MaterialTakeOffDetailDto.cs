@@ -20,6 +20,6 @@
         public string MaterialTakeOffDetailId { get; set; }
 
 
-        public double? RoundUp { get; set; }
+        public float? RoundUp { get; set; }
     }
 }
