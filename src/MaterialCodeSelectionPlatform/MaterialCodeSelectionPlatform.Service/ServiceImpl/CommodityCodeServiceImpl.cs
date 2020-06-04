@@ -80,9 +80,9 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid)
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid, string mtoId = "")
         {
-            return await _CommodityCodeDao.GetUserMaterialTakeOff(userid);
+            return await _CommodityCodeDao.GetUserMaterialTakeOff(userid,mtoId);
         }
         /// <summary>
         /// 获取用户的物料表

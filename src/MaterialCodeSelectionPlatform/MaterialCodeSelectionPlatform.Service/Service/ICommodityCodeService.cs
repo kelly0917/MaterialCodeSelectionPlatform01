@@ -51,7 +51,7 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid);
+        Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid, string mtoId = "");
         /// <summary>
         /// 获取用户的物料表
         /// </summary>
