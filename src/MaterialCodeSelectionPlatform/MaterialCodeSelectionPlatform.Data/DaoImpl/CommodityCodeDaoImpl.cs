@@ -720,7 +720,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid &&( it.CreateUserId == userId || it.Approver == userId)).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
                     //if (ent.CheckStatus == 1)
