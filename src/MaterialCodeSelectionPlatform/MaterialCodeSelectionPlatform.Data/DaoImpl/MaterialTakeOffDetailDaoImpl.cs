@@ -174,18 +174,9 @@ namespace MaterialCodeSelectionPlatform.Data
 
             foreach (var materialTakeOffDetailDto in data.Key)
             {
-                if (materialTakeOffDetailDto.RoundUpDigit.HasValue && materialTakeOffDetailDto.Allowance.HasValue)
-                {
-                    var d = 1 / Math.Pow(10, materialTakeOffDetailDto.RoundUpDigit.Value);
-                    var oldValue = materialTakeOffDetailDto.DesignQty * materialTakeOffDetailDto.Allowance.Value;
-                    materialTakeOffDetailDto.RoundUp = Math.Round(oldValue, materialTakeOffDetailDto.RoundUpDigit.Value);
-
-                    if (materialTakeOffDetailDto.RoundUp < oldValue)
-                    {
-                        materialTakeOffDetailDto.RoundUp += d;
-                    }
-
-                }
+                materialTakeOffDetailDto.RoundUp = ConvertHelper.ConvertFloatPointData(
+                    materialTakeOffDetailDto.DesignQty, materialTakeOffDetailDto.Allowance,
+                    materialTakeOffDetailDto.RoundUpDigit);
 
                 if (materialTakeOffDetailDto.Allowance.HasValue)
                 {
