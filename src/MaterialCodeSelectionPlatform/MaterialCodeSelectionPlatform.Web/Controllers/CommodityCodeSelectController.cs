@@ -236,11 +236,11 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// 获取用户的【物资汇总表】
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult> GetUserMaterialTakeOff()
+        public async Task<ActionResult> GetUserMaterialTakeOff(string mtoId="")
         {
             try
             {
-                var result = await Service.GetUserMaterialTakeOff(this.UserId);
+                var result = await Service.GetUserMaterialTakeOff(this.UserId, mtoId);
                 return ConvertJsonResult("成功", true, result);
             }
             catch (Exception e)
@@ -449,6 +449,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 }
             }
         }
+      
         /// <summary>
         /// 审批
         /// </summary>
