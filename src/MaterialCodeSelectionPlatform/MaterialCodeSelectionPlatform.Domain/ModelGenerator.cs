@@ -150,7 +150,7 @@ namespace MaterialCodeSelectionPlatform.Domain.Entities
 		public virtual string Approver { get; set; }
 		public virtual string ApproveContent { get; set; }
 		public virtual DateTime? ApproveDate { get; set; }
-		public virtual int ApproveStatus { get; set; }
+		//public virtual int ApproveStatus { get; set; }
 	}
 
     /// <summary>

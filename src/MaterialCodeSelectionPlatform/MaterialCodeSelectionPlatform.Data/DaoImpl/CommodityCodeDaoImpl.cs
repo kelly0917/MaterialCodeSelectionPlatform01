@@ -706,7 +706,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     c.ProjectCode = project?.Code;
                     c.DeviceName = device?.Name;
                     c.DeviceCode = device?.Code;
-                    c.Revision = revision;
+                    c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
                     c.Version = mtoEntity.Version;
                     c.DeviceRemark = device?.Remark;
                     c.UserName = user?.Name;
@@ -720,7 +720,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && it.CreateUserId == userId).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid &&( it.CreateUserId == userId || it.Approver == userId)).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
                     //if (ent.CheckStatus == 1)
@@ -873,9 +873,8 @@ namespace MaterialCodeSelectionPlatform.Data
        /// <param name="mto"></param>
        /// <returns></returns>
         public async Task<int> ApproveMto(MaterialTakeOff mto)
-        {
-            var checkStatus = mto.ApproveStatus == 1 ? 2 : 1;
-            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= checkStatus, Revision=mto.Revision, ApproveStatus =mto.ApproveStatus, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
+        {           
+            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
             return n;
         }
         private double? getAllowanceQty(int? roundUpDigit,double? allowance,double designQty)

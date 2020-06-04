@@ -5,7 +5,15 @@
 @using MaterialCodeSelectionPlatform.Domain
 @using System.Collections.Specialized
 @model IEnumerable<PartNumberReport>
-
+@{
+    string approver = string.Empty;
+    string reversion = string.Empty;
+    if (Model != null && Model.Count() > 0)
+    {
+        approver = Model.FirstOrDefault()?.Approver;
+        reversion= Model.FirstOrDefault()?.Revision;
+    }
+}
 <link href="~/css/formSelects-v4.css" rel="stylesheet" />
 <script src="~/js/jsencrypt.min.js"></script>
 <form class="layui-form layui-form-model" action="">
@@ -86,13 +94,20 @@
                     <label class="layui-form-label" style="width:80px">审批人：</label>
                     <div class="layui-input-inline" style="width:100px">
                         <select lay-search id="selApprover" name="selApprover" lay-filter="selApprover">
-                            @{
+                            @{                               
                                 var users = ViewData["users"] as List<MaterialCodeSelectionPlatform.Domain.Entities.User>;
                                 if (users != null && users.Count > 0)
                                 {
                                     foreach (var user in users)
                                     {
-                                        <option value="@user.Id">@user.Name</option>
+                                        if (approver == user.Name)
+                                        {
+                                            <option value="@user.Id" selected>@user.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.Id">@user.Name</option>
+                                        }
                                     }
                                 }
                             }
@@ -103,7 +118,7 @@
 
                     <label class="layui-form-label" style="width:50px">版本：</label>
                     <div class="layui-input-inline" style="width:100px">
-                        <input type="text" id="txtRevision" class="layui-input" style="width:100px"/>
+                        <input type="text" id="txtRevision" class="layui-input" style="width:100px"  value="@reversion"/>
                     </div>
                     <div class="layui-inline layui-float-rigt" style="float:right">
                         @{

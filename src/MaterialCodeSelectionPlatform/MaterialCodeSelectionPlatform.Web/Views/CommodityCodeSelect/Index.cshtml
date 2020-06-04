@@ -213,7 +213,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">审批结果：</label>
                 <div class="layui-input-inline" style="width:300px;padding:10px;top:-10px">
-                    <input type="checkbox" id="txtApproveStatus" name="txtApproveStatus" lay-skin="primary"  style="width:50px">  <label class="layui-form-label">审批通过</label>                  
+                    <input type="checkbox" id="txtcheckStatus" name="txtcheckStatus" lay-skin="primary"  style="width:50px">  <label class="layui-form-label">审批通过</label>                  
                 </div>               
             </div>          
         </div>
@@ -690,9 +690,9 @@
                             var ent = result.data[0];
                              $("#txtRevision").val(ent.revision);
                             $("#txtApproveContent").val(ent.approveContent);
-                            var bol = ent.approveStatus == 1 ? true : false;
-                            var statusCheckbox = $("input[name='txtApproveStatus']");
-                            $('#txtApproveStatus').prop("checked", bol); //注意这里使用的是prop()
+                            var bol = ent.checkStatus == 2 ? true : false;
+                            var statusCheckbox = $("input[name='txtcheckStatus']");
+                            $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
                             statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
                             form.render('checkbox');//记得每次操作后要渲染该元素
                             winApproveIndex= layer.open({
@@ -719,20 +719,20 @@
         var id=  $("#txtMtoId").val();
         var revision = $("#txtRevision").val();
         var approveContent = $("#txtApproveContent").val();
-        var approveStatus = $("#txtApproveStatus").val();
+        var approveStatus = $("#txtcheckStatus").val();
         debugger;
-         var value = 0;       
+         var value = 1;       
        //获取选中值    
-        var statusCheckbox = $("input[name='txtApproveStatus']");
+        var statusCheckbox = $("input[name='txtcheckStatus']");
        var bol=statusCheckbox.prop('checked'); 
                 if (bol) {
-                    value = 1;
+                    value = 2;
                 }       
         var mto = new Object();        
         mto.Id = $("#txtMtoId").val();
         mto.Revision = $("#txtRevision").val();
         mto.ApproveContent = $("#txtApproveContent").val();
-         mto.ApproveStatus=value;
+         mto.CheckStatus=value;
         $.post("/CommodityCodeSelect/ApproveMto", { mto: mto }, function (data) {
             if (data.success) {//更新数量成功
                           layer.msg("审批成功");
