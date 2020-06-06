@@ -93,12 +93,12 @@
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看</button>
             </div>
-            <div id="divApprove" class="layui-inline layui-float-right">
+            @*<div id="divApprove" class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openApprove()">审批</button>
             </div>
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openMaterial()">裕量</button>
-            </div>
+            </div>*@
 
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
@@ -194,39 +194,7 @@
         </div>
     </div>
 </div>
-@*审批页面*@
-<div class="layui-form" action="" id="showApprove" style="display:none">
-    <div class="layui-row">
-        <div class="layui-col-xs12">
-            <div class="layui-form-item">
-                <label class="layui-form-label">版本号：</label>
-                <div class="layui-input-inline" style="width:300px;padding:10px">
-                    <input type="text" id="txtRevision" name="txtRevision" required lay-verify="required" placeholder="版本号" autocomplete="off" class="layui-input" maxlength="20">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">审批意见：</label>
-                <div class="layui-input-inline" style="width:400px;padding:10px">
-                    <textarea class="layui-textarea" id="txtApproveContent"  name="txtApproveContent" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">审批结果：</label>
-                <div class="layui-input-inline" style="width:300px;padding:10px;top:-10px">
-                    <input type="checkbox" id="txtcheckStatus" name="txtcheckStatus" lay-skin="primary"  style="width:50px">  <label class="layui-form-label">审批通过</label>                  
-                </div>               
-            </div>          
-        </div>
-    </div>
 
-
-    <div class="layui-form-item">
-        <div class="layui-input-block layui-align-right"  style="right:20px">
-            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="okApprove" onclick="okApprove()">确定</button>
-            <button type="reset" class="layui-btn layui-bg-blue layui-btn-primary" onclick="closeApprove()">取消</button>
-        </div>
-    </div>
-</div>
 
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-sm permission" action="8" lay-event="attr">查看属性</a>
@@ -677,74 +645,11 @@
                 resetUserInput();
                 loadData();
             } 
-                 //==============打开【审批界面】==================
-    window.openApprove = function() {
-         var mtoId=  $("#txtMtoId").val();
-        $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?mtoId=" + mtoId + "&pt=" + Math.random(), function (result) {
-            debugger;
-                    if (!result.success) {
-                        layer.msg(result.message);
-                    }
-                    else {
-                        if (result.data.length >= 0) {
-                            var ent = result.data[0];
-                             $("#txtRevision").val(ent.revision);
-                            $("#txtApproveContent").val(ent.approveContent);
-                            var bol = ent.checkStatus == 2 ? true : false;
-                            var statusCheckbox = $("input[name='txtcheckStatus']");
-                            $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
-                            statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
-                            form.render('checkbox');//记得每次操作后要渲染该元素
-                            winApproveIndex= layer.open({
-                                type: 1,
-                                title: '审批意见',
-                                area: ['600px', '350px'],
-                                minHeight:'200px',
-                                content: $('#showApprove') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                              
-                            });
-                        }
-                    }
-                });
-    }
+                 
     window.closeApprove =function () {
          layer.close(winApproveIndex);
     }
-    //==============打开【审批界面】end==================
-             //==============审批意见=========//
 
-            window.okApprove = function () {
-      //  var isShow = $("#usteel-condition").is(":hidden");
-
-        var id=  $("#txtMtoId").val();
-        var revision = $("#txtRevision").val();
-        var approveContent = $("#txtApproveContent").val();
-        var approveStatus = $("#txtcheckStatus").val();
-        debugger;
-         var value = 1;       
-       //获取选中值    
-        var statusCheckbox = $("input[name='txtcheckStatus']");
-       var bol=statusCheckbox.prop('checked'); 
-                if (bol) {
-                    value = 2;
-                }       
-        var mto = new Object();        
-        mto.Id = $("#txtMtoId").val();
-        mto.Revision = $("#txtRevision").val();
-        mto.ApproveContent = $("#txtApproveContent").val();
-         mto.CheckStatus=value;
-        $.post("/CommodityCodeSelect/ApproveMto", { mto: mto }, function (data) {
-            if (data.success) {//更新数量成功
-                          layer.msg("审批成功");
-                         layer.close(winApproveIndex);
-                    }
-                    else {
-                         layer.msg(data.message);
-            }
-               form.render();
-                });
-    }
-    //============审批意见 end==============//
 
         });
     var winIndex = 0;
@@ -778,6 +683,8 @@
         $("#lbDevice").html($("#selDevice2").find("option:selected").text());
         currentProjectId = $("#selProject2").find("option:selected").val();
         currentDeviceId = $("#selDevice2").find("option:selected").val();
+        openMaterial();
+
     }
     //==============打开【最近项目，装置】==================
 
@@ -870,6 +777,7 @@
                 $("#lbDevice").html($("#selDevice").find("option:selected").text());
                 currentProjectId = $("#selProject").find("option:selected").val();
                 currentDeviceId = $("#selDevice").find("option:selected").val();
+                openMaterial();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
                     url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -1015,6 +923,7 @@
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
         $.cookie('deviceIdcd', deviceId, { path: '/', secure: false });
         //$.cookie('projectId', projectId);
+        $.cookie('mtoId', $("#txtMtoId").val(), { path: '/', secure: false });
 
         parent.locationPage('管理料表');
     }

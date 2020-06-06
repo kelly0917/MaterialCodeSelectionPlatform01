@@ -568,8 +568,9 @@ layui.define('view', function(exports){
 
         $(TABS_HEADER).eq(0).trigger('click');
       } else {
-        $(TABS_HEADER).each(function(index, item){
-          if(index && index != admin.tabsPage.index){
+          $(TABS_HEADER).each(function (index, item) {
+              debugger;
+          if(index != admin.tabsPage.index){
             $(item).addClass(TABS_REMOVE);
             admin.tabsBody(index).addClass(TABS_REMOVE);
           }

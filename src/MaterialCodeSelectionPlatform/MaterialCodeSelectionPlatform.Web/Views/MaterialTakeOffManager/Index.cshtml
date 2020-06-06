@@ -30,25 +30,25 @@
         <div class="layui-inline">
             <label class="layui-form-label">元件类型代码：</label>
             <div class="layui-input-inline">
-                <input type="text" name="componentTypeCode" class="layui-input"  />
+                <input type="text" name="componentTypeCode" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px;">元件类型描述：</label>
             <div class="layui-input-inline">
-                <input type="text" name="componentTypeDesc" class="layui-input"  />
+                <input type="text" name="componentTypeDesc" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px;">物资编码：</label>
             <div class="layui-input-inline">
-                <input type="text" name="commodityCode" class="layui-input"  />
+                <input type="text" name="commodityCode" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px;">采购码：</label>
             <div class="layui-input-inline">
-                <input type="text" name="partNumberCode" class="layui-input"  />
+                <input type="text" name="partNumberCode" class="layui-input" />
             </div>
         </div>
     </div>
@@ -56,27 +56,34 @@
         <div class="layui-inline">
             <label class="layui-form-label">采购码中文长描述：</label>
             <div class="layui-input-inline">
-                <input type="text" name="partNumberCNDesc" class="layui-input"  />
+                <input type="text" name="partNumberCNDesc" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px;">采购码英文长描述：</label>
             <div class="layui-input-inline">
-                <input type="text" name="partNumberENDesc" class="layui-input"  />
+                <input type="text" name="partNumberENDesc" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px;">采购码俄文长描述：</label>
             <div class="layui-input-inline">
-                <input type="text" name="partNumberRUDesc" class="layui-input"  />
+                <input type="text" name="partNumberRUDesc" class="layui-input" />
             </div>
         </div>
         <div class="layui-inline">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
-        <div class="layui-inline layui-float-right">
+        <div class="layui-inline layui-float-right" id="divAdd">
             <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">设置裕量</button>
         </div>
+        <div id="divreload" class="layui-inline layui-float-right" >
+            <button class="layui-btn layui-btn-normal" lay-filter="search" onclick="parent.location.reload()">刷新</button>
+        </div>
+        <div id="divApprove" class="layui-inline layui-float-right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" onclick="openApprove()">审批</button>
+        </div>
+
     </div>
 </div>
 <table class="layui-hide" id="test" lay-filter="useruv"></table>
@@ -97,32 +104,32 @@
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({
-                    elem: '#test', url: '/MaterialTakeOffManager/GetDataList' + para + '&order='+order+'&orderType='+orderType+'&' + Math.random()//数据接口
+                    elem: '#test', url: '/MaterialTakeOffManager/GetDataList' + para + '&order=' + order + '&orderType=' + orderType + '&' + Math.random()//数据接口
                     , page: true //开启分页
                     , limit: 20
                     , limits: [20, 50, 100]
                     , cols: [[ //表头
                         { type: 'checkbox' },
-                        { field: 'ComponentTypeCode', title: '元件类型代码' ,width:200, sort: true },
+                        { field: 'ComponentTypeCode', title: '元件类型代码', width: 200, sort: true },
                         { field: 'ComponentTypeDesc', title: '元件类型描述', width: 200, sort: true },
                         { field: 'PartNumber', title: '采购码', width: 200, sort: true },
-                        { field: 'PartNumberCNLongDesc', title: '采购码中文长描述', sort: true  }
-                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述',width:200 , sort: true }
-                        , { field: 'DesignQty', title: '设计量',width:100, sort: true }
-                        , { field: 'AllowanceStr', title: '裕量比例',width:100, sort: true }
-                        , { field: 'RoundUp', title: '裕量',width:100, sort: true}
+                        { field: 'PartNumberCNLongDesc', title: '采购码中文长描述', sort: true }
+                        , { field: 'PartNumberCNSizeDesc', title: '尺寸描述', width: 200, sort: true }
+                        , { field: 'DesignQty', title: '设计量', width: 100, sort: true }
+                        , { field: 'AllowanceStr', title: '裕量比例', width: 100, sort: true }
+                        , { field: 'RoundUp', title: '裕量', width: 100, sort: true }
                     ]]
                     , id: 'testReload',
 
                 });
-               
+
             }
             //刷新表格
             window.flush = function () {
                 loadData();
             }
             //监听排序事件
-            table.on('sort(useruv)', function(obj){ //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            table.on('sort(useruv)', function (obj) { //注：sort 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
                 console.log(obj.field); //当前排序的字段名
                 console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
                 console.log(this); //当前排序的 th 对象
@@ -136,7 +143,7 @@
                 //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
                 table.reload('testReload', {
                     initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。
-                    ,   url: '/MaterialTakeOffManager/GetDataList' + para + '&order='+order+'&orderType='+orderType+'&' + Math.random()//数据接口
+                    , url: '/MaterialTakeOffManager/GetDataList' + para + '&order=' + order + '&orderType=' + orderType + '&' + Math.random()//数据接口
                 });
 
             });
@@ -150,7 +157,7 @@
                     layer.alert("请勾选需要设置裕量的数据行");
                     return;
                 }
-                
+
                 var detailIds = "";
                 for (var i = 0; i < data.length; i++) {
                     detailIds += data[i].MaterialTakeOffDetailId + ",";
@@ -164,7 +171,7 @@
             }
             var defaultProject = $.cookie('projectIdcd');
             var defaultDevice = $.cookie('deviceIdcd');
-           
+
             //select 控件加载完再初始化table
             $("select[name=projectId]").dropdownlist({
                 url: "/CommodityCodeSelect/GetDropDownData?type=1&parentId=00000000-0000-0000-0000-000000000000&pt=" + Math.random(), defaultValue: defaultProject, complete: function () {
@@ -177,20 +184,63 @@
             });
 
             form.on('select(selProject)',
-                function(data1) {
+                function (data1) {
                     var value = data1.value;
-                   // alert(value);
+                    // alert(value);
                     $("select[name=deviceId]").dropdownlist({
                         url: "/CommodityCodeSelect/GetDropDownData?type=2&parentId=" + value + "&pt=" + Math.random(), defaultValue: defaultDevice, complete: function () {
                             loadData();
                         }
                     });
                 });
-           
+
+            //==============打开【审批界面】==================
+            window.openApprove = function () {
+                var mtoId = $.cookie('mtoId');
+                $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?mtoId=" + mtoId + "&pt=" + Math.random(), function (result) {
+                    debugger;
+                    if (!result.success) {
+                        layer.msg(result.message);
+                    }
+                    else {
+                        if (result.data.length >= 0) {
+                            var ent = result.data[0];
+                            $("#txtRevision").val(ent.revision);
+                            $("#txtApproveContent").val(ent.approveContent);
+                            var bol = ent.checkStatus == 2 ? true : false;
+                            var statusCheckbox = $("input[name='txtcheckStatus']");
+                            $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
+                            statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
+                            form.render('checkbox');//记得每次操作后要渲染该元素
+                            layer.open({
+                                type: 2,
+                                title: '审批意见',
+                                area: ['600px', '380px'],
+                                minHeight: '200px',
+                                content:'/MaterialTakeOffManager/ApprovePage?mtoId=' + mtoId+ "&" + Math.random(),//这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+
+                            });
+                        }
+                    }
+                });
+            }
+
+
+          
         });
 
-    $(function() {
-     
+    $(function () {
+        var isApprover = "@ViewData["isApprover"]";
+        if (isApprover == "true") {
+            $("#divAdd").hide();
+            parent.closeFirstTab();
+
+
+        } else {
+            $("#divApprove").hide();
+            $("#divreload").hide();
+
+        }
     });
     //回车响应
     $("body").keydown(
