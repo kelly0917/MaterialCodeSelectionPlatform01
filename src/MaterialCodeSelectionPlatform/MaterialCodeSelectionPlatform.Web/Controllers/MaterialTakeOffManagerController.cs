@@ -13,16 +13,30 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
     public class MaterialTakeOffManagerController : BaseController<IMaterialTakeOffDetailService, MaterialTakeOffDetail>
     {
-
-        public MaterialTakeOffManagerController(IMaterialTakeOffDetailService materialTakeOffDetailService)
+        private IMaterialTakeOffService materialTakeOffService;
+        public MaterialTakeOffManagerController(IMaterialTakeOffDetailService materialTakeOffDetailService, IMaterialTakeOffService materialTakeOffService)
         {
             this.Service = materialTakeOffDetailService;
+            this.materialTakeOffService = materialTakeOffService;
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult>  Index()
         {
-        
+            var projectId = Request.Cookies["projectIdcd"];
+            var deviceId = Request.Cookies["deviceIdcd"];
+            
+            var list =await materialTakeOffService.GetByColumnValuess("ProjectId,DeviceId", projectId + "," + deviceId);
+            if (list.Count > 0)
+            {
+                var model = list.FirstOrDefault();
+                if (model.Approver.Equals(UserId,StringComparison.OrdinalIgnoreCase))
+                {
+                    ViewData["isApprover"] = "true";
+                }
+            }
+
+
             return View();
         }
 
@@ -32,7 +46,14 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return View();
         }
 
+        public IActionResult ApprovePage(string mtoId)
+        {
+            ViewData["mtoId"] = mtoId;
+            return View();
+        }
 
+
+         
         /// <summary>
         /// 搜索数据
         /// </summary>
@@ -63,6 +84,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             materialTakeOffDetailSearchCondition.PartNumberENDesc = partNumberENDesc;
             materialTakeOffDetailSearchCondition.PartNumberRUDesc = partNumberRUDesc;
             materialTakeOffDetailSearchCondition.ProjectId = projectId;
+            materialTakeOffDetailSearchCondition.OrderBy = orderBy;
+            materialTakeOffDetailSearchCondition.OrderByType = orderByType;
             materialTakeOffDetailSearchCondition.Page = dataPage;
 
             var data = await Service.GetManagerList(materialTakeOffDetailSearchCondition);
