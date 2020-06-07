@@ -22,11 +22,14 @@ namespace MaterialCodeSelectionPlatform.Data
               JoinType.Inner,a.DeviceId==c.Id,
               JoinType.Left,a.CreateUserId==d.Id
             });
-            if (!string.IsNullOrEmpty(searchCondition.UserfId))
+            if (!string.IsNullOrEmpty(searchCondition.UserId))
             {
-                query = query.Where(a => a.CreateUserId== searchCondition.UserfId ||a.Approver == searchCondition.UserfId);
+                query = query.Where(a => a.CreateUserId== searchCondition.UserId ||a.Approver == searchCondition.UserId);
             }
-
+            if (searchCondition.Type == 0)
+            {
+                query = query.Where(a =>a.CheckStatus==1);
+            }
             if (!string.IsNullOrEmpty(searchCondition.MtoId))
             {
                 query = query.Where(a => a.Id == searchCondition.MtoId);
@@ -36,10 +39,24 @@ namespace MaterialCodeSelectionPlatform.Data
             //3. 已审批： approver!= null && status =approved
             //其中待审批的，按照lastModifyTIme 顺序，越早提出的越前边。   工作中或者已审批的按照LastModifyTime 倒序，越晚提出的越前边
             var total = 0;           
-            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
-                .OrderBy(a=>a.CheckStatus,OrderByType.Asc).OrderBy(a => a.Approver, OrderByType.Desc).OrderBy(a=>a.LastModifyTime,OrderByType.Asc).ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
+            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime,LastModifyTime=a.LastModifyTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
+                .ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
             searchCondition.Page.RecordCount = data.Value;
-            return data.Key;
+            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1).ToList();
+            var workingList = data.Key?.Where(a => string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1).ToList();
+            approverList = approverList?.OrderBy(c => c.LastModifyTime).ToList();
+            workingList = workingList?.OrderByDescending(c => c.LastModifyTime).ToList();
+            List<MaterialTakeOffDto> newList = new List<MaterialTakeOffDto>();
+            newList.AddRange(approverList);
+            newList.AddRange(workingList);
+            if (newList.Count > 0)
+            {
+                return newList;
+            }
+            else
+            {
+                return data.Key;
+            }
         }
         /// <summary>
         /// 获取物资编码属性
