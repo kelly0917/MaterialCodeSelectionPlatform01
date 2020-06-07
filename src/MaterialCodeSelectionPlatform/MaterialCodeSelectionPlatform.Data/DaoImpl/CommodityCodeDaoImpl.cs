@@ -12,6 +12,36 @@ namespace MaterialCodeSelectionPlatform.Data
     public partial class CommodityCodeDaoImpl
     {
         /// <summary>
+        /// 物资汇总表查询
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOffList(MtoSearchCondition searchCondition)
+        {
+            var query = Db.Queryable<MaterialTakeOff, Project, Device, User>((a, b, c,d) => new object[] {
+              JoinType.Inner,a.ProjectId==b.Id,
+              JoinType.Inner,a.DeviceId==c.Id,
+              JoinType.Left,a.CreateUserId==d.Id
+            });
+            if (!string.IsNullOrEmpty(searchCondition.UserfId))
+            {
+                query = query.Where(a => a.CreateUserId== searchCondition.UserfId ||a.Approver == searchCondition.UserfId);
+            }
+
+            if (!string.IsNullOrEmpty(searchCondition.MtoId))
+            {
+                query = query.Where(a => a.Id == searchCondition.MtoId);
+            }
+            //1. 工作中：（approver ==null ）  
+            //2. 待审批： approver !=null && status = working
+            //3. 已审批： approver!= null && status =approved
+            //其中待审批的，按照lastModifyTIme 顺序，越早提出的越前边。   工作中或者已审批的按照LastModifyTime 倒序，越晚提出的越前边
+            var total = 0;           
+            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
+                .OrderBy(a=>a.CheckStatus,OrderByType.Asc).OrderBy(a => a.Approver, OrderByType.Desc).OrderBy(a=>a.LastModifyTime,OrderByType.Asc).ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
+            searchCondition.Page.RecordCount = data.Value;
+            return data.Key;
+        }
+        /// <summary>
         /// 获取物资编码属性
         /// </summary>
         /// <param name="id"></param>
@@ -33,6 +63,7 @@ namespace MaterialCodeSelectionPlatform.Data
 
             return null;
         }
+
 
         /// <summary>
         /// 获取物资编码下的采购编码以及属性
@@ -391,8 +422,10 @@ namespace MaterialCodeSelectionPlatform.Data
         /// 保存:物料报表【物资汇总明细表】数量
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
+        /// <param name="approver">MaterialTakeOffDetail集合</param>
+        /// <param name="type">【0:保存】【1：发送审批人】</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver,int type)
         {
 
             if (detailList != null && detailList.Count > 0)
@@ -428,9 +461,11 @@ namespace MaterialCodeSelectionPlatform.Data
                     }
                 }
                 #region 更新 MaterialTakeOff
-                if (!string.IsNullOrEmpty(approver))
+                if (!string.IsNullOrEmpty(approver)&& type==1)
                 {
                     mto.Approver = approver;
+                    mto.CheckStatus = 1;
+                    mto.Version = mto.Version + 1;//当文件提交审批后，内部版次+1。并生成一次Json。也就是版次现在实际上是等于提交审批的次数。（生成报表等其他的行为都不会使版次+1。）
                 }
                 if (change)
                 {
@@ -729,13 +764,15 @@ namespace MaterialCodeSelectionPlatform.Data
                     //    ent.CheckStatus = 2;
                     //}
                     ent.LastModifyTime = DateTime.Now;
-                    ent.Version = ent.Version + 1;
+                   // ent.Version = ent.Version + 1;
                     ent.Revision = revision;
                     Db.Updateable(ent).ExecuteCommand();
                 }
             }
             return await Task.Run(() => { return resutList; });
         }
+       
+
         /// <summary>
         /// 删除 MaterialTakeOffDetail
         /// </summary>

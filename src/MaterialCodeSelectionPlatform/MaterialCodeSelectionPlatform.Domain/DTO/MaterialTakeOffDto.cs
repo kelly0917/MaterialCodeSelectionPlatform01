@@ -66,13 +66,20 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// </summary>
         public string CheckStatusName
         {
+        //1. 工作中：（approver ==null ）  
+        //2. 待审批： approver !=null && status = working
+        //3. 已审批： approver!= null && status =approved
             get
             {
-                if (CheckStatus == 1)
+                if (string.IsNullOrEmpty(Approver))
                 {
                     return "工作中";
                 }
-                else if (CheckStatus == 2)
+                else if (!string.IsNullOrEmpty(Approver)&&CheckStatus==1)
+                {
+                    return "待审批";
+                }
+                else if (!string.IsNullOrEmpty(Approver) && CheckStatus == 2)
                 {
                     return "已审批";
                 }

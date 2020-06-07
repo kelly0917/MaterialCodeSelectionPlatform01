@@ -149,32 +149,14 @@
     <table class="layui-table" lay-data="{height: 'full-200', cellMinWidth: 80}" id="tbCommodityCodeList" lay-filter="useruv"></table>
 </div>
 @*打开最近工作*@
+
+
 <div class="layui-form" action="" id="openShow" style="display:none">
-    <table class="layui-table" id="projectDevice">
-        <colgroup>
-            <col>
-            <col>
-            <col width="80">
-            <col width="80">
-            <col width="80">
-            <col width="100">
-            <col width="80">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>项目</th>
-                <th>装置</th>
-                <th>版本</th>
-                <th>版次</th>
-                <th>状态</th>
-                <th>时间</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody id="trody"></tbody>
-    </table>
-    <div class="layui-layer-title" style="cursor: move;">新建工作...</div>
-    <div class="layui-form" action="" id="searchForm2">
+    <table class="layui-hide" id="mtoTable" lay-filter="mtoTool"></table>
+
+
+    <div class="layui-layer-title" style="cursor: move;"> 新建工作...</div>
+    <div class="layui-form " action="" id="searchForm2" >
         <div class="layui-form-item search">
             <div class="layui-inline layui-float-left">
                 <label class="layui-form-label ">项目：</label>
@@ -207,21 +189,21 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">审批意见：</label>
                 <div class="layui-input-inline" style="width:400px;padding:10px">
-                    <textarea class="layui-textarea" id="txtApproveContent"  name="txtApproveContent" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                    <textarea class="layui-textarea" id="txtApproveContent" name="txtApproveContent" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">审批结果：</label>
                 <div class="layui-input-inline" style="width:300px;padding:10px;top:-10px">
-                    <input type="checkbox" id="txtcheckStatus" name="txtcheckStatus" lay-skin="primary"  style="width:50px">  <label class="layui-form-label">审批通过</label>                  
-                </div>               
-            </div>          
+                    <input type="checkbox" id="txtcheckStatus" name="txtcheckStatus" lay-skin="primary" style="width:50px">  <label class="layui-form-label">审批通过</label>
+                </div>
+            </div>
         </div>
     </div>
 
 
     <div class="layui-form-item">
-        <div class="layui-input-block layui-align-right"  style="right:20px">
+        <div class="layui-input-block layui-align-right" style="right:20px">
             <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="okApprove" onclick="okApprove()">确定</button>
             <button type="reset" class="layui-btn layui-bg-blue layui-btn-primary" onclick="closeApprove()">取消</button>
         </div>
@@ -352,20 +334,59 @@
             window.flush = function () {
                 loadData();
             }
-            openProject();//打开最近【项目】【装置】
+            //==============================================打开最近【项目】【装置】分页====================================
+          
+            window.loadMtoData = function () {
+                var mtoId = $("#txtMtoId").val();
+                table.render({
+                    elem: '#mtoTable'
+                    , url: "/CommodityCodeSelect/GetUserMaterialTakeOffList?mtoId=&pt=" + Math.random()
+                    , page: true //开启分页
+                    , limit: 5
+                   
+                    , limits: [5, 10, 20]
+                    , cols: [[
+                        { field: 'ProjectName', width: 150, title: '项目', sort: true }
+                        , { field: 'DeviceName', width: 150, title: '装置' }
+                        , { field: 'Revision', width: 80, title: '版本', sort: true }
+                        , { field: 'Version', width: 80, title: '版次' }
+                        , { field: 'CheckStatusName', width: 80,title: '状态' }
+                        , { field: 'CreateTime', width: 180, title: '时间', sort: true }                       
+                        ,{
+                            field: 'CheckStatus', width: 80,title: '操作', templet: function (ent) {
+                                debugger;
+                                if (ent.CheckStatusName == "待审批") {
+                                    return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
+                                }
+                               else if (ent.CheckStatusName == "已审批") {
+                                    return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                                }
+                                else {
+                                    return "";
+                                }
+                            }}
+                    ]]
+
+                });
+            }
+             
+
+          
 
 
 
-            window.openProjectAgain = function() {
+            window.openProjectAgain = function () {
+                loadMtoData();
                 winIndex= layer.open({
                     type: 1,
                     title: '打开最近工作...',
-                    area: ['800px', '600px'],
+                    area: ['850px', '480px'],
                     minHeight:'200px',
                     content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
 
                 });
             }
+            //==============================================打开最近【项目】【装置】分页 end ====================================
 
 
             var defaultValue = "@ViewData["projectId"]";
@@ -676,7 +697,7 @@
                 }
                 resetUserInput();
                 loadData();
-            } 
+            }
                  //==============打开【审批界面】==================
     window.openApprove = function() {
          var mtoId=  $("#txtMtoId").val();
@@ -701,7 +722,7 @@
                                 area: ['600px', '350px'],
                                 minHeight:'200px',
                                 content: $('#showApprove') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                              
+
                             });
                         }
                     }
@@ -721,14 +742,14 @@
         var approveContent = $("#txtApproveContent").val();
         var approveStatus = $("#txtcheckStatus").val();
         debugger;
-         var value = 1;       
-       //获取选中值    
+         var value = 1;
+       //获取选中值
         var statusCheckbox = $("input[name='txtcheckStatus']");
-       var bol=statusCheckbox.prop('checked'); 
+       var bol=statusCheckbox.prop('checked');
                 if (bol) {
                     value = 2;
-                }       
-        var mto = new Object();        
+                }
+        var mto = new Object();
         mto.Id = $("#txtMtoId").val();
         mto.Revision = $("#txtRevision").val();
         mto.ApproveContent = $("#txtApproveContent").val();
@@ -779,62 +800,6 @@
         currentProjectId = $("#selProject2").find("option:selected").val();
         currentDeviceId = $("#selDevice2").find("option:selected").val();
     }
-    //==============打开【最近项目，装置】==================
-
-            function openProject(){
-                $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?id=&pt=" + Math.random(), function (result) {
-                    if (!result.success) {
-                        layer.msg(result.message);
-                    }
-                    else {
-                        if (result.data.length >= 0) {
-                            var tr= "";
-                            for (var i = 0; i < result.data.length; i++) {
-                                var ent = result.data[i];
-
-                                tr += "<tr>";
-                                tr += "<td><a onclick=projectClick('"+ ent.id +"','"+ ent.projectId +"','"+ ent.deviceId + "')>"+ ent.projectName + "</a></td>";
-                                tr += "<td>" + ent.deviceName + "</td>";
-                                tr += "<td>" + (ent.revision == null ? "" : ent.revision) + "</td>";
-                                tr += "<td>"+ent.version+"</td>";
-                                tr += "<td>"+ent.checkStatusName+"</td>";
-                                tr += "<td>" + ent.timeString + "</td>";
-                                tr += "<td> <button class=\"layui-btn layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.id + "','" + ent.projectId + "','" + ent.deviceId + "','" + ent.revision + "','" + ent.approver + "')>选择</button></td>";
-                                tr += " </tr>";
-                            }
-                            $("#trody").append(tr);
-                            winIndex= layer.open({
-                                type: 1,
-                                title: '打开最近工作...',
-                                area: ['800px', '600px'],
-                                minHeight:'200px',
-                                content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-                                //,btn: ['按钮一', '按钮二', '按钮三']
-                                //,yes: function(index, layero){
-                                //  //按钮【按钮一】的回调
-                                //}
-                                //,btn2: function(index, layero){
-                                //  //按钮【按钮二】的回调
-
-                                //    return false; 开启该代码可禁止点击该按钮关闭
-                                //}
-                                //,btn3: function(index, layero){
-                                //  //按钮【按钮三】的回调
-
-                                //  //return false 开启该代码可禁止点击该按钮关闭
-                                //}
-                                //,cancel: function(){
-                                //  //右上角关闭回调
-
-                                //  //return false 开启该代码可禁止点击该按钮关闭
-                                //}
-                            });
-                        }
-                    }
-                });
-
-            }
-            //==============打开【最近项目，装置】end==================
 
     //==============确定【项目】【装置】end==================
     //==============选择【项目】【装置】==================
@@ -925,7 +890,7 @@
             type: 2,
             content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
             title: '选择采购码',
-            area: ["1000px;", "700px;"]//宽 高
+            area: ["1150px;", "700px;"]//宽 高
         });
     }
     //==============打开【查看料表】end==================
@@ -945,12 +910,16 @@
         }
     }
     //============显示隐藏属性end==============//
-    
+
 </script>
 
 
 
 <script type="text/javascript">
+    window.onload = function()
+    {
+        openProjectAgain();
+    }
     //页面加载
     $("#txtCode").autocomplete({
         source: function (request, response) {
@@ -1008,10 +977,10 @@
     }
 
     function openMaterial() {
-       
+
         var projectId = currentProjectId;
         var deviceId = currentDeviceId;
- 
+
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
         $.cookie('deviceIdcd', deviceId, { path: '/', secure: false });
         //$.cookie('projectId', projectId);

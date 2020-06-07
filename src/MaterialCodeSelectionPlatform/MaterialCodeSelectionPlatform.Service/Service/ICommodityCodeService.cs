@@ -8,6 +8,11 @@ namespace MaterialCodeSelectionPlatform.Service
     public partial interface ICommodityCodeService
     {
         /// <summary>
+        /// 物资汇总表查询
+        /// </summary>
+        /// <returns></returns>
+        Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOffList(MtoSearchCondition searchCondition);
+        /// <summary>
         /// 物资编码查询
         /// </summary>
         /// <param name="condition">查询条件</param>
@@ -45,7 +50,7 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver);
+        Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver, int type);
         /// <summary>
         /// 获取用户的【物资汇总表】
         /// </summary>
