@@ -249,7 +249,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 
             MtoSearchCondition searchCondition = new MtoSearchCondition();
             searchCondition.Page = dataPage;
-            searchCondition.UserfId = this.UserId;
+            searchCondition.UserId = this.UserId;
             searchCondition.MtoId = mtoId;
             var list = await Service.GetUserMaterialTakeOffList(searchCondition);
             return ConvertListResult(list, dataPage);
