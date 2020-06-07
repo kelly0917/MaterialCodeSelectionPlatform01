@@ -93,12 +93,12 @@
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openReoprt()">查看</button>
             </div>
-            <div id="divApprove" class="layui-inline layui-float-right">
+            @*<div id="divApprove" class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openApprove()">审批</button>
             </div>
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="openMaterial()">裕量</button>
-            </div>
+            </div>*@
 
             <div class="layui-inline layui-float-right">
                 <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnCopy" onclick="copy()">拷贝</button>
@@ -176,6 +176,7 @@
         </div>
     </div>
 </div>
+
 @*审批页面*@
 <div class="layui-form" action="" id="showApprove" style="display:none">
     <div class="layui-row">
@@ -697,6 +698,7 @@
                 }
                 resetUserInput();
                 loadData();
+
             }
                  //==============打开【审批界面】==================
     window.openApprove = function() {
@@ -728,11 +730,11 @@
                     }
                 });
     }
+
     window.closeApprove =function () {
          layer.close(winApproveIndex);
     }
-    //==============打开【审批界面】end==================
-             //==============审批意见=========//
+
 
             window.okApprove = function () {
       //  var isShow = $("#usteel-condition").is(":hidden");
@@ -767,6 +769,7 @@
     }
     //============审批意见 end==============//
 
+
         });
     var winIndex = 0;
     //==============确定【项目】【装置】==================
@@ -799,6 +802,8 @@
         $("#lbDevice").html($("#selDevice2").find("option:selected").text());
         currentProjectId = $("#selProject2").find("option:selected").val();
         currentDeviceId = $("#selDevice2").find("option:selected").val();
+        openMaterial();
+
     }
 
     //==============确定【项目】【装置】end==================
@@ -835,6 +840,7 @@
                 $("#lbDevice").html($("#selDevice").find("option:selected").text());
                 currentProjectId = $("#selProject").find("option:selected").val();
                 currentDeviceId = $("#selDevice").find("option:selected").val();
+                openMaterial();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
                     url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -984,6 +990,7 @@
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
         $.cookie('deviceIdcd', deviceId, { path: '/', secure: false });
         //$.cookie('projectId', projectId);
+        $.cookie('mtoId', $("#txtMtoId").val(), { path: '/', secure: false });
 
         parent.locationPage('管理料表');
     }

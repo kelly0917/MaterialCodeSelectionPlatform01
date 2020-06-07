@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewData["Title"] = "ApprovePage";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+@*审批页面*@
+<div class="layui-form" action="" id="showApprove" >
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-form-item">
+                <label class="layui-form-label">版本号：</label>
+                <div class="layui-input-inline" style="width:300px;padding:10px">
+                    <input type="text" id="txtRevision" name="txtRevision" required lay-verify="required" placeholder="版本号" autocomplete="off" class="layui-input" maxlength="20">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审批意见：</label>
+                <div class="layui-input-inline" style="width:400px;padding:10px">
+                    <textarea class="layui-textarea" id="txtApproveContent" name="txtApproveContent" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">审批结果：</label>
+                <div class="layui-input-inline" style="width:300px;padding:10px;top:-10px">
+                    <input type="checkbox" id="txtcheckStatus" name="txtcheckStatus" lay-skin="primary" style="width:50px">  <label class="layui-form-label">审批通过</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block layui-align-right" style="right:20px">
+            <button class="layui-btn layui-bg-blue" lay-submit="" lay-filter="okApprove" onclick="okApprove()">确定</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    layui.use(['form', 'upload', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+
+        //==============打开【审批界面】end==================
+        //==============审批意见=========//
+        window.okApprove = function () {
+            //  var isShow = $("#usteel-condition").is(":hidden");
+            var id=  '@ViewData["mtoId"]';
+            var revision = $("#txtRevision").val();
+            var approveContent = $("#txtApproveContent").val();
+            var approveStatus = $("#txtcheckStatus").val();
+  
+            var value = 1;       
+            //获取选中值    
+            var statusCheckbox = $("input[name='txtcheckStatus']");
+            var bol=statusCheckbox.prop('checked'); 
+            if (bol) {
+                value = 2;
+            }       
+            var mto = new Object();        
+            mto.Id =id;
+            mto.Revision = $("#txtRevision").val();
+            mto.ApproveContent = $("#txtApproveContent").val();
+            mto.CheckStatus=value;
+            $.post("/CommodityCodeSelect/ApproveMto", { mto: mto }, function (data) {
+                if (data.success) {//更新数量成功
+                    parent.closeiframe("审批成功！");
+                }
+                else {
+                    layer.msg(data.message);
+                }
+                form.render();
+            });
+        }
+        //============审批意见 end==============//
+
+
+
+    });
+
+</script>
