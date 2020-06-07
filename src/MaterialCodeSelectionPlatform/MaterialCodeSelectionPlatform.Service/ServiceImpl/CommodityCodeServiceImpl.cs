@@ -8,6 +8,14 @@ namespace MaterialCodeSelectionPlatform.Service
     public partial class CommodityCodeServiceImpl
     {
         /// <summary>
+        /// 物资汇总表查询
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOffList(MtoSearchCondition searchCondition)
+        {
+            return await _CommodityCodeDao.GetUserMaterialTakeOffList(searchCondition);
+        }
+        /// <summary>
         /// 获取物资编码属性
         /// </summary>
         /// <param name="id"></param>
@@ -71,9 +79,9 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver, int type)
         {
-            return await _CommodityCodeDao.UpdateReportMaterialTakeOffDetail(detailList,approver);
+            return await _CommodityCodeDao.UpdateReportMaterialTakeOffDetail(detailList,approver,  type);
         }
         /// <summary>
         /// 获取用户的【物资汇总表】

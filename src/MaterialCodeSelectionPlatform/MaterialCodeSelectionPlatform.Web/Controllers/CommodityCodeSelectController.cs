@@ -219,18 +219,40 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// 更新:物料报表【物资汇总明细表】数量
         /// </summary>
         /// <param name="detailList">MaterialTakeOffDetail集合</param>
+        ///  <param name="approver">审批人ID</param>
+        ///   <param name="type">【0:保存】【1：发送审批人】【2：生成物料报表】</param>
         /// <returns></returns>
-        public async Task<IActionResult> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList,string approver)
+        public async Task<IActionResult> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList,string approver,int type)
         {
             try
             {
-                var result = await Service.UpdateReportMaterialTakeOffDetail(detailList, approver);
+                var result = await Service.UpdateReportMaterialTakeOffDetail(detailList, approver,type);
                 return ConvertJsonResult("更新成功", true);
             }
             catch (Exception e)
             {
                 return ConvertFailResult(null, e.ToString());
             }
+        }
+        /// <summary>
+        /// 物资汇总表查询
+        /// </summary>
+        /// <param name="mtoId"></param>
+        /// <param name="page"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> GetUserMaterialTakeOffList(string mtoId,  int page, int limit)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = page;
+            dataPage.PageSize = limit;
+
+            MtoSearchCondition searchCondition = new MtoSearchCondition();
+            searchCondition.Page = dataPage;
+            searchCondition.UserfId = this.UserId;
+            searchCondition.MtoId = mtoId;
+            var list = await Service.GetUserMaterialTakeOffList(searchCondition);
+            return ConvertListResult(list, dataPage);
         }
         /// <summary>
         /// 获取用户的【物资汇总表】
@@ -248,6 +270,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 return ConvertJsonResult("失败", false, e.Message, e);
             }
         }
+      
         /// <summary>
         /// 获取用户的物料表
         /// </summary>
@@ -334,12 +357,13 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <summary>
         /// 导出物料表
         /// </summary>
+        /// <param name="type"> 【0:保存】【1：发送审批人】【2：生成物料报表】</param>
         /// <param name="revision">版本</param>
         /// <param name="projectid">项目ID</param>
         /// <param name="deviceid">装置ID</param>
         /// <param name="templatePath">模板路径</param>
         /// <returns></returns>
-        public async Task<IActionResult> DownloadExcelReport(string revision, string mtoId, string projectid, string deviceid, string templatePath)
+        public async Task<IActionResult> DownloadExcelReport(int type,string revision, string mtoId, string projectid, string deviceid, string templatePath)
         {
             try
             {
@@ -375,13 +399,65 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     var saveFilePath = $"{saveDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{version}_{UserName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
                     var jsonFilePath = $"{jsonDir}{excelName}_{projectCode}_{deviceCode}_{revision}_{version}_{UserName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
                     saveJson(jsonFilePath, result);
-                    var newPath = ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
-                    var file = DownLoad(newPath);
-                    return file;
+                    if (type == 2)
+                    {
+                        var newPath = ExcelHelper.WriteDataTable(result, templatePath, saveFilePath);
+                        var file = DownLoad(newPath);
+                        return file;
+                    }
+                    else
+                    {
+                        return Json(new DataResult() { Success = false, Message = "成功" });
+                    }
                 }
                 else
                 {
                     return DownLoad(templatePath); ;
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new DataResult() { Success = false, Message = e.Message });
+            }
+        }
+        public async Task<IActionResult> SendApprover(List<MaterialTakeOffDetail> detailList, string approver, int type, string revision, string mtoId, string projectid, string deviceid)
+        {
+            try
+            {
+                //C:\工作\GIT\src\MaterialCodeSelectionPlatform\MaterialCodeSelectionPlatform.Web\ReportTemplates\管道综合材料表\管道综合材料表_ENG.xlsx
+                //保存到ReportDownload\$ProjectCode$\$Device$ \ 目录下
+                //文件名希望调整为XXXXXXX_$Project$_$Device$_$Revision$_yyyyMMddhhmmss.xlsx。其中
+                //XXXX为原来的文件名
+                //$Project$为当前MTO的Project.Code
+                //$Device$为当前MTO的Device.Code
+                //$Revision$为手动输入的Revision字段
+                //yyyyMMddhhmmss为时间戳
+                await UpdateReportMaterialTakeOffDetail(detailList,approver,type);
+                   var result = await Service.GetUserMaterialTakeReport(mtoId, revision, this.UserId, projectid, deviceid, 1);
+                if (result != null && result.Count > 0)
+                {
+                    result.ForEach(a =>
+                    a.PartNumberReportDetailList = a.PartNumberReportDetailList?.OrderBy(c => c.T_Code).ThenBy(c => c.C_Code).ThenBy(c => c.P_Code).ToList()
+                    );
+
+                    var ent = result.FirstOrDefault();
+                    var projectCode = ent.ProjectCode;
+                    var deviceCode = ent.DeviceCode;
+                    var version = ent.Version;
+                    var jsonDir = Directory.GetCurrentDirectory() + "\\ReportJson\\" + projectCode + "\\" + deviceCode + "\\";
+                    if (!Directory.Exists(jsonDir))
+                    {
+                        Directory.CreateDirectory(jsonDir);
+                    }
+                    //项目、用户、装置、Version、Revision
+                    var jsonFilePath = $"{jsonDir}{projectCode}_{deviceCode}_{revision}_{version}_{UserName}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.json";
+                    saveJson(jsonFilePath, result);
+                    return ConvertJsonResult("成功", true);
+                }
+                else
+                {
+                    return ConvertFailResult(null,"找不到记录");
                 }
 
             }

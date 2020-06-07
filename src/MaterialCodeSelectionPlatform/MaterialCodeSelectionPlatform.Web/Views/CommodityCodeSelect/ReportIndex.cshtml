@@ -72,63 +72,89 @@
 
         </div>
         <div class=" layui-row layer-footer" style="position: fixed; bottom: 0;background-color:#F8F8F8;width:100%;height:50px">
-            <div class="layui-form-item search">
+            <div class="layui-inline  layui-form-item search">
                 <div class="layui-inline layui-float-left">
-                    <label class="layui-form-label" style="width:130px">材料统计表模板：</label>
-                    <div class="layui-input-inline" style="width:250px">
-                        <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
-                            @{
-                                var fileList = ViewData["fileList"] as NameValueCollection;
-                                if (fileList != null && fileList.Count > 0)
-                                {
-                                    foreach (string key in fileList.Keys)
-                                    {
-                                        <option value="@fileList[key].ToString()">@key</option>
-                                    }
-                                }
-                            }
-
-                        </select>
-                    </div>
-
-                    <label class="layui-form-label" style="width:80px">审批人：</label>
-                    <div class="layui-input-inline" style="width:100px">
-                        <select lay-search id="selApprover" name="selApprover" lay-filter="selApprover">
-                            @{                               
-                                var users = ViewData["users"] as List<MaterialCodeSelectionPlatform.Domain.Entities.User>;
-                                if (users != null && users.Count > 0)
-                                {
-                                    foreach (var user in users)
-                                    {
-                                        if (approver == user.Name)
-                                        {
-                                            <option value="@user.Id" selected>@user.Name</option>
+                    <table>
+                        <tr>
+                            <td>
+                                <label class="layui-form-label" style="width:50px">版本：</label>
+                            </td>
+                            <td>
+                                <div class="layui-input-inline" style="width:100px">
+                                    <input type="text" id="txtRevision" class="layui-input" style="width:100px" value="@reversion" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-inline layui-float-rigt" style="float:right">
+                                    <button type="button" id="btnSave" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px;">保存</button>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="layui-form-label" style="width:80px">审批人：</label>
+                            </td>
+                            <td>
+                                <div class="layui-input-inline" style="width:100px">
+                                    <select lay-search id="selApprover" name="selApprover" lay-filter="selApprover">
+                                        @{
+                                            var users = ViewData["users"] as List<MaterialCodeSelectionPlatform.Domain.Entities.User>;
+                                            if (users != null && users.Count > 0)
+                                            {
+                                                foreach (var user in users)
+                                                {
+                                                    if (approver == user.Name)
+                                                    {
+                                                        <option value="@user.Id" selected>@user.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@user.Id">@user.Name</option>
+                                                    }
+                                                }
+                                            }
                                         }
-                                        else
+
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-inline layui-float-rigt" style="float:right">
+                                    <button type="button" id="btnApprover" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px;">发送审批</button>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="layui-form-label" style="width:130px">材料统计表模板：</label>
+                            </td>
+                            <td>
+                                <div class="layui-input-inline" style="width:250px">
+                                    <select lay-search id="selTemplate" name="selTemplate" lay-filter="selTemplate">
+                                        @{
+                                            var fileList = ViewData["fileList"] as NameValueCollection;
+                                            if (fileList != null && fileList.Count > 0)
+                                            {
+                                                foreach (string key in fileList.Keys)
+                                                {
+                                                    <option value="@fileList[key].ToString()">@key</option>
+                                                }
+                                            }
+                                        }
+
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="layui-inline layui-float-rigt" style="float:right">
+                                    @{
+                                        if (Model != null && Model.Count() > 0)
                                         {
-                                            <option value="@user.Id">@user.Name</option>
+                                            <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px;">生成物料表</button>
                                         }
                                     }
-                                }
-                            }
-
-                        </select>
-                    </div>
-
-
-                    <label class="layui-form-label" style="width:50px">版本：</label>
-                    <div class="layui-input-inline" style="width:100px">
-                        <input type="text" id="txtRevision" class="layui-input" style="width:100px"  value="@reversion"/>
-                    </div>
-                    <div class="layui-inline layui-float-rigt" style="float:right">
-                        @{
-                            if (Model != null && Model.Count() > 0)
-                            {
-                                <button type="button" id="btnReport" class="layui-btn layui-btn-normal layui-float-right" style="margin:0px;">生成物料表</button>
-                            }
-                        }
-
-                    </div>
+                                </div>
+                            </td>
+                           
+                        </tr>
+                    </table>
+                  
                 </div>
 
             </div>
@@ -158,8 +184,35 @@
             var layer = layui.layer;
             var table = layui.table;
             var $ = layui.jquery;
+            //（点保存的时候，不保存审批人信息。点发送审批的时候，保存版以及审批人，并且生成Json）
+            $('#btnSave').on('click', function () {
+                pageSave(0);
+            });
+             $('#btnApprover').on('click', function () {
+                pageSave(1);
+            });
             $('#btnReport').on('click', function () {
-                var projectid = "@ViewData["projectid"]";
+               pageSave(2);
+          });
+          });
+    function deleteOnclick(id) {
+       layer.confirm('确定删除吗', function (index) {
+           $.ajax({
+               url: '/CommodityCodeSelect/DeleteById?id=' + id + "&" + Math.random(),
+               dataType: "json",
+               success: function (data) {
+                   if (data.Success) {
+                       layer.msg("删除成功");
+                       window.location.href=window.location.href;
+                   } else {
+                       layer.msg("删除失败", { icon: 5 });
+                   }
+               }
+           });
+       });
+    }
+     function pageSave(type) {
+        var projectid = "@ViewData["projectid"]";
                 var deviceid = "@ViewData["deviceid"]";
                 var mtoId = "@ViewData["mtoId"]";
                 var revision = $("#txtRevision").val().trim();
@@ -195,35 +248,42 @@
                     layer.msg("版本不能为空");
                     return;
                 }
-                 var approver = encodeURIComponent($("#selApprover").val());
-                $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list ,approver:approver}, function (data) {
+         var approver = encodeURIComponent($("#selApprover").val());
+        
+         if (type == 0) {
+              $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list ,approver:approver,type:type}, function (data) {
                     if (data.success) {//更新数量成功
-                        var templatePath = encodeURIComponent($("#selTemplate").val());
-                        //导出报表
-                        var url = "/CommodityCodeSelect/DownloadExcelReport?revision=" + revision + "&mtoId=" + mtoId + "&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath + "&pt=" + Math.random();
-                        window.location.href = url;
+                        layer.msg(data.message);
                     }
                     else {
                          layer.msg(data.message);
                     }
                 });
-
-            });
-          });
-    function deleteOnclick(id) {
-       layer.confirm('确定删除吗', function (index) {
-           $.ajax({
-               url: '/CommodityCodeSelect/DeleteById?id=' + id + "&" + Math.random(),
-               dataType: "json",
-               success: function (data) {
-                   if (data.Success) {
-                       layer.msg("删除成功");
-                       window.location.href=window.location.href;
-                   } else {
-                       layer.msg("删除失败", { icon: 5 });
-                   }
-               }
-           });
-       });
+         }
+         if (type == 1) {
+              //SendApprover(List<MaterialTakeOffDetail> detailList, string approver, int type, string revision, string mtoId, string projectid, string deviceid
+               $.post("/CommodityCodeSelect/SendApprover", { detailList: list ,approver:approver,type:type,revision:revision,mtoId:mtoId,projectid:projectid,deviceid:deviceid}, function (data) {
+                    if (data.success) {//
+                        layer.msg(data.message);
+                    }
+                    else {
+                         layer.msg(data.message);
+                    }
+                });
+         }
+         if (type == 2) {
+               $.post("/CommodityCodeSelect/UpdateReportMaterialTakeOffDetail", { detailList: list ,approver:approver,type:type}, function (data) {
+                    if (data.success) {//更新数量成功
+                        var templatePath = encodeURIComponent($("#selTemplate").val());
+                        //导出报表
+                        //type:【0:保存】【1：发送审批人】【2：生成物料报表】
+                         var url = "/CommodityCodeSelect/DownloadExcelReport?type=" + type + "&revision=" + revision + "&mtoId=" + mtoId + "&projectid=" + projectid + "&deviceid=" + deviceid + "&templatePath=" + templatePath + "&pt=" + Math.random();
+                         window.location.href = url;
+                    }
+                    else {
+                         layer.msg(data.message);
+                    }
+                });
+         }
     }
 </script>
