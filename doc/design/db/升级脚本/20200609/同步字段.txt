@@ -1,0 +1,2 @@
+ALTER TABLE dbo.ComponentType  ADD OrgId INT NULL;
+ALTER TABLE dbo.CommodityCode  ADD OrgId INT NULL;
