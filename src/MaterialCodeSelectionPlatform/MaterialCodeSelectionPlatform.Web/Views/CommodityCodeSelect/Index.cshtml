@@ -704,35 +704,7 @@
 
             }
                  //==============打开【审批界面】==================
-    window.openApprove = function() {
-         var mtoId=  $("#txtMtoId").val();
-        $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?mtoId=" + mtoId + "&pt=" + Math.random(), function (result) {
-            debugger;
-                    if (!result.success) {
-                        layer.msg(result.message);
-                    }
-                    else {
-                        if (result.data.length >= 0) {
-                            var ent = result.data[0];
-                             $("#txtRevision").val(ent.revision);
-                            $("#txtApproveContent").val(ent.approveContent);
-                            var bol = ent.checkStatus == 2 ? true : false;
-                            var statusCheckbox = $("input[name='txtcheckStatus']");
-                            $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
-                            statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
-                            form.render('checkbox');//记得每次操作后要渲染该元素
-                            winApproveIndex= layer.open({
-                                type: 1,
-                                title: '审批意见',
-                                area: ['600px', '350px'],
-                                minHeight:'200px',
-                                content: $('#showApprove') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-
-                            });
-                        }
-                    }
-                });
-    }
+   
 
     window.closeApprove =function () {
          layer.close(winApproveIndex);
