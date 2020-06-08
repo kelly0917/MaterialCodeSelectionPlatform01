@@ -601,6 +601,10 @@
                 $("#divTable").find(".layui-table-view").first().css("top",null);
             }
 
+
+            $(function() {
+                openProjectAgain();
+            })
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
@@ -796,11 +800,6 @@
             }
         });
 
-
-        $("#lbProject").html($("#selProject2").find("option:selected").text());
-        $("#lbDevice").html($("#selDevice2").find("option:selected").text());
-        currentProjectId = $("#selProject2").find("option:selected").val();
-        currentDeviceId = $("#selDevice2").find("option:selected").val();
         openMaterial();
 
     }
@@ -812,6 +811,8 @@
     function projectClick(id, projectId, deviceId, revision, approver) {
         globalProjectId = projectId;
         globalDeviceId = deviceId;
+        currentProjectId = projectId;
+        currentDeviceId = deviceId;
         if (approver != $("#txtUserId").val()) {
             $("#divApprove").hide();
         }
@@ -839,7 +840,8 @@
                 $("#lbDevice").html($("#selDevice").find("option:selected").text());
                 currentProjectId = $("#selProject").find("option:selected").val();
                 currentDeviceId = $("#selDevice").find("option:selected").val();
-
+                
+                debugger;
                // openMaterial();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
@@ -923,9 +925,7 @@
 
 
 <script type="text/javascript">   
-    window.onload = function () {
-        window.openProjectAgain();
-    }
+    
     //页面加载
     $("#txtCode").autocomplete({
         source: function (request, response) {
@@ -983,7 +983,8 @@
     }
 
     function openMaterial() {
-
+        
+        debugger;
         var projectId = currentProjectId;
         var deviceId = currentDeviceId;
 
