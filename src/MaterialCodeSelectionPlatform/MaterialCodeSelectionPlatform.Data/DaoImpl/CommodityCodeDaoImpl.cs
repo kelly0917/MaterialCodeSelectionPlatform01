@@ -26,10 +26,10 @@ namespace MaterialCodeSelectionPlatform.Data
             {
                 query = query.Where(a => a.CreateUserId== searchCondition.UserId ||a.Approver == searchCondition.UserId);
             }
-            if (searchCondition.Type == 0)
-            {
-                query = query.Where(a =>a.CheckStatus==1);
-            }
+            //if (searchCondition.Type == 0)
+            //{
+            //    query = query.Where(a =>a.CheckStatus==1);
+            //}
             if (!string.IsNullOrEmpty(searchCondition.MtoId))
             {
                 query = query.Where(a => a.Id == searchCondition.MtoId);
@@ -42,8 +42,8 @@ namespace MaterialCodeSelectionPlatform.Data
             var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime,LastModifyTime=a.LastModifyTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
                 .ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
             searchCondition.Page.RecordCount = data.Value;
-            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1).ToList();
-            var workingList = data.Key?.Where(a => string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1).ToList();
+            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) ).ToList();
+            var workingList = data.Key?.Where(a => string.IsNullOrEmpty(a.Approver) ).ToList();
             approverList = approverList?.OrderBy(c => c.LastModifyTime).ToList();
             workingList = workingList?.OrderByDescending(c => c.LastModifyTime).ToList();
             List<MaterialTakeOffDto> newList = new List<MaterialTakeOffDto>();
@@ -479,14 +479,17 @@ namespace MaterialCodeSelectionPlatform.Data
                 }
                 #region 更新 MaterialTakeOff
                 if (!string.IsNullOrEmpty(approver)&& type==1)
-                {
+                {//审批
                     mto.Approver = approver;
                     mto.CheckStatus = 1;
                     mto.Version = mto.Version + 1;//当文件提交审批后，内部版次+1。并生成一次Json。也就是版次现在实际上是等于提交审批的次数。（生成报表等其他的行为都不会使版次+1。）
                 }
-                if (change)
-                {
+                if (change && type == 0)
+                {//保存
                     mto.CheckStatus = 1;
+                    mto.Approver = "";
+                    mto.ApproveContent = "";
+                    mto.ApproveDate = null;
                 }
                 Db.Updateable<MaterialTakeOff>(mto).ExecuteCommand();
                 #endregion
