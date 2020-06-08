@@ -339,7 +339,6 @@
           
             window.loadMtoData = function () {
                 var mtoId = $("#txtMtoId").val();
-                var userId = $("#txtUserId").val();
                 table.render({
                     elem: '#mtoTable'
                     , url: "/CommodityCodeSelect/GetUserMaterialTakeOffList?mtoId=&pt=" + Math.random()
@@ -352,19 +351,15 @@
                         , { field: 'DeviceName', width: 150, title: '装置' }
                         , { field: 'Revision', width: 80, title: '版本', sort: true }
                         , { field: 'Version', width: 80, title: '版次' }
-                        , { field: 'CheckStatusName', width: 80, title: '状态' }                      
+                        , { field: 'CheckStatusName', width: 80,title: '状态' }
                         , { field: 'LastModifyTime', width: 180, title: '时间', sort: true }                       
                         ,{
-                            field: 'CheckStatus', width: 80, title: '操作', templet: function (ent) {     
-
-                                if (ent.CheckStatusName == "已审批" && ent.Approver==userId) {
-                                    return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
-                                }
-                                 if (ent.CheckStatusName == "待审批" && ent.Approver==userId) {
+                            field: 'CheckStatus', width: 80,title: '操作', templet: function (ent) {                              
+                                if (ent.CheckStatusName == "待审批") {
                                     return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
                                 }
-                               else if (ent.CheckStatusName == "工作中"&& ent.CreateUserId==userId) {
-                                    return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
+                               else if (ent.CheckStatusName == "工作中") {
+                                    return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
                                 }
                                 else {
                                     return "";
@@ -606,6 +601,10 @@
                 $("#divTable").find(".layui-table-view").first().css("top",null);
             }
 
+
+            $(function() {
+                openProjectAgain();
+            })
             //加载属性
             window.loadAttr = function (ctId) {
                 var label = '<label class="layui-form-label" >{属性}：</label>';
@@ -801,22 +800,19 @@
             }
         });
 
-
-        $("#lbProject").html($("#selProject2").find("option:selected").text());
-        $("#lbDevice").html($("#selDevice2").find("option:selected").text());
-        currentProjectId = $("#selProject2").find("option:selected").val();
-        currentDeviceId = $("#selDevice2").find("option:selected").val();
         openMaterial();
 
     }
 
     //==============确定【项目】【装置】end==================
     //==============选择【项目】【装置】==================
-  
+    var globalProjectId = null;//全局变量
+    var globalDeviceId = null;//全局变量
     function projectClick(id, projectId, deviceId, revision, approver) {
-        
+        globalProjectId = projectId;
+        globalDeviceId = deviceId;
         currentProjectId = projectId;
-        currentDeviceId = deviceId;      
+        currentDeviceId = deviceId;
         if (approver != $("#txtUserId").val()) {
             $("#divApprove").hide();
         }
@@ -844,8 +840,9 @@
                 $("#lbDevice").html($("#selDevice").find("option:selected").text());
                 currentProjectId = $("#selProject").find("option:selected").val();
                 currentDeviceId = $("#selDevice").find("option:selected").val();
-
-                openMaterial();
+                
+                debugger;
+               // openMaterial();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
                     url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -885,14 +882,14 @@
     //==============打开【拷贝】end==================
      //==============打开【查看料表】==================
     function openReoprt() {
-        
+        debugger;
         var projectId = $("#selProject").val();
         var deviceId = $("#selDevice").val();
         if (projectId == null) {
-            projectId = currentProjectId;
+            projectId = globalProjectId;
         }
          if (deviceId == null) {
-            deviceId = currentDeviceId;
+            deviceId = globalDeviceId;
         }
         var mtoId= $("#txtMtoId").val();
         if ((projectId == -1 || projectId == "" || projectId == null) || (deviceId == -1 || deviceId == "" || deviceId == null)) {
@@ -928,9 +925,7 @@
 
 
 <script type="text/javascript">   
-    window.onload = function () {
-        window.openProjectAgain();
-    }
+    
     //页面加载
     $("#txtCode").autocomplete({
         source: function (request, response) {
@@ -988,9 +983,11 @@
     }
 
     function openMaterial() {
-
+        
+        debugger;
         var projectId = currentProjectId;
-        var deviceId = currentDeviceId;    
+        var deviceId = currentDeviceId;
+
         $.cookie('projectIdcd', projectId, { path: '/', secure: false });
         $.cookie('deviceIdcd', deviceId, { path: '/', secure: false });
         //$.cookie('projectId', projectId);

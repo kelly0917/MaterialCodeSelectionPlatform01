@@ -30,7 +30,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             if (list.Count > 0)
             {
                 var model = list.FirstOrDefault();
-                if (model.Approver.Equals(UserId,StringComparison.OrdinalIgnoreCase))
+                if (model.Approver !=null && model.Approver.Equals(UserId,StringComparison.OrdinalIgnoreCase))
                 {
                     ViewData["isApprover"] = "true";
                 }
