@@ -312,17 +312,17 @@
                         });
 
                     } else if (obj.event === 'select') {
-                        if ($("#selProject").val() == null || $("#selProject").val() == "-1") {
+                        if (currentProjectId == null || currentProjectId == "-1") {
                             layer.msg('请选择项目！');
                             return;
                         }
-                        if ($("#selDevice").val() == null || $("#selDevice").val() == "-1") {
+                        if (currentDeviceId == null || currentDeviceId == "-1") {
                             layer.msg('请选择装置！');
                             return;
                         }
                         layer.open({
                             type: 2,
-                            content: '/CommodityCodeSelect/CommodityCodePartNumberList?commodityCodeId=' + data.Id + "&userId=" + userId + "&projectId=" + $("#selProject").val() + "&deviceId=" + $("#selDevice").val() + "&" + Math.random(),
+                            content: '/CommodityCodeSelect/CommodityCodePartNumberList?commodityCodeId=' + data.Id + "&userId=" + userId + "&projectId=" + currentProjectId + "&deviceId=" + currentDeviceId + "&" + Math.random(),
                             title: '选择采购码',
                             area: ["800px;", "500px;"]//宽 高
                         });
@@ -339,6 +339,7 @@
           
             window.loadMtoData = function () {
                 var mtoId = $("#txtMtoId").val();
+                var userId = $("#txtUserId").val();
                 table.render({
                     elem: '#mtoTable'
                     , url: "/CommodityCodeSelect/GetUserMaterialTakeOffList?mtoId=&pt=" + Math.random()
@@ -355,11 +356,14 @@
                         , { field: 'LastModifyTime', width: 180, title: '时间', sort: true }                       
                         ,{
                             field: 'CheckStatus', width: 80,title: '操作', templet: function (ent) {                              
-                                if (ent.CheckStatusName == "待审批") {
+                                if (ent.CheckStatusName == "已审批" && ent.Approver==userId) {
+                                    return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                                }
+                                if (ent.CheckStatusName == "待审批" && ent.Approver==userId) {
                                     return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
                                 }
-                               else if (ent.CheckStatusName == "工作中") {
-                                    return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                                else if (ent.CheckStatusName == "工作中"&& ent.CreateUserId==userId) {
+                                    return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
                                 }
                                 else {
                                     return "";
@@ -704,35 +708,7 @@
 
             }
                  //==============打开【审批界面】==================
-    window.openApprove = function() {
-         var mtoId=  $("#txtMtoId").val();
-        $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?mtoId=" + mtoId + "&pt=" + Math.random(), function (result) {
-            debugger;
-                    if (!result.success) {
-                        layer.msg(result.message);
-                    }
-                    else {
-                        if (result.data.length >= 0) {
-                            var ent = result.data[0];
-                             $("#txtRevision").val(ent.revision);
-                            $("#txtApproveContent").val(ent.approveContent);
-                            var bol = ent.checkStatus == 2 ? true : false;
-                            var statusCheckbox = $("input[name='txtcheckStatus']");
-                            $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
-                            statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
-                            form.render('checkbox');//记得每次操作后要渲染该元素
-                            winApproveIndex= layer.open({
-                                type: 1,
-                                title: '审批意见',
-                                area: ['600px', '350px'],
-                                minHeight:'200px',
-                                content: $('#showApprove') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
-
-                            });
-                        }
-                    }
-                });
-    }
+   
 
     window.closeApprove =function () {
          layer.close(winApproveIndex);
@@ -787,7 +763,12 @@
         $("#selDevice").val(deviceId);
         layui.form.render('select');
         layer.close(winIndex);
-
+        
+        //刷新编码库
+        $("#lbProject").html($("#selProject").find("option:selected").text());
+        $("#lbDevice").html($("#selDevice").find("option:selected").text());
+        currentProjectId = $("#selProject").find("option:selected").val();
+        currentDeviceId = $("#selDevice").find("option:selected").val();
         //编码库
         $("select[name=selCatalog]").dropdownlist({
             url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject2").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -841,11 +822,10 @@
                 currentProjectId = $("#selProject").find("option:selected").val();
                 currentDeviceId = $("#selDevice").find("option:selected").val();
                 
-                debugger;
-               // openMaterial();
+                openMaterial();
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
-                    url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + $("#selProject").val() + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
+                    url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + currentProjectId + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
                         var value = $("select[name=selCatalog]").val();
 
                         loadCompenetType(value);
@@ -854,7 +834,7 @@
                         clearTableData();
                     }
                 });
-                selectProjectDevice();
+               
             }
             layer.close(winIndex);
            
@@ -870,8 +850,8 @@
     //==============选择【项目】【装置】end==================
     //==============打开【拷贝】==================
     function copy() {
-         var projectId = $("#selProject").val();
-        var deviceId = $("#selDevice").val();
+         var projectId = currentProjectId;
+        var deviceId = currentDeviceId;
         layer.open({
             type: 2,
             content: '/CommodityCodeSelect/CopyIndex?projectId='+projectId+"&deviceId=" +deviceId+"&"+ Math.random(),
@@ -883,8 +863,8 @@
      //==============打开【查看料表】==================
     function openReoprt() {
         debugger;
-        var projectId = $("#selProject").val();
-        var deviceId = $("#selDevice").val();
+        var projectId = currentProjectId;
+        var deviceId = currentDeviceId;
         if (projectId == null) {
             projectId = globalProjectId;
         }

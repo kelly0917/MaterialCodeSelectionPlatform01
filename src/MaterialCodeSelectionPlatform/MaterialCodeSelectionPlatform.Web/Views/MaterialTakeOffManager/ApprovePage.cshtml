@@ -45,12 +45,12 @@
         var upload = layui.upload;
         var layer = layui.layer;
         var laydate = layui.laydate;
-
+        var id=  '@ViewData["mtoId"]';
         //==============打开【审批界面】end==================
         //==============审批意见=========//
         window.okApprove = function () {
             //  var isShow = $("#usteel-condition").is(":hidden");
-            var id=  '@ViewData["mtoId"]';
+           
             var revision = $("#txtRevision").val();
             var approveContent = $("#txtApproveContent").val();
             var approveStatus = $("#txtcheckStatus").val();
@@ -79,7 +79,25 @@
         }
         //============审批意见 end==============//
 
-
+        $.get("/CommodityCodeSelect/GetUserMaterialTakeOff?mtoId=" + id + "&pt=" + Math.random(), function (result) {
+            debugger;
+            if (!result.success) {
+                layer.msg(result.message);
+            }
+            else {
+                if (result.data.length >= 0) {
+                    var ent = result.data[0];
+                    $("#txtRevision").val(ent.revision);
+                    $("#txtApproveContent").val(ent.approveContent);
+                    var bol = ent.checkStatus == 2 ? true : false;
+                    var statusCheckbox = $("input[name='txtcheckStatus']");
+                    $('#txtcheckStatus').prop("checked", bol); //注意这里使用的是prop()
+                    statusCheckbox.prop('checked', bol); //切换下拉选项时，清空所有选中状态
+                    form.render('checkbox');//记得每次操作后要渲染该元素
+                
+                }
+            }
+        });
 
     });
 
