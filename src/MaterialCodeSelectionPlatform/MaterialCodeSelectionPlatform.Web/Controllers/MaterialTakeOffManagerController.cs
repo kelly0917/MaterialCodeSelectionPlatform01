@@ -21,22 +21,15 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         }
 
 
-        public async Task<IActionResult>  Index()
+        public async Task<IActionResult> Index()
         {
-            var projectId = Request.Cookies["projectIdcd"];
-            var deviceId = Request.Cookies["deviceIdcd"];
-            
-            var list =await materialTakeOffService.GetByColumnValuess("ProjectId,DeviceId", projectId + "," + deviceId);
-            if (list.Count > 0)
+            var mtoId = Request.Cookies["mtoId"];
+
+            var model = await materialTakeOffService.GetAsync(mtoId);
+            if (model!=null && model.Approver != null && model.Approver.Equals(UserId, StringComparison.OrdinalIgnoreCase))
             {
-                var model = list.FirstOrDefault();
-                if (model.Approver !=null && model.Approver.Equals(UserId,StringComparison.OrdinalIgnoreCase))
-                {
-                    ViewData["isApprover"] = "true";
-                }
+                ViewData["isApprover"] = "true";
             }
-
-
             return View();
         }
 
@@ -53,7 +46,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         }
 
 
-         
+
         /// <summary>
         /// 搜索数据
         /// </summary>
@@ -103,7 +96,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         public async Task<IActionResult> SaveData(string detailIds, double allowance, int roundUpDigit)
         {
             List<string> detailList =
-                detailIds.Split(new string[] {","}, StringSplitOptions.RemoveEmptyEntries).ToList();
+                detailIds.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             List<MaterialTakeOffDetail> datas = new List<MaterialTakeOffDetail>();
             foreach (var detailId in detailList)
