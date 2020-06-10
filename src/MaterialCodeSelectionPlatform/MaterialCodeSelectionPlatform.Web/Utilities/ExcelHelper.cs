@@ -614,8 +614,8 @@ namespace MaterialCodeSelectionPlatform.Web.Common
             {
                 startRow = startRow + 1;//移下一行填充数据             
                 IRow styleRow = sheet.GetRow(startRow);
-              
-               CopyRow(sheet, startRow+1, startRow, dataList.Count-1);              
+                var insertCount = dataList.Count == 1 ? 1 : dataList.Count - 1;
+               CopyRow(sheet, startRow+1, startRow, insertCount);              
 
                 foreach (var item in dataList)
                 {

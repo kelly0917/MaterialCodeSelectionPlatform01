@@ -42,10 +42,13 @@ namespace MaterialCodeSelectionPlatform.Data
             var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime,LastModifyTime=a.LastModifyTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
                 .ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
             searchCondition.Page.RecordCount = data.Value;
-            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) ).ToList();
-            var workingList = data.Key?.Where(a => string.IsNullOrEmpty(a.Approver) ).ToList();
-            approverList = approverList?.OrderBy(c => c.LastModifyTime).ToList();
+
+            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) && a.CheckStatus==1).ToList();//等待审批
+            var workingList = data.Key?.Where(a => (string.IsNullOrEmpty(a.Approver)&&a.CheckStatus==1)||a.CheckStatus==2 ).ToList();//已审核，工作中
+
+            approverList = approverList?.OrderBy(c => c.CheckStatus).ThenBy(c=>c.LastModifyTime).ToList();
             workingList = workingList?.OrderByDescending(c => c.LastModifyTime).ToList();
+
             List<MaterialTakeOffDto> newList = new List<MaterialTakeOffDto>();
             newList.AddRange(approverList);
             newList.AddRange(workingList);
@@ -762,7 +765,8 @@ namespace MaterialCodeSelectionPlatform.Data
                     c.ProjectCode = project?.Code;
                     c.DeviceName = device?.Name;
                     c.DeviceCode = device?.Code;
-                    c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
+                   // c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
+                    c.Revision = revision;
                     c.Version = mtoEntity.Version;
                     c.DeviceRemark = device?.Remark;
                     c.UserName = user?.Name;
@@ -931,8 +935,12 @@ namespace MaterialCodeSelectionPlatform.Data
        /// <param name="mto"></param>
        /// <returns></returns>
         public async Task<int> ApproveMto(MaterialTakeOff mto)
-        {           
-            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
+        {
+            if (mto.CheckStatus == 1)
+            {
+                mto.Approver = "";//审批不通过，清空
+            }
+            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision,Approver=mto.Approver, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
             return n;
         }
         private double? getAllowanceQty(int? roundUpDigit,double? allowance,double designQty)
