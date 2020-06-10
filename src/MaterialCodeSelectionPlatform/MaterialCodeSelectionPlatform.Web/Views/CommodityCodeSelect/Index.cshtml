@@ -355,12 +355,19 @@
                         , { field: 'CheckStatusName', width: 80,title: '状态' }
                         , { field: 'LastModifyTime', width: 180, title: '时间', sort: true }                       
                         ,{
-                            field: 'CheckStatus', width: 80,title: '操作', templet: function (ent) {                              
-                                if (ent.CheckStatusName == "已审批" && ent.Approver==userId) {
-                                    return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                            field: 'CheckStatus', width: 80, title: '操作', templet: function (ent) {
+                                
+                                if (ent.CheckStatusName == "已审批" && ent.CreateUserId == userId && ent.Approver == userId) {//【审批人】是我，【创建人】是我
+                                    return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
                                 }
-                                if (ent.CheckStatusName == "待审批" && ent.Approver==userId) {
+                               else  if (ent.CheckStatusName == "已审批" && ent.CreateUserId == userId&& ent.Approver!=userId) {//【审批人】不是我，【创建人】是我
+                                    return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                                }  
+                                else if (ent.CheckStatusName == "待审批" && ent.Approver == userId&& ent.CreateUserId == userId ) {//【审批人】是我，【创建人】是我
                                     return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
+                                }
+                                 else if (ent.CheckStatusName == "待审批" && ent.Approver != userId&& ent.CreateUserId == userId ) {//【审批人】不是我，【创建人】是我
+                                    return "<button class=\"layui-btn layui-btn-normal layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
                                 }
                                 else if (ent.CheckStatusName == "工作中"&& ent.CreateUserId==userId) {
                                     return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
