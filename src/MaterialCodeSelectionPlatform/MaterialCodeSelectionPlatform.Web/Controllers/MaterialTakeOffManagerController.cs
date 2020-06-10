@@ -28,7 +28,16 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var model = await materialTakeOffService.GetAsync(mtoId);
             if (model!=null && model.Approver != null && model.Approver.Equals(UserId, StringComparison.OrdinalIgnoreCase))
             {
-                ViewData["isApprover"] = "true";
+                if (model.CheckStatus.HasValue && model.CheckStatus.Value == 2)
+                {
+
+                }
+                else
+                {
+                    ViewData["isApprover"] = "true";
+                }
+
+
             }
             return View();
         }
