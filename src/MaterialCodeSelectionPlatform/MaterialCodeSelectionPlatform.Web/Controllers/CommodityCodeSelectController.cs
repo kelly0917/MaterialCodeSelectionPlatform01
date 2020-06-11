@@ -278,7 +278,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <param name="projectid">项目Id</param>
         /// <param name="deviceid">装置Id</param>
         /// <returns></returns>
-        public async Task<ActionResult> ReportIndex(string mtoId, string projectid, string deviceid)
+        public async Task<ActionResult> ReportIndex(string mtoId, string projectid, string deviceid,string revision)
         {
             try
             {
@@ -289,6 +289,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                 ViewData["fileList"] = fileList;
                 ViewData["projectid"] = projectid;
                 ViewData["deviceid"] = deviceid;
+                ViewData["revision"] = revision;
                 UserSearchCondition userSearchCondition = new UserSearchCondition();
                 DataPage dataPage = new DataPage();
                 dataPage.PageNo = 1;

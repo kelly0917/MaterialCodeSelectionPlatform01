@@ -12,7 +12,7 @@ namespace MaterialCodeSelectionPlatform.Data
     public partial class CommodityCodeDaoImpl
     {
         /// <summary>
-        /// 物资汇总表查询
+        /// 物资汇总表查询(最近工作)
         /// </summary>
         /// <returns></returns>
         public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOffList(MtoSearchCondition searchCondition)
@@ -24,7 +24,7 @@ namespace MaterialCodeSelectionPlatform.Data
             });
             if (!string.IsNullOrEmpty(searchCondition.UserId))
             {
-                query = query.Where(a => a.CreateUserId== searchCondition.UserId ||a.Approver == searchCondition.UserId);
+                query = query.Where(a => a.CreateUserId== searchCondition.UserId ||(a.Approver == searchCondition.UserId &&a.CheckStatus==1));
             }
             //if (searchCondition.Type == 0)
             //{
@@ -939,6 +939,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (mto.CheckStatus == 1)
             {
                 mto.Approver = "";//审批不通过，清空
+                mto.ApproveContent = "";//审批不通过，清空               
             }
             var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision,Approver=mto.Approver, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
             return n;
