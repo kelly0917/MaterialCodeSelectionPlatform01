@@ -360,16 +360,19 @@
                                 if (ent.CheckStatusName == "已审批" && ent.CreateUserId == userId && ent.Approver == userId) {//【审批人】是我，【创建人】是我
                                     return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
                                 }
-                               else  if (ent.CheckStatusName == "已审批" && ent.CreateUserId == userId&& ent.Approver!=userId) {//【审批人】不是我，【创建人】是我
+                                else if (ent.CheckStatusName == "已审批" && ent.CreateUserId == userId && ent.Approver != userId) {//【审批人】不是我，【创建人】是我
                                     return "<button class=\"layui-btn layui-btn-sm layui-btn-normal permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
-                                }  
-                                else if (ent.CheckStatusName == "待审批" && ent.Approver == userId&& ent.CreateUserId == userId ) {//【审批人】是我，【创建人】是我
+                                }
+                                else if (ent.CheckStatusName == "待审批" && ent.Approver == userId && ent.CreateUserId == userId) {//【审批人】是我，【创建人】是我
                                     return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
                                 }
-                                 else if (ent.CheckStatusName == "待审批" && ent.Approver != userId&& ent.CreateUserId == userId ) {//【审批人】不是我，【创建人】是我
-                                    return "<button class=\"layui-btn layui-btn-normal layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>查看</button>";
+                                else if (ent.CheckStatusName == "待审批" && ent.Approver == userId && ent.CreateUserId != userId) {//【审批人】是我，【创建人】不是我
+                                    return "<button class=\"layui-btn layui-btn-danger layui-btn-sm permission\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>审批</button>";
                                 }
-                                else if (ent.CheckStatusName == "工作中"&& ent.CreateUserId==userId) {
+                                else if (ent.CheckStatusName == "待审批" && ent.Approver != userId && ent.CreateUserId == userId) {//【审批人】不是我，【创建人】是我
+                                    return "";
+                                }
+                                else if (ent.CheckStatusName == "工作中" && ent.CreateUserId == userId) {
                                     return "<button class=\"layui-btn  layui-btn-sm layui-btn-normal\" lay-filter=\"search\" id=\"btnNew\" onclick=projectClick('" + ent.Id + "','" + ent.ProjectId + "','" + ent.DeviceId + "','" + ent.Revision + "','" + ent.Approver + "')>编辑</button>";
                                 }
                                 else {
@@ -878,6 +881,7 @@
          if (deviceId == null) {
             deviceId = globalDeviceId;
         }
+         var revision= $("#txtRevision").val();
         var mtoId= $("#txtMtoId").val();
         if ((projectId == -1 || projectId == "" || projectId == null) || (deviceId == -1 || deviceId == "" || deviceId == null)) {
             layer.msg("【项目】和【装置】必须选择");
@@ -885,7 +889,7 @@
         }
         layer.open({
             type: 2,
-            content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&" + Math.random(),
+            content: '/CommodityCodeSelect/ReportIndex?mtoId='+mtoId+'&projectId=' + projectId + "&deviceId=" + deviceId + "&revision=" + revision + "&" + Math.random(),
             title: '选择采购码',
             area: ["1150px;", "700px;"]//宽 高
         });
