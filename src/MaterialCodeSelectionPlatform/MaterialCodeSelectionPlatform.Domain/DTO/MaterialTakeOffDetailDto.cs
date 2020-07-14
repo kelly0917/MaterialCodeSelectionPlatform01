@@ -23,5 +23,17 @@
         public float? RoundUp { get; set; }
 
         public string PartNumber { get; set; }
+        /// <summary>
+        /// 总量
+        /// </summary>
+        public decimal? AllQty
+        {
+            get
+            {
+                var allqty = DesignQty + (RoundUp != null ? RoundUp : 0);
+                return decimal.Round(decimal.Parse(allqty.ToString()), 2);
+
+            }
+        }
     }
 }

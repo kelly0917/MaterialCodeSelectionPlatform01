@@ -111,11 +111,24 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// </summary>
         public string ComponentTypeName { get; set; }
         /// <summary>
-        /// 余量值
+        /// 裕量
         /// </summary>
         [SugarColumn(IsIgnore =true)]
         public double? AllowanceQty { get; set; }
+       
+        /// <summary>
+        /// 总量
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public decimal? AllQty
+        {
+            get
+            {
+                var allqty = DesignQty + (AllowanceQty != null ? AllowanceQty : 0);
+                return decimal.Round(decimal.Parse(allqty.ToString()), 2);
 
+            }
+        }
     }
     /// <summary>
     /// 采购码DTO
