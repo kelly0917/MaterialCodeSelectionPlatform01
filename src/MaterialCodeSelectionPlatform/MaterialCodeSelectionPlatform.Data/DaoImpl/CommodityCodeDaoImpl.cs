@@ -415,6 +415,8 @@ namespace MaterialCodeSelectionPlatform.Data
                     {
                         mto.Version = mto.Version + 1;
                         mto.CheckStatus = 1;
+                        mto.ApproveContent = null;
+                        mto.Approver = null;
                         Db.Updateable(mto).ExecuteCommand();
                         var ent = Db.Deleteable<MaterialTakeOffDetail>().Where(c => c.MaterialTakeOffId == mto.Id && c.CommodityCodeId == commodityCodeId).ExecuteCommand();//暂时不留历史记录
                                                                                                                                                                             //新增明细（保持最新）

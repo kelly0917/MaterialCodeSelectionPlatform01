@@ -118,7 +118,7 @@
                             </li>
                         }
 
-                        <li data-name="get" class="layui-nav-item">
+                        <li data-name="get" class="layui-nav-item" id="liCC">
                             <a href="javascript:;" lay-href="/CommodityCodeSelect/Index" lay-tips="物资选码" lay-direction="2">
                                 <i class="layui-icon layui-icon-auz"></i>
                                 <cite>物资选码</cite>
@@ -127,7 +127,7 @@
 
                         <li data-name="get" class="layui-nav-item" style="display: none;">
                             <a href="javascript:;" lay-href="/MaterialTakeOffManager/Index" lay-tips="管理料表" lay-direction="2">
-                                <i class="layui-icon layui-icon-auz"></i>
+                                <i class="layui-icon layui-icon-auz" id="iLb"></i>
                                 <cite>管理料表</cite>
                             </a>
                         </li>
@@ -243,7 +243,11 @@
 
             window.closeFirstTab = function () {
                 $("#liFirst").hide();
+                $("#liCC").hide();
+                $("li[lay-id='/MaterialTakeOffManager/Index']").find('i').hide();
             }
+
+           
 
             window.changePwd = function () {
                 layer.open({
