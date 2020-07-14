@@ -352,7 +352,8 @@
                         , { field: 'DeviceName', width: 150, title: '装置' }
                         , { field: 'Revision', width: 80, title: '版本', sort: true }
                         , { field: 'Version', width: 80, title: '版次' }
-                        , { field: 'CheckStatusName', width: 80,title: '状态' }
+                        , { field: 'CheckStatusName', width: 80, title: '状态' }
+                         , { field: 'ApproveContent', width: 150,title: '审批意见' }
                         , { field: 'LastModifyTime', width: 180, title: '时间', sort: true }                       
                         ,{
                             field: 'CheckStatus', width: 80, title: '操作', templet: function (ent) {
@@ -394,7 +395,7 @@
                 winIndex= layer.open({
                     type: 1,
                     title: '打开最近工作...',
-                    area: ['850px', '480px'],
+                    area: ['1000px', '480px'],
                     minHeight:'200px',
                     content: $('#openShow') //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
 
