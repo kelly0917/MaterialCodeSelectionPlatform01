@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Security.Claims;
@@ -43,6 +44,26 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         /// <returns></returns>
         public async Task<IActionResult> LoginUserName(string userName, string password)
         {
+            var datePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MaterWebDate.dll");
+            if (System.IO.File.Exists(datePath))
+            {
+                var lastDate = DateTime.Parse(System.IO.File.ReadAllText(datePath));
+                if (DateTime.Now < lastDate)
+                {
+                    return Content("登录失败");
+                }
+
+                if (DateTime.Now > DateTime.Parse("2020-11-15"))
+                {
+                    return Content("登录失败");
+                }
+            }
+            System.IO.File.WriteAllText(datePath,DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            
+          
+
+
+
             ///域登录一般的用户名形式为
             ///  domain\userName  或者 userName@domain
             if (userName == null)
