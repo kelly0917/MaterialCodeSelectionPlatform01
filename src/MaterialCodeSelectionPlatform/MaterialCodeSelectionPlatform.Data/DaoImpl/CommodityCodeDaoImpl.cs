@@ -941,7 +941,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (mto.CheckStatus == 1)
             {
                 mto.Approver = "";//审批不通过，清空
-                mto.ApproveContent = "";//审批不通过，清空               
+             //   mto.ApproveContent = "";//审批不通过，清空               
             }
             var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision,Approver=mto.Approver, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
             return n;
