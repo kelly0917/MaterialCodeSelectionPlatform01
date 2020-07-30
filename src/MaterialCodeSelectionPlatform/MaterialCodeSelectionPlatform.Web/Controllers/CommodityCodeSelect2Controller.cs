@@ -56,7 +56,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             desc = desc.Replace(@"\\\", "PRPRPR").Replace("\\", "").Replace("PRPRPR", @"\\\");
             var result = await componentTypeService.GetByCommodityCodeDesc(catalogId, desc);
 
-            result = result.OrderByDescending(c => c.Count).ToList();
+            result = result.OrderByDescending(c => c.ComponentTypeCode).ToList();
             log.Debug($"完成搜索 {desc} 的数据,编码库：{catalogId},耗时：{watch.ElapsedMilliseconds}毫秒");
             return ConvertSuccessResult(result);
         }
