@@ -1,4 +1,5 @@
 ﻿using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.DTO;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -90,5 +91,11 @@ namespace MaterialCodeSelectionPlatform.Service
         /// <param name="mto"></param>
         /// <returns></returns>
          Task<int> ApproveMto(MaterialTakeOff mto);
+        /// <summary>
+        /// CSV文件导入
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <returns></returns>
+        Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv);
     }
 }

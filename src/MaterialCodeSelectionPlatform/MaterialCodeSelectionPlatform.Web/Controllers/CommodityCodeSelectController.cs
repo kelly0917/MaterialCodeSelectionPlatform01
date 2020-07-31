@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Web;
 using MaterialCodeSelectionPlatform.Domain.DTO;
 using Newtonsoft.Json;
+using System.Collections;
+using MaterialCodeSelectionPlatform.Utilities;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
@@ -543,6 +545,104 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             catch (Exception e)
             {
                 return ConvertFailResult(null, e.ToString());
+            }
+        }
+        /// <summary>
+        /// 导入数据
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> ImportData()
+        {
+            ArrayList arr = new ArrayList();
+            MaterialTakeOffDetailCSV csv = new MaterialTakeOffDetailCSV();
+            try
+            {
+                csv.UserId = this.UserId;
+                var files = Request.Form.Files;
+                string msg = String.Empty;
+                if (files.Count == 1)
+                {
+                    var file = files[0];
+                    var filePath = SaveFile(file);
+                    var errorPath = string.Empty;
+                    var errorMsg = string.Empty;
+                    string strline;
+
+                    StreamReader mysr = new StreamReader(filePath, System.Text.Encoding.Default);
+                 
+                    while ((strline = mysr.ReadLine()) != null)
+                    {
+                        #region 例子
+                        //$B: SSF: PDMS - I:12.60:18 - Jul - 2019 21.13.04:PI: lijunlong: 1100101 - D273.0X6.35 - PN16 - FW.1 *
+                        //$L: 110:1100101 - D273.0X6.35 - PN16 - FW:1.6A1: 1100101 - D273.0X6.35 - PN16 - FW:::::::*
+                        //$S: 01:SJ04T01SP006 - A01#EFF-DW-0101:0::::*
+                        //$C: 250:::P0::PPPSP000731::1.112:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::P0::PPPSP000731::0.100:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::P0::PPPSP000731::0.292:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::P0::PPPSP000731::0.195:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:125::RE::PBREE002286::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:15::WON::POFNO003132::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::E90::PBEAA000620::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C::::::PCOM - 225::1:3:::N: N: N: HG - PN16::::Y:Y:::110 *
+                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                        //$C: 250:::VT0::PVGAA000154::1:3:::N: N: N:::::Y: Y:::110 *
+
+                        #endregion
+                     
+                        var strs = strline.Split(':');
+                        var str0 = strs[0];//标识【$B：项目 】【$L：设备】【$C：PartNumber】
+                        var str1 = strs[1];//项目或设备
+
+                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$b")
+                        {
+                            csv.ProjectCode = str1;
+                        }
+                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$l")
+                        {
+                            csv.DeviceCode = str1;
+                        }
+                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$c")
+                        {
+                            var str6 = strs[6];//PartNumber
+                            var str8 = strs[8];//descignQty
+                            if (!string.IsNullOrEmpty(str6) && !string.IsNullOrEmpty(str8))
+                            {
+                                var qty = Convert.ToDouble(str8);
+                                if (!csv.PartNumberDesignQty.ContainsKey(str6))
+                                {
+                                    csv.PartNumberDesignQty.Add(str6, qty);
+                                }
+                                else
+                                {
+                                    var count = csv.PartNumberDesignQty[str6];
+                                    csv.PartNumberDesignQty[str6] = count + qty;
+                                }
+                            }
+                        }
+                    }
+                    var result = await Service.ImportData(csv);
+                    return await Task.Run(() => { return ConvertSuccessResult(result,"成功"); });
+                }
+                else
+                {
+                    return ConvertFailResultStr(null, "请选择文件");
+                }
+            }
+            catch (Exception e)
+            {
+                return ConvertJsonResult("失败", false, arr, e);
             }
         }
     }

@@ -74,10 +74,16 @@
         <div class="layui-inline">
             <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">搜索</button>
         </div>
+
         <div class="layui-inline layui-float-right" id="divAdd">
             <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">设置裕量</button>
         </div>
-        <div id="divreload" class="layui-inline layui-float-right" >
+        <div class="layui-inline layui-float-right">
+            <button type="button" class="layui-btn permission" action="268435456" id="btnUpload">
+                <i class="layui-icon">&#xe67c;</i>导入数据
+            </button>
+        </div>
+        <div id="divreload" class="layui-inline layui-float-right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" onclick="parent.location.reload()">刷新</button>
         </div>
         <div id="divApprove" class="layui-inline layui-float-right">
@@ -98,9 +104,38 @@
             var form = layui.form;
             var layer = layui.layer;
             var table = layui.table;
+            var upload = layui.upload; 
             var $ = layui.jquery;
 
             form.render();
+             //执行实例
+            var uploadInst = upload.render({
+                elem: '#btnUpload' //绑定元素
+                , url: '/CommodityCodeSelect/ImportData' //上传接口
+                , accept: 'file' //允许上传的文件类型
+                , done: function (res) {
+                    debugger;
+                    //上传完毕回调
+                     layer.msg(res.Message);
+                    if (res.Success) {
+                        layer.msg(res.Message);
+                        flush();
+                    } else {
+                        if (res.Message == "haveError") {
+                            layer.msg("导入完成，部分出错！");
+                            window.location.href = "/CommodityCodeSelect/DownloadErrorFile";
+                            flush();
+                        } else {
+                            layer.msg(res.Message);
+                        }
+
+                       
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({

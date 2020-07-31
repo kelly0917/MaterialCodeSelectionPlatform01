@@ -153,5 +153,8 @@ namespace MaterialCodeSelectionPlatform.Domain
         /// 采购码数量
         /// </summary>
         public double DesignQty { get; set; }
+
+        public string CatalogId { get; set; }
+       
     }
 }
