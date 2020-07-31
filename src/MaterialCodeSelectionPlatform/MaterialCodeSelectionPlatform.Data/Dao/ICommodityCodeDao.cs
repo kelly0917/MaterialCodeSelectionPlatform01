@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using MaterialCodeSelectionPlatform.Domain;
-
+using MaterialCodeSelectionPlatform.Domain.DTO;
 
 namespace MaterialCodeSelectionPlatform.Data
 {
@@ -96,5 +96,11 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="mto"></param>
         /// <returns></returns>
         Task<int> ApproveMto(MaterialTakeOff mto);
+        /// <summary>
+        /// CSV文件导入
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <returns></returns>
+        Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv);
     }
 }

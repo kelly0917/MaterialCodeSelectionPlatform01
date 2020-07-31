@@ -1,4 +1,5 @@
 ﻿using MaterialCodeSelectionPlatform.Domain;
+using MaterialCodeSelectionPlatform.Domain.DTO;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.Utilities;
 using SqlSugar;
@@ -967,6 +968,106 @@ namespace MaterialCodeSelectionPlatform.Data
         
            
             return roundUp;
+        }
+        /// <summary>
+        /// CSV文件导入
+        /// </summary>
+        /// <param name="csv"></param>
+        /// <returns></returns>
+        public async Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv)
+        {
+            /*
+             
+            select b.CatalogId from Project a 
+            inner join ProjectCatalogMap b on b.ProjectId=a.Id
+            where a.status=0 and b.Status=0 and a.code='塔里木'
+
+            =======================
+
+            select * from ProjectCatalogMap where Status=0 and CatalogId in(select c.CatalogId from PartNumber a 
+            inner join CommodityCode b on b.Id=a.CommodityCodeId
+            inner join ComponentType c on c.Id=a.ComponentTypeId
+            inner join Catalog d on d.Id=c.CatalogId
+            where a.Status=0 and b.Status=0 and c.Status=0 and d.Status=0 and a.code='PFT000005'
+            )
+             */
+            var sql = $@" select b.* from Project a 
+            inner join ProjectCatalogMap b on b.ProjectId=a.Id
+            where a.status=0 and b.Status=0 and a.code=@code";//项目
+
+            var mapList = Db.Ado.SqlQuery<ProjectCatalogMap>(sql, new { code = csv.ProjectCode });
+            if (mapList != null && mapList.Count > 0)
+            {
+                csv.LogMsg += $"【1】找到项目{string.Join(',',mapList.Select(c=>c.ProjectId))}";
+                if (csv.PartNumberDesignQty != null && csv.PartNumberDesignQty.Count > 0)
+                {
+                    csv.LogMsg += $"【2】PartNumberDesignQty 数量：{csv.PartNumberDesignQty.Count}";
+                    var device =await Db.Queryable<Device>().FirstAsync(c => c.Status == 0 && c.Code == csv.DeviceCode);//设备
+                    var projectId = mapList.FirstOrDefault().ProjectId;
+                    var deviceId = device.Id;
+                    // 物资汇总表
+                    var mto = await Db.Queryable<MaterialTakeOff>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId&&c.DeviceId==deviceId&&c.CreateUserId==csv.UserId);
+                    if (mto == null)
+                    {
+                        csv.LogMsg += $"【3】找不到 MaterialTakeOff：ProjectId={projectId}，deviceId={deviceId}";
+                        mto = addMaterialTakeOff(projectId, deviceId, csv.UserId, 1, 0);
+                    }
+                    List<MaterialTakeOffDetail> listDetail = new List<MaterialTakeOffDetail>();
+                    foreach (var part in csv.PartNumberDesignQty)
+                    {
+                        var partNumberCode = part.Key;
+                        var designQty = part.Value;
+                        sql = $@"select c.CatalogId,a.* from PartNumber a 
+                                        inner join CommodityCode b on b.Id=a.CommodityCodeId
+                                        inner join ComponentType c on c.Id=a.ComponentTypeId
+                                        inner join Catalog d on d.Id=c.CatalogId
+                                        where a.Status=0 and b.Status=0 and c.Status=0 and d.Status=0 and a.code=@partNumberCode";
+                        var typeList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { partNumberCode = partNumberCode });
+                        if (typeList != null && typeList.Count > 0)
+                        {
+                            csv.LogMsg += $"【4】找到 PartNumberDto 数量：{typeList.Count}，partNumberCode={partNumberCode}";
+                            foreach (var type in typeList)
+                            {
+                                var ent = mapList.FirstOrDefault(c => c.CatalogId == type.CatalogId);
+                                if (ent != null)
+                                {
+                                    var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId && c.DeviceId == deviceId&&c.CommodityCodeId== type.CommodityCodeId && c.CreateUserId == csv.UserId);
+                                    if (detail == null)
+                                    {
+                                        csv.LogMsg += $"【5】找不到 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                        #region 物资汇总明细表
+                                        detail = new MaterialTakeOffDetail();
+                                        detail.Id = Guid.NewGuid().ToString();
+                                        detail.MaterialTakeOffId = mto.Id;
+                                        detail.CommodityCodeId = type.CommodityCodeId;
+                                        detail.PartNumberId = type.Id;//采购码Id                                                                
+                                        detail.ProjectId = projectId;//所属项目
+                                        detail.DeviceId = deviceId;//所属装置
+                                        detail.DesignQty = designQty;//数量
+                                        detail.Flag = 0;
+                                        detail.Status = 0;
+                                        detail.CreateUserId = csv.UserId;
+                                        detail.CreateTime = DateTime.Now;
+                                        detail.LastModifyUserId = csv.UserId;
+                                        detail.LastModifyTime = DateTime.Now;
+                                        Db.Insertable(detail).ExecuteCommand();
+                                        #endregion
+                                    }
+                                    else
+                                    {
+                                        csv.LogMsg += $"【6】找到 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                        detail.DesignQty = designQty;//数量
+                                        detail.LastModifyUserId = csv.UserId;
+                                        detail.LastModifyTime = DateTime.Now;
+                                        Db.Updateable(detail).ExecuteCommand();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return csv;
         }
     }
 } 
