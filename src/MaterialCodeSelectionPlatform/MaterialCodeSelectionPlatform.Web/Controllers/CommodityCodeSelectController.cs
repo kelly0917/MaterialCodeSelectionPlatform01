@@ -16,19 +16,25 @@ using MaterialCodeSelectionPlatform.Domain.DTO;
 using Newtonsoft.Json;
 using System.Collections;
 using MaterialCodeSelectionPlatform.Utilities;
+using System.IO.Compression;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MaterialCodeSelectionPlatform.Web.Controllers
 {
+   
+
     public class CommodityCodeSelectController : BaseController<ICommodityCodeService, CommodityCode>
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         private IPartNumberService PartNumberService;
         private IComponentTypeService componentTypeService;
         private IProjectService projectService;
         private IDeviceService deviceService;
         private IUserService userService;
       
-        public CommodityCodeSelectController(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService, IUserService userService)
+        public CommodityCodeSelectController(IHostingEnvironment hostingEnvironment,ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService, IUserService userService)
         {
+            _hostingEnvironment = hostingEnvironment;
             this.Service = services;
             this.PartNumberService = PartNumberService;
             this.componentTypeService = componentTypeService;
@@ -554,96 +560,235 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ImportData()
         {
-            ArrayList arr = new ArrayList();
-            MaterialTakeOffDetailCSV csv = new MaterialTakeOffDetailCSV();
+            //var logPath = System.IO.Path.Combine(appBasePath, "Logs", DateTime.Now.ToString("yyyyMMdd"));
+            var logUrl = string.Empty;
+            var logs = System.IO.Path.Combine("Logs", DateTime.Now.ToString("yyyyMMdd"));
+            var logPath = System.IO.Path.Combine(_hostingEnvironment.WebRootPath, logs);
+           
+            MaterialTakeOffDetailCSVList result = new MaterialTakeOffDetailCSVList();
             try
             {
-                csv.UserId = this.UserId;
+                result.UserId = this.UserId;
+                var projectId = Request.Cookies["projectIdcd"];
+                var deviceId = Request.Cookies["deviceIdcd"];
+
                 var files = Request.Form.Files;
-                string msg = String.Empty;
+
                 if (files.Count == 1)
                 {
                     var file = files[0];
-                    var filePath = SaveFile(file);
-                    var errorPath = string.Empty;
-                    var errorMsg = string.Empty;
-                    string strline;
-
-                    StreamReader mysr = new StreamReader(filePath, System.Text.Encoding.Default);
-                 
-                    while ((strline = mysr.ReadLine()) != null)
+                    var ext = Path.GetExtension(file.FileName);
+                    if (ext.ToLower() != ".zip" && ext.ToLower() != ".csv")
                     {
-                        #region 例子
-                        //$B: SSF: PDMS - I:12.60:18 - Jul - 2019 21.13.04:PI: lijunlong: 1100101 - D273.0X6.35 - PN16 - FW.1 *
-                        //$L: 110:1100101 - D273.0X6.35 - PN16 - FW:1.6A1: 1100101 - D273.0X6.35 - PN16 - FW:::::::*
-                        //$S: 01:SJ04T01SP006 - A01#EFF-DW-0101:0::::*
-                        //$C: 250:::P0::PPPSP000731::1.112:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::P0::PPPSP000731::0.100:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::P0::PPPSP000731::0.292:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::P0::PPPSP000731::0.195:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:125::RE::PBREE002286::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:15::WON::POFNO003132::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::E90::PBEAA000620::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C::::::PCOM - 225::1:3:::N: N: N: HG - PN16::::Y:Y:::110 *
-                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
-                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
-                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
-                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
-                        //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
-                        //$C: 250:::VT0::PVGAA000154::1:3:::N: N: N:::::Y: Y:::110 *
+                        return ConvertJsonResult("只能上传【zip】或【csv】", false);
+                    }
+                    var filePath = SaveFile(file);
 
-                        #endregion
-                     
-                        var strs = strline.Split(':');
-                        var str0 = strs[0];//标识【$B：项目 】【$L：设备】【$C：PartNumber】
-                        var str1 = strs[1];//项目或设备
+                    if (ext.ToLower() == ".csv")
+                    {
+                        var csv = new MaterialTakeOffDetailCSV();
+                        csv.ProjectId = projectId;
+                        csv.DeviceId = deviceId;
+                        csv.UserId = this.UserId;
+                        csv.FileName = file.FileName;
+                        getCSV(csv, filePath);
+                        result.CSVList.Add(csv);
+                        result = await Service.ImportData(result);//数据库操作
+                       
+                        var fileName = $"{Path.GetFileNameWithoutExtension(filePath)}.txt";
+                        var logFilePath = System.IO.Path.Combine(logPath, fileName);//绝对路径     
 
-                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$b")
+                        var fileNameError = $"{Path.GetFileNameWithoutExtension(filePath)}_error.txt";                          
+                        var logFilePathError = System.IO.Path.Combine(logPath, fileNameError);//绝对路径
+
+
+                        logUrl = System.IO.Path.Combine(logs, fileNameError);//相对路径
+                        result.LogPath = logFilePath;
+                      
+                        foreach (var ent in result.CSVList)
                         {
-                            csv.ProjectCode = str1;
-                        }
-                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$l")
-                        {
-                            csv.DeviceCode = str1;
-                        }
-                        if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$c")
-                        {
-                            var str6 = strs[6];//PartNumber
-                            var str8 = strs[8];//descignQty
-                            if (!string.IsNullOrEmpty(str6) && !string.IsNullOrEmpty(str8))
+                            if (!string.IsNullOrEmpty(ent.ErrorMsg))
                             {
-                                var qty = Convert.ToDouble(str8);
-                                if (!csv.PartNumberDesignQty.ContainsKey(str6))
-                                {
-                                    csv.PartNumberDesignQty.Add(str6, qty);
-                                }
-                                else
-                                {
-                                    var count = csv.PartNumberDesignQty[str6];
-                                    csv.PartNumberDesignQty[str6] = count + qty;
-                                }
+                                result.ErrorMsg += $"#---------------------------【{DateTime.Now}】:{Path.GetFileName(ent.FileName)}----------------------------------";
+                                result.ErrorMsg += $"#{ent.ErrorMsg}";
                             }
                         }
+                        WriteLog(logFilePath, JsonConvert.SerializeObject(result, Formatting.Indented));
+                       
+                        WriteLog(logFilePathError, result.ErrorMsg);
+
                     }
-                    var result = await Service.ImportData(csv);
-                    return await Task.Run(() => { return ConvertSuccessResult(result,"成功"); });
+                    if (ext.ToLower() == ".zip")
+                    {
+                        var folderName = Path.GetFileNameWithoutExtension(filePath);
+                        var folderPath = System.IO.Path.Combine(appBasePath, "Uploader", DateTime.Now.ToString("yyyyMMdd"), folderName);
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+                        ExtractToDirectory(filePath, folderPath);
+                        System.IO.File.Delete(filePath);
+                        #region 处理文件夹下的CSV
+                        var dFiles = Directory.GetFiles(folderPath);
+                        if (dFiles.Length > 0)
+                        {
+                            foreach (var f in dFiles)
+                            {                                
+                                var csv = new MaterialTakeOffDetailCSV();
+                                csv.ProjectId = projectId;
+                                csv.DeviceId = deviceId;
+                                csv.UserId = this.UserId;
+                                csv.FileName = f;
+                                getCSV(csv, f);
+                                result.CSVList.Add(csv);
+                                // WriteLog(logPath, JsonConvert.SerializeObject(result, Formatting.Indented) + "\r\n");
+                            }
+                            if (result.CSVList.Count > 0)
+                            {
+                                result = await Service.ImportData(result);//传到数据库
+
+                                var fileName = $"{Path.GetFileNameWithoutExtension(folderName)}.txt";
+                                var logFilePath = System.IO.Path.Combine(logPath, fileName);//绝对路径    
+
+                                var fileNameError = $"{Path.GetFileNameWithoutExtension(folderName)}_error.txt";
+                                var logFilePathError = System.IO.Path.Combine(logPath, fileNameError);//绝对路径
+
+                                logUrl = System.IO.Path.Combine(logs, fileNameError);//相对路径
+                                result.LogPath = logFilePath;
+                                foreach (var ent in result.CSVList)
+                                {
+                                    if (!string.IsNullOrEmpty(ent.ErrorMsg))
+                                    {
+                                        result.ErrorMsg += $"#---------------------------【{DateTime.Now}】:{Path.GetFileName(ent.FileName)}----------------------------------";
+                                        result.ErrorMsg += $"#{ent.ErrorMsg}";
+                                    }
+                                }
+
+                                WriteLog(logFilePath, JsonConvert.SerializeObject(result, Formatting.Indented));
+                                
+                                WriteLog(logFilePathError, result.ErrorMsg);
+                                //foreach (var ent in result.CSVList)
+                                //{
+                                //    logPath = System.IO.Path.Combine(logPath, $"{Path.GetFileNameWithoutExtension(ent.FileName)}.txt");                                  
+                                //    WriteLog(logPath, JsonConvert.SerializeObject(ent, Formatting.Indented) + "\r\n");
+                                //}
+                            }
+                        }
+                        #endregion
+                    }                   
+                    var msg = result.Success ? "成功" : $"失败：请查看日志文件";
+                    return ConvertJsonResult(msg, result.Success, result,null, logUrl);
                 }
                 else
                 {
-                    return ConvertFailResultStr(null, "请选择文件");
+                    return ConvertJsonResult("请选择文件,只能选择一个文件", false);
                 }
             }
             catch (Exception e)
             {
-                return ConvertJsonResult("失败", false, arr, e);
+                result.LogMsg+=e.ToString();                
+                var fileName = $"error.txt";
+                logPath = System.IO.Path.Combine(logPath, fileName);//绝对路径                   
+                logUrl = System.IO.Path.Combine(logs, fileName);//相对路径
+                result.LogPath = logPath;
+                WriteLog(logPath, e.ToString()+result.SerializeToString());
+                return ConvertJsonResult("失败", false, result, e, logUrl);
             }
+        }
+        private static void getCSV(MaterialTakeOffDetailCSV csv, string filePath)
+        {
+            var errorPath = string.Empty;
+            var errorMsg = string.Empty;
+            string strline;
+            StreamReader mysr = new StreamReader(filePath, System.Text.Encoding.Default);
+            while ((strline = mysr.ReadLine()) != null)
+            {
+                #region 例子
+                //$B: SSF: PDMS - I:12.60:18 - Jul - 2019 21.13.04:PI: lijunlong: 1100101 - D273.0X6.35 - PN16 - FW.1 *
+                //$L: 110:1100101 - D273.0X6.35 - PN16 - FW:1.6A1: 1100101 - D273.0X6.35 - PN16 - FW:::::::*
+                //$S: 01:SJ04T01SP006 - A01#EFF-DW-0101:0::::*
+                //$C: 250:::P0::PPPSP000731::1.112:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::P0::PPPSP000731::0.100:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::P0::PPPSP000731::0.292:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::P0::PPPSP000731::0.195:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:125::RE::PBREE002286::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:15::WON::POFNO003132::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::E90::PBEAA000620::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C::::::PCOM - 225::1:3:::N: N: N: HG - PN16::::Y:Y:::110 *
+                //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::FW0::PFMWN000947::1:1:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::G0::PGNFG000003::1:3:::N: N: N:::::Y: Y:::110 *
+                //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                //$C::::::PLBAA001115::12:3:::N: N: N:::::Y: Y:::110 *
+                //$C: 250:::VT0::PVGAA000154::1:3:::N: N: N:::::Y: Y:::110 *
+
+                #endregion
+
+                var strs = strline.Split(':');
+                var str0 = strs[0];//标识【$B：项目 】【$L：设备】【$C：PartNumber】
+                var str1 = strs[1];//项目或设备
+
+                if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$b")
+                {
+                    csv.ProjectCode = str1;
+                }
+                if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$l")
+                {
+                    csv.DeviceCode = str1;
+                }
+                if (!string.IsNullOrEmpty(str0) && str0.ToLower() == "$c")
+                {
+                    var str6 = strs[6];//PartNumber
+                    var str8 = strs[8];//descignQty
+                    if (!string.IsNullOrEmpty(str6) && !string.IsNullOrEmpty(str8))
+                    {
+                        var qty = Convert.ToDouble(str8);
+                        if (!csv.PartNumberDesignQty.ContainsKey(str6))
+                        {
+                            csv.PartNumberDesignQty.Add(str6, qty);
+                        }
+                        else
+                        {
+                            var count = csv.PartNumberDesignQty[str6];
+                            csv.PartNumberDesignQty[str6] = count + qty;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ExtractToDirectory(string zipPath, string outPath)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            ZipFile.ExtractToDirectory(zipPath, outPath, Encoding.GetEncoding("GB2312"));
+        }
+        private void WriteLog(string path, string text)
+        {
+           
+           // var time = $"\r\n============================时间：{DateTime.Now}=======================================\r\n";
+            if (!string.IsNullOrEmpty(text))
+            {
+                text =  text.Replace("#", "\r\n");
+            }
+            // var jasonString = JsonConvert.SerializeObject(result, Formatting.Indented);
+            var saveDir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(saveDir))
+            {
+                Directory.CreateDirectory(saveDir);
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true, System.Text.Encoding.Default))
+            {
+                file.WriteLine(text);// 直接追加文件末尾，换行
+            }
+           
         }
     }
 }

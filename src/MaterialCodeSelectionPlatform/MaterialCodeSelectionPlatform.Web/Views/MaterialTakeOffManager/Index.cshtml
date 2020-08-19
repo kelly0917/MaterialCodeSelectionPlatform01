@@ -79,9 +79,10 @@
             <button class="layui-btn layui-btn-normal permission" action="1" lay-filter="add" id="btnAdd" onclick="add()">设置裕量</button>
         </div>
         <div class="layui-inline layui-float-right">
-            <button type="button" class="layui-btn permission" action="268435456" id="btnUpload">
-                <i class="layui-icon">&#xe67c;</i>导入数据
+            <button type="button" class="layui-btn permission" action="268435456" style="display:none" id="btnUpload">
+                <i class="layui-icon">&#xe67c;</i>导入文件
             </button>
+            <button type="button" class="layui-btn permission" action="268435456" onclick="uoloadfile()"> <i class="layui-icon">&#xe67c;</i>导入</button>
         </div>
         <div id="divreload" class="layui-inline layui-float-right">
             <button class="layui-btn layui-btn-normal" lay-filter="search" onclick="parent.location.reload()">刷新</button>
@@ -109,33 +110,50 @@
 
             form.render();
              //执行实例
+
+            window.uoloadfile = function () {
+                layer.confirm('上传文件会覆盖装置下的内容，请确认是否要继续上传，如需得到装置完整的材料，需使用ZIP方式打包所有的CSV进行提交。', function (index) {
+                    layer.close(index);
+                    $('#btnUpload').click(); //检查通过再选上传图片
+                });
+             }
+           
             var uploadInst = upload.render({
                 elem: '#btnUpload' //绑定元素
                 , url: '/CommodityCodeSelect/ImportData' //上传接口
                 , accept: 'file' //允许上传的文件类型
-                , done: function (res) {
+                , exts: 'csv|zip' //只允许上传Excel文件
+                 ,choose: function(obj){  
+                    //确认框
+                    layer.confirm('上传文件会覆盖装置下的内容，请确认是否要继续上传，如需得到装置完整的材料，需使用ZIP方式打包所有的CSV进行提交.', {icon: 3, title:'提示'}, function(index){
+                         //读取本地文件
+                        obj.preview(function(index, file, result){
+                          //单个重传
+                            obj.upload(index, file);
+                        });
+                            layer.close(index);
+                      });
+                },done: function (res) {
                     debugger;
-                    //上传完毕回调
-                     layer.msg(res.Message);
-                    if (res.Success) {
-                        layer.msg(res.Message);
-                        flush();
+                    //上传完毕回调                    
+                    if (res.success) {
+                        layer.msg(res.message);
+                        //flush();
                     } else {
-                        if (res.Message == "haveError") {
-                            layer.msg("导入完成，部分出错！");
-                            window.location.href = "/CommodityCodeSelect/DownloadErrorFile";
-                            flush();
-                        } else {
-                            layer.msg(res.Message);
-                        }
-
-                       
+                       // layer.msg(res.message);
+                        var url = "/" + res.url;
+                        layer.open({
+                            title: '提示信息：'
+                            , icon: 2
+                            , content: '<div><a href='+url+' target="_blank" style="color:red">详情【点击】此查看日志 </a></div>'
+                        }); 
                     }
                 }
                 ,error: function(){
                     //请求异常回调
                 }
             });
+
             window.loadData = function () {
                 var para = getSearchCondition("searchForm");
                 table.render({

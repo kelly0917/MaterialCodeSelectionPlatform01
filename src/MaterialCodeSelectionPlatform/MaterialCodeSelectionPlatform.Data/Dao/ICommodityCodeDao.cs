@@ -101,6 +101,6 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="csv"></param>
         /// <returns></returns>
-        Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv);
+        Task<MaterialTakeOffDetailCSVList> ImportData(MaterialTakeOffDetailCSVList csv);
     }
 }

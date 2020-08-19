@@ -2,6 +2,7 @@
 using MaterialCodeSelectionPlatform.Domain.DTO;
 using MaterialCodeSelectionPlatform.Domain.Entities;
 using MaterialCodeSelectionPlatform.Utilities;
+using Newtonsoft.Json;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,14 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <returns></returns>
         public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOffList(MtoSearchCondition searchCondition)
         {
-            var query = Db.Queryable<MaterialTakeOff, Project, Device, User>((a, b, c,d) => new object[] {
+            var query = Db.Queryable<MaterialTakeOff, Project, Device, User>((a, b, c, d) => new object[] {
               JoinType.Inner,a.ProjectId==b.Id,
               JoinType.Inner,a.DeviceId==c.Id,
               JoinType.Left,a.CreateUserId==d.Id
             });
             if (!string.IsNullOrEmpty(searchCondition.UserId))
             {
-                query = query.Where(a => a.CreateUserId== searchCondition.UserId ||(a.Approver == searchCondition.UserId &&a.CheckStatus==1));
+                query = query.Where(a => a.CreateUserId == searchCondition.UserId || (a.Approver == searchCondition.UserId && a.CheckStatus == 1));
             }
             //if (searchCondition.Type == 0)
             //{
@@ -39,15 +40,15 @@ namespace MaterialCodeSelectionPlatform.Data
             //2. 待审批： approver !=null && status = working
             //3. 已审批： approver!= null && status =approved
             //其中待审批的，按照lastModifyTIme 顺序，越早提出的越前边。   工作中或者已审批的按照LastModifyTime 倒序，越晚提出的越前边
-            var total = 0;           
-            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime,LastModifyTime=a.LastModifyTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
+            var total = 0;
+            var data = await query.Select((a, b, c, d) => new MaterialTakeOffDto() { ProjectName = b.Name, DeviceName = c.Name, UserName = d.Name, Id = a.Id, ProjectId = a.ProjectId, DeviceId = a.DeviceId, ApproveContent = a.ApproveContent, ApproveDate = a.ApproveDate, Approver = a.Approver, CheckStatus = a.CheckStatus, CreateTime = a.CreateTime, LastModifyTime = a.LastModifyTime, CreateUserId = a.CreateUserId, Revision = a.Revision, Version = a.Version })
                 .ToPageListAsync(searchCondition.Page.PageNo, searchCondition.Page.PageSize, total);
             searchCondition.Page.RecordCount = data.Value;
 
-            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) && a.CheckStatus==1).ToList();//等待审批
-            var workingList = data.Key?.Where(a => (string.IsNullOrEmpty(a.Approver)&&a.CheckStatus==1)||a.CheckStatus==2 ).ToList();//已审核，工作中
+            var approverList = data.Key?.Where(a => !string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1).ToList();//等待审批
+            var workingList = data.Key?.Where(a => (string.IsNullOrEmpty(a.Approver) && a.CheckStatus == 1) || a.CheckStatus == 2).ToList();//已审核，工作中
 
-            approverList = approverList?.OrderBy(c => c.CheckStatus).ThenBy(c=>c.LastModifyTime).ToList();
+            approverList = approverList?.OrderBy(c => c.CheckStatus).ThenBy(c => c.LastModifyTime).ToList();
             workingList = workingList?.OrderByDescending(c => c.LastModifyTime).ToList();
 
             List<MaterialTakeOffDto> newList = new List<MaterialTakeOffDto>();
@@ -448,7 +449,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// <param name="approver">MaterialTakeOffDetail集合</param>
         /// <param name="type">【0:保存】【1：发送审批人】</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver,int type)
+        public async Task<List<MaterialTakeOffDetail>> UpdateReportMaterialTakeOffDetail(List<MaterialTakeOffDetail> detailList, string approver, int type)
         {
 
             if (detailList != null && detailList.Count > 0)
@@ -484,7 +485,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     }
                 }
                 #region 更新 MaterialTakeOff
-                if (!string.IsNullOrEmpty(approver)&& type==1)
+                if (!string.IsNullOrEmpty(approver) && type == 1)
                 {//审批
                     mto.Approver = approver;
                     mto.CheckStatus = 1;
@@ -608,7 +609,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="userid">用户Id</param>
         /// <returns></returns>
-        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid,string mtoId="")
+        public async Task<List<MaterialTakeOffDto>> GetUserMaterialTakeOff(string userid, string mtoId = "")
         {
             #region SQL 
             /*
@@ -667,7 +668,7 @@ namespace MaterialCodeSelectionPlatform.Data
                             INNER JOIN device  c ON c.Id=a.DeviceId
                             LEFT JOIN [User] d ON d.Id=a.CreateUserId AND d.Status=0
                             WHERE a.Status=0 AND b.Status=0 AND c.Status=0 {where} ORDER BY a.LastModifyTime desc";
-            var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { UserId = userid, mtoId= mtoId });
+            var list = Db.Ado.SqlQuery<MaterialTakeOffDto>(sql, new { UserId = userid, mtoId = mtoId });
             return list;
         }
         /// <summary>
@@ -707,7 +708,7 @@ namespace MaterialCodeSelectionPlatform.Data
             //{
             //    mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && c.CreateUserId == userId && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
             //}
-            mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && (c.CreateUserId == userId|| c.Approver == userId) && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
+            mtoEntity = await Db.Queryable<MaterialTakeOff>().Where(c => c.Status == 0 && (c.CreateUserId == userId || c.Approver == userId) && c.ProjectId == projectid && c.DeviceId == deviceid).OrderBy(c => c.LastModifyTime, OrderByType.Desc).FirstAsync();
 
             var sql = $@" SELECT c.Code P_Code
                                ,c.Code P_Code
@@ -743,7 +744,7 @@ namespace MaterialCodeSelectionPlatform.Data
                 foreach (var part in partNumberList)
                 {
                     part.AllowanceQty = Utilities.ConvertHelper.ConvertFloatPointData(part.DesignQty, part.Allowance, part.RoundUpDigit);
-                     //   getAllowanceQty(part.RoundUpDigit, part.Allowance, part.DesignQty);
+                    //   getAllowanceQty(part.RoundUpDigit, part.Allowance, part.DesignQty);
                 }
             }
             var resut = from p in partNumberList
@@ -768,7 +769,7 @@ namespace MaterialCodeSelectionPlatform.Data
                     c.ProjectCode = project?.Code;
                     c.DeviceName = device?.Name;
                     c.DeviceCode = device?.Code;
-                   // c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
+                    // c.Revision = string.IsNullOrEmpty(revision)?mtoEntity.Revision :revision;
                     c.Revision = revision;
                     c.Version = mtoEntity.Version;
                     c.DeviceRemark = device?.Remark;
@@ -783,7 +784,7 @@ namespace MaterialCodeSelectionPlatform.Data
             if (downLoad == 1)
             {
                 // 更新版次
-                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid &&( it.CreateUserId == userId || it.Approver == userId)).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
+                var ent = await Db.Queryable<MaterialTakeOff>().Where(it => it.Status == 0 && it.ProjectId == projectid && it.DeviceId == deviceid && (it.CreateUserId == userId || it.Approver == userId)).OrderBy(it => it.LastModifyTime, OrderByType.Desc).FirstAsync();
                 if (ent != null)
                 {
                     //if (ent.CheckStatus == 1)
@@ -791,14 +792,14 @@ namespace MaterialCodeSelectionPlatform.Data
                     //    ent.CheckStatus = 2;
                     //}
                     ent.LastModifyTime = DateTime.Now;
-                   // ent.Version = ent.Version + 1;
+                    // ent.Version = ent.Version + 1;
                     ent.Revision = revision;
                     Db.Updateable(ent).ExecuteCommand();
                 }
             }
             return await Task.Run(() => { return resutList; });
         }
-       
+
 
         /// <summary>
         /// 删除 MaterialTakeOffDetail
@@ -932,25 +933,25 @@ namespace MaterialCodeSelectionPlatform.Data
             }
             return num;
         }
-       /// <summary>
-       /// 审批
-       /// </summary>
-       /// <param name="mto"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 审批
+        /// </summary>
+        /// <param name="mto"></param>
+        /// <returns></returns>
         public async Task<int> ApproveMto(MaterialTakeOff mto)
         {
             if (mto.CheckStatus == 1)
             {
                 mto.Approver = "";//审批不通过，清空
-             //   mto.ApproveContent = "";//审批不通过，清空               
+                                  //   mto.ApproveContent = "";//审批不通过，清空               
             }
-            var n=await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() {CheckStatus= mto.CheckStatus, Revision=mto.Revision,Approver=mto.Approver, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
+            var n = await Db.Updateable<MaterialTakeOff>().UpdateColumns(it => new MaterialTakeOff() { CheckStatus = mto.CheckStatus, Revision = mto.Revision, Approver = mto.Approver, ApproveContent = mto.ApproveContent, ApproveDate = DateTime.Now }).Where(t => t.Id == mto.Id).ExecuteCommandAsync();
             return n;
         }
-        private double? getAllowanceQty(int? roundUpDigit,double? allowance,double designQty)
+        private double? getAllowanceQty(int? roundUpDigit, double? allowance, double designQty)
         {
             double? roundUp;
-            if (allowance== null|| roundUpDigit == null)
+            if (allowance == null || roundUpDigit == null)
             {
                 roundUp = 0;
             }
@@ -965,8 +966,8 @@ namespace MaterialCodeSelectionPlatform.Data
                     roundUp += d;
                 }
             }
-        
-           
+
+
             return roundUp;
         }
         /// <summary>
@@ -974,7 +975,7 @@ namespace MaterialCodeSelectionPlatform.Data
         /// </summary>
         /// <param name="csv"></param>
         /// <returns></returns>
-        public async Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv)
+        public async Task<MaterialTakeOffDetailCSVList> ImportData(MaterialTakeOffDetailCSVList model)
         {
             /*
              
@@ -991,83 +992,189 @@ namespace MaterialCodeSelectionPlatform.Data
             where a.Status=0 and b.Status=0 and c.Status=0 and d.Status=0 and a.code='PFT000005'
             )
              */
-            var sql = $@" select b.* from Project a 
-            inner join ProjectCatalogMap b on b.ProjectId=a.Id
-            where a.status=0 and b.Status=0 and a.code=@code";//项目
-
-            var mapList = Db.Ado.SqlQuery<ProjectCatalogMap>(sql, new { code = csv.ProjectCode });
-            if (mapList != null && mapList.Count > 0)
+            try
             {
-                csv.LogMsg += $"【1】找到项目{string.Join(',',mapList.Select(c=>c.ProjectId))}";
-                if (csv.PartNumberDesignQty != null && csv.PartNumberDesignQty.Count > 0)
+               
+                var newModel =JsonConvert.DeserializeObject<MaterialTakeOffDetailCSVList>(model.SerializeToString());
+                newModel.CSVList = new List<MaterialTakeOffDetailCSV>();
+                foreach (var csv in model.CSVList)
                 {
-                    csv.LogMsg += $"【2】PartNumberDesignQty 数量：{csv.PartNumberDesignQty.Count}";
-                    var device =await Db.Queryable<Device>().FirstAsync(c => c.Status == 0 && c.Code == csv.DeviceCode);//设备
-                    var projectId = mapList.FirstOrDefault().ProjectId;
-                    var deviceId = device.Id;
-                    // 物资汇总表
-                    var mto = await Db.Queryable<MaterialTakeOff>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId&&c.DeviceId==deviceId&&c.CreateUserId==csv.UserId);
-                    if (mto == null)
+                    var temp = newModel.CSVList.SingleOrDefault(c => c.ProjectCode == csv.ProjectCode && c.DeviceCode == csv.DeviceCode);
+                    if (temp == null)
                     {
-                        csv.LogMsg += $"【3】找不到 MaterialTakeOff：ProjectId={projectId}，deviceId={deviceId}";
-                        mto = addMaterialTakeOff(projectId, deviceId, csv.UserId, 1, 0);
+                        newModel.CSVList.Add(csv);
                     }
-                    List<MaterialTakeOffDetail> listDetail = new List<MaterialTakeOffDetail>();
-                    foreach (var part in csv.PartNumberDesignQty)
-                    {
-                        var partNumberCode = part.Key;
-                        var designQty = part.Value;
-                        sql = $@"select c.CatalogId,a.* from PartNumber a 
-                                        inner join CommodityCode b on b.Id=a.CommodityCodeId
-                                        inner join ComponentType c on c.Id=a.ComponentTypeId
-                                        inner join Catalog d on d.Id=c.CatalogId
-                                        where a.Status=0 and b.Status=0 and c.Status=0 and d.Status=0 and a.code=@partNumberCode";
-                        var typeList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { partNumberCode = partNumberCode });
-                        if (typeList != null && typeList.Count > 0)
+                    else
+                    {                       
+                        foreach (var ent in csv.PartNumberDesignQty)
                         {
-                            csv.LogMsg += $"【4】找到 PartNumberDto 数量：{typeList.Count}，partNumberCode={partNumberCode}";
-                            foreach (var type in typeList)
+                            if (temp.PartNumberDesignQty.ContainsKey(ent.Key))
                             {
-                                var ent = mapList.FirstOrDefault(c => c.CatalogId == type.CatalogId);
-                                if (ent != null)
-                                {
-                                    var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId && c.DeviceId == deviceId&&c.CommodityCodeId== type.CommodityCodeId && c.CreateUserId == csv.UserId);
-                                    if (detail == null)
-                                    {
-                                        csv.LogMsg += $"【5】找不到 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
-                                        #region 物资汇总明细表
-                                        detail = new MaterialTakeOffDetail();
-                                        detail.Id = Guid.NewGuid().ToString();
-                                        detail.MaterialTakeOffId = mto.Id;
-                                        detail.CommodityCodeId = type.CommodityCodeId;
-                                        detail.PartNumberId = type.Id;//采购码Id                                                                
-                                        detail.ProjectId = projectId;//所属项目
-                                        detail.DeviceId = deviceId;//所属装置
-                                        detail.DesignQty = designQty;//数量
-                                        detail.Flag = 0;
-                                        detail.Status = 0;
-                                        detail.CreateUserId = csv.UserId;
-                                        detail.CreateTime = DateTime.Now;
-                                        detail.LastModifyUserId = csv.UserId;
-                                        detail.LastModifyTime = DateTime.Now;
-                                        Db.Insertable(detail).ExecuteCommand();
-                                        #endregion
-                                    }
-                                    else
-                                    {
-                                        csv.LogMsg += $"【6】找到 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
-                                        detail.DesignQty = designQty;//数量
-                                        detail.LastModifyUserId = csv.UserId;
-                                        detail.LastModifyTime = DateTime.Now;
-                                        Db.Updateable(detail).ExecuteCommand();
-                                    }
-                                }
+                                temp.PartNumberDesignQty[ent.Key] += Convert.ToDouble(ent.Value.ToString());
                             }
+                           
                         }
                     }
                 }
+                List<MaterialTakeOffDetail> newList = new List<MaterialTakeOffDetail>();//新增的
+                List<MaterialTakeOffDetail> editList = new List<MaterialTakeOffDetail>();//修改的
+
+
+                model = newModel;
+                foreach (var csv in model.CSVList)
+                {
+                    #region 判断选择的项目是否存在
+                    var projectObj = await Db.Queryable<Project>().SingleAsync(c => c.Status == 0 && c.Id == csv.ProjectId);//选择的项目
+                    var deviceObj = await Db.Queryable<Device>().SingleAsync(c => c.Status == 0 && c.Id == csv.DeviceId);//选择的装置
+                    if (projectObj == null)
+                    {
+                        csv.ErrorMsg += $"#项目为空：ProjectId={csv.ProjectId}";
+                        csv.LogMsg += $"#项目为空：ProjectId={csv.ProjectId}";
+                        continue;
+                    }
+                    if (deviceObj == null)
+                    {
+                        csv.ErrorMsg += $"#装置为空：DeviceId={csv.DeviceId}";
+                        csv.LogMsg += $"#装置为空：DeviceId={csv.DeviceId}";
+                        continue;
+                    }
+                    if (projectObj != null && projectObj.Code.ToLower().Trim() != csv.ProjectCode.ToLower().Trim())
+                    {
+                        csv.ErrorMsg += $"#选择的项目【{projectObj.Code}】与CSV的项目【{csv.ProjectCode}】不一致";
+                        csv.LogMsg += $"#选择的项目【{projectObj.Code}】与CSV的项目【{csv.ProjectCode}】不一致";
+                        continue;
+                    }
+                    if (deviceObj != null && deviceObj.Code.ToLower().Trim() != csv.DeviceCode.ToLower().Trim())
+                    {
+                        csv.ErrorMsg += $"#选择的装置【{deviceObj.Code}】与CSV的装置【{csv.DeviceCode}】不一致";
+                        csv.LogMsg += $"#选择的装置【{deviceObj.Code}】与CSV的装置【{csv.DeviceCode}】不一致";
+                        continue;
+                    }
+                    #endregion
+                    var sql = $@" select b.* from Project a  inner join ProjectCatalogMap b on b.ProjectId=a.Id  where a.status=0 and b.Status=0 and b.ProjectId=@ProjectId";//项目
+                    csv.LogMsg += $"#【SQL】{sql.Replace("@ProjectId", $"'{ csv.ProjectId}'")}";
+                    var mapList = Db.Ado.SqlQuery<ProjectCatalogMap>(sql, new { ProjectId = csv.ProjectId });//找出项目的所有映射关系
+                    if (mapList != null && mapList.Count > 0)
+                    {
+                        var projectId = projectObj.Id;
+                        var deviceId = deviceObj.Id;
+                        csv.LogMsg += $"#【1】找到项目ProjectId=[{csv.ProjectId} 与 CatalogId=[{string.Join(',', mapList.Select(c => c.CatalogId))}] 关联 ";
+                        if (csv.PartNumberDesignQty != null && csv.PartNumberDesignQty.Count > 0)
+                        {   
+                            // 物资汇总表
+                            var mto = await Db.Queryable<MaterialTakeOff>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId && c.DeviceId == deviceId && c.CreateUserId == csv.UserId);
+                            if (mto == null)
+                            {
+                                mto = addMaterialTakeOff(projectId, deviceId, csv.UserId, 1, 0);
+                                csv.LogMsg += $"#【3】新增 MaterialTakeOff：ProjectId={projectId}，deviceId={deviceId}，CreateUserId ={ csv.UserId} 成功";
+                            }
+                            else
+                            {
+                                csv.LogMsg += $"#【3】已存在 MaterialTakeOff：ProjectId={projectId}，deviceId={deviceId}，CreateUserId ={ csv.UserId} ";
+                            }
+                            List<MaterialTakeOffDetail> listDetail = new List<MaterialTakeOffDetail>();
+                            foreach (var part in csv.PartNumberDesignQty)
+                            {
+                                var partNumberCode = part.Key;
+                                var designQty = part.Value;
+                                sql = $@"select c.CatalogId,d.name CatalogName,a.* from PartNumber a  inner join CommodityCode b on b.Id=a.CommodityCodeId  inner join ComponentType c on c.Id=a.ComponentTypeId  inner join Catalog d on d.Id=c.CatalogId  where a.Status=0 and b.Status=0 and c.Status=0 and d.Status=0 and a.code=@partNumberCode";
+                                var typeList = Db.Ado.SqlQuery<PartNumberDto>(sql, new { partNumberCode = partNumberCode });
+                                if (typeList != null && typeList.Count > 0)
+                                {
+                                    csv.LogMsg += $"#【SQL】{sql.Replace("@partNumberCode", $"'{ partNumberCode}'")}";
+                                    csv.LogMsg += $"#【4】找到 PartNumberDto 数量：{typeList.Count}，partNumberCode={partNumberCode}";
+                                    foreach (var type in typeList)
+                                    {
+                                        var ent = mapList.FirstOrDefault(c => c.CatalogId == type.CatalogId);
+                                        if (ent != null)
+                                        {
+                                            var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 &&c.PartNumberId==type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
+                                            if (detail == null)
+                                            {
+                                                csv.LogMsg += $"#【5】新增 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                                #region 物资汇总明细表
+                                                detail = new MaterialTakeOffDetail();
+                                                detail.Id = Guid.NewGuid().ToString();
+                                                detail.MaterialTakeOffId = mto.Id;
+                                                detail.CommodityCodeId = type.CommodityCodeId;
+                                                detail.PartNumberId = type.Id;//采购码Id                                                                
+                                                detail.ProjectId = projectId;//所属项目
+                                                detail.DeviceId = deviceId;//所属装置
+                                                detail.DesignQty = designQty;//数量
+                                                detail.Flag = 0;
+                                                detail.Status = 0;
+                                                detail.CreateUserId = csv.UserId;
+                                                detail.CreateTime = DateTime.Now;
+                                                detail.LastModifyUserId = csv.UserId;
+                                                detail.LastModifyTime = DateTime.Now;
+                                                newList.Add(detail);
+                                                // Db.Insertable(detail).ExecuteCommand();
+                                                #endregion
+                                                csv.Success = true;
+                                            }
+                                            else
+                                            {
+                                                csv.LogMsg += $"#【6】更新 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                                detail.DesignQty = designQty;//数量
+                                                detail.LastModifyUserId = csv.UserId;
+                                                detail.LastModifyTime = DateTime.Now;
+                                                editList.Add(detail);
+                                                // Db.Updateable(detail).ExecuteCommand();
+                                                csv.Success = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            csv.Success = false;
+                                            csv.ErrorMsg += $"# 找不到 ProjectCatalogMap 的映射关系 {projectObj.Name}与 {type.CatalogName}";
+                                            csv.LogMsg += $"#【7】找不到 ProjectCatalogMap 的映射关系 {projectObj.Name}与 {type.CatalogName};projectId={projectId}， CatalogId={ type.CatalogId}";
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    csv.Success = false;
+                                    csv.ErrorMsg += $"# 找不到 采购码 partNumberCode={partNumberCode}";
+                                    csv.LogMsg += $"#【8】找不到 采购码 partNumberCode={partNumberCode}";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            csv.Success = false;
+                            csv.ErrorMsg += $"# CSV文件中没有找到 PartNumber（采购码） 和 数量";
+                            csv.LogMsg += $"#【2】CSV文件中没有找到 PartNumber 和 数量";
+                        }
+                    }
+                    else
+                    {
+                        csv.Success = false;
+                        csv.ErrorMsg += $"# 找不到项目：{projectObj.Name} 与 Catalog 的关联";
+                        csv.LogMsg += $"#【9】找不到项目：{projectObj.Name}与 Catalog 的关联，ProjectId=[{csv.ProjectId} 与 CatalogId=[{string.Join(',', mapList.Select(c => c.CatalogId))}] 关联 ";
+                    }
+                }
+                var num = model.CSVList.Count(c=>c.Success==false);//是否全部可以导入,如果没有false可以导入
+                model.Success = num>0?false:true;
+                if (num==0)
+                {
+                    if (newList.Count > 0)
+                    {
+                      var n= await Db.Insertable(newList).ExecuteCommandAsync();
+                      model.LogMsg += $"#【10】新增 MaterialTakeOffDetail 数量：{n}";
+                    }
+                    if (editList.Count > 0)
+                    {
+                      var n=  await Db.Updateable(editList).ExecuteCommandAsync();
+                      model.LogMsg += $"#【10】更新 MaterialTakeOffDetail 数量：{n}";
+                    }
+                }
+                return model;
             }
-            return csv;
+            catch (Exception e)
+            {
+                model.LogMsg+=e.ToString();
+                return model;
+            }
         }
     }
-} 
+}

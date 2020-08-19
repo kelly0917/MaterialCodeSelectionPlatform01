@@ -146,7 +146,7 @@ namespace MaterialCodeSelectionPlatform.Service
         /// </summary>
         /// <param name="csv"></param>
         /// <returns></returns>
-        public async Task<MaterialTakeOffDetailCSV> ImportData(MaterialTakeOffDetailCSV csv)
+        public async Task<MaterialTakeOffDetailCSVList> ImportData(MaterialTakeOffDetailCSVList csv)
         {
             {
                 return await _CommodityCodeDao.ImportData(csv);

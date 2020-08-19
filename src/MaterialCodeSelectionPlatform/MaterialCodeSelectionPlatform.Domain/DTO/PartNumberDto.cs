@@ -155,6 +155,7 @@ namespace MaterialCodeSelectionPlatform.Domain
         public double DesignQty { get; set; }
 
         public string CatalogId { get; set; }
-       
+        public string CatalogName { get; set; }
+
     }
 }
