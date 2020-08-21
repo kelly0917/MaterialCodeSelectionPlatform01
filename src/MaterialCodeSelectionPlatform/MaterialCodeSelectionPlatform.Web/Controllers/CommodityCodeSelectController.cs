@@ -621,6 +621,9 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     if (ext.ToLower() == ".zip")
                     {
                         var folderName = Path.GetFileNameWithoutExtension(filePath);
+
+                        result.FileName = folderName;
+
                         var folderPath = System.IO.Path.Combine(appBasePath, "Uploader", DateTime.Now.ToString("yyyyMMdd"), folderName);
                         if (!Directory.Exists(folderPath))
                         {

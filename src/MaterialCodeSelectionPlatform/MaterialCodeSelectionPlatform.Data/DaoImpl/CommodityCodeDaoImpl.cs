@@ -1019,7 +1019,6 @@ namespace MaterialCodeSelectionPlatform.Data
                 List<MaterialTakeOffDetail> newList = new List<MaterialTakeOffDetail>();//新增的
                 List<MaterialTakeOffDetail> editList = new List<MaterialTakeOffDetail>();//修改的
 
-
                 model = newModel;
                 foreach (var csv in model.CSVList)
                 {
@@ -1054,6 +1053,9 @@ namespace MaterialCodeSelectionPlatform.Data
                     var sql = $@" select b.* from Project a  inner join ProjectCatalogMap b on b.ProjectId=a.Id  where a.status=0 and b.Status=0 and b.ProjectId=@ProjectId";//项目
                     csv.LogMsg += $"#【SQL】{sql.Replace("@ProjectId", $"'{ csv.ProjectId}'")}";
                     var mapList = Db.Ado.SqlQuery<ProjectCatalogMap>(sql, new { ProjectId = csv.ProjectId });//找出项目的所有映射关系
+                    
+
+
                     if (mapList != null && mapList.Count > 0)
                     {
                         var projectId = projectObj.Id;
@@ -1088,33 +1090,43 @@ namespace MaterialCodeSelectionPlatform.Data
                                         var ent = mapList.FirstOrDefault(c => c.CatalogId == type.CatalogId);
                                         if (ent != null)
                                         {
+                                            var tempSql = $@"select * from MaterialTakeOffDetail a where a.status=0 and a.PartNumberId='{type.Id}' and a.DeviceId='{deviceId}' and a.ProjectId='{projectId}' and a.CommodityCodeId='{type.CommodityCodeId}' and a.CreateUserId='{ csv.UserId}'";
+                                            csv.LogMsg += $"#明细【SQL】{tempSql}";
                                             var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 &&c.PartNumberId==type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
                                             if (detail == null)
                                             {
-                                                csv.LogMsg += $"#【5】新增 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
-                                                #region 物资汇总明细表
-                                                detail = new MaterialTakeOffDetail();
-                                                detail.Id = Guid.NewGuid().ToString();
-                                                detail.MaterialTakeOffId = mto.Id;
-                                                detail.CommodityCodeId = type.CommodityCodeId;
-                                                detail.PartNumberId = type.Id;//采购码Id                                                                
-                                                detail.ProjectId = projectId;//所属项目
-                                                detail.DeviceId = deviceId;//所属装置
-                                                detail.DesignQty = designQty;//数量
-                                                detail.Flag = 0;
-                                                detail.Status = 0;
-                                                detail.CreateUserId = csv.UserId;
-                                                detail.CreateTime = DateTime.Now;
-                                                detail.LastModifyUserId = csv.UserId;
-                                                detail.LastModifyTime = DateTime.Now;
-                                                newList.Add(detail);
-                                                // Db.Insertable(detail).ExecuteCommand();
-                                                #endregion
+                                                var newDetail = newList.FirstOrDefault(c => c.Status == 0 && c.PartNumberId == type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
+                                                if (newDetail == null)
+                                                {
+                                                    csv.LogMsg += $"#【5】新增 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                                    #region 物资汇总明细表
+                                                    detail = new MaterialTakeOffDetail();
+                                                    detail.Id = Guid.NewGuid().ToString();
+                                                    detail.MaterialTakeOffId = mto.Id;
+                                                    detail.CommodityCodeId = type.CommodityCodeId;
+                                                    detail.PartNumberId = type.Id;//采购码Id                                                                
+                                                    detail.ProjectId = projectId;//所属项目
+                                                    detail.DeviceId = deviceId;//所属装置
+                                                    detail.DesignQty = designQty;//数量
+                                                    detail.Flag = 0;
+                                                    detail.Status = 0;
+                                                    detail.CreateUserId = csv.UserId;
+                                                    detail.CreateTime = DateTime.Now;
+                                                    detail.LastModifyUserId = csv.UserId;
+                                                    detail.LastModifyTime = DateTime.Now;
+                                                    newList.Add(detail);
+                                                    // Db.Insertable(detail).ExecuteCommand();
+                                                    #endregion                                                   
+                                                }
+                                                else
+                                                {
+                                                    newDetail.DesignQty += designQty;//数量
+                                                }
                                                 csv.Success = true;
                                             }
                                             else
                                             {
-                                                csv.LogMsg += $"#【6】更新 MaterialTakeOffDetail ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
+                                                csv.LogMsg += $"#【6】更新 MaterialTakeOffDetail DesignQty={detail.DesignQty}改为{designQty}， ProjectId={projectId}，deviceId={deviceId}，CommodityCodeId={ type.CommodityCodeId}，CreateUserId={csv.UserId}";
                                                 detail.DesignQty = designQty;//数量
                                                 detail.LastModifyUserId = csv.UserId;
                                                 detail.LastModifyTime = DateTime.Now;

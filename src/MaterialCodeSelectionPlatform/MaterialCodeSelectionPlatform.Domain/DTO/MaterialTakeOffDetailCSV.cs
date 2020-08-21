@@ -31,6 +31,8 @@ namespace MaterialCodeSelectionPlatform.Domain.DTO
         /// 
         /// </summary>
         public string LogPath { get; set; }
+
+        public string FileName { get; set; }
     }
     /// <summary>
     /// CSV导入
