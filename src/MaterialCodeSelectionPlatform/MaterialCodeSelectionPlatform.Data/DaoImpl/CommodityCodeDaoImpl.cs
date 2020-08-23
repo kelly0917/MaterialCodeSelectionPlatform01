@@ -994,8 +994,8 @@ namespace MaterialCodeSelectionPlatform.Data
              */
             try
             {
-               
-                var newModel =JsonConvert.DeserializeObject<MaterialTakeOffDetailCSVList>(model.SerializeToString());
+
+                var newModel = JsonConvert.DeserializeObject<MaterialTakeOffDetailCSVList>(model.SerializeToString());
                 newModel.CSVList = new List<MaterialTakeOffDetailCSV>();
                 foreach (var csv in model.CSVList)
                 {
@@ -1005,14 +1005,18 @@ namespace MaterialCodeSelectionPlatform.Data
                         newModel.CSVList.Add(csv);
                     }
                     else
-                    {                       
+                    {
                         foreach (var ent in csv.PartNumberDesignQty)
                         {
                             if (temp.PartNumberDesignQty.ContainsKey(ent.Key))
                             {
                                 temp.PartNumberDesignQty[ent.Key] += Convert.ToDouble(ent.Value.ToString());
                             }
-                           
+                            else
+                            {
+                                temp.PartNumberDesignQty.Add(ent.Key, ent.Value);
+                            }
+
                         }
                     }
                 }
@@ -1053,8 +1057,11 @@ namespace MaterialCodeSelectionPlatform.Data
                     var sql = $@" select b.* from Project a  inner join ProjectCatalogMap b on b.ProjectId=a.Id  where a.status=0 and b.Status=0 and b.ProjectId=@ProjectId";//项目
                     csv.LogMsg += $"#【SQL】{sql.Replace("@ProjectId", $"'{ csv.ProjectId}'")}";
                     var mapList = Db.Ado.SqlQuery<ProjectCatalogMap>(sql, new { ProjectId = csv.ProjectId });//找出项目的所有映射关系
-                    
 
+                    var catalogSql = $@" select * from Catalog where status =0";
+                    var catalogList = Db.Ado.SqlQuery<Catalog>(catalogSql);
+
+                    var targetCatalog = catalogList.FirstOrDefault(x => model.FileName.Contains("_"+x.Description+"_", StringComparison.InvariantCultureIgnoreCase) || model.FileName.Contains("_" + x.Name + "_", StringComparison.InvariantCultureIgnoreCase));
 
                     if (mapList != null && mapList.Count > 0)
                     {
@@ -1062,7 +1069,7 @@ namespace MaterialCodeSelectionPlatform.Data
                         var deviceId = deviceObj.Id;
                         csv.LogMsg += $"#【1】找到项目ProjectId=[{csv.ProjectId} 与 CatalogId=[{string.Join(',', mapList.Select(c => c.CatalogId))}] 关联 ";
                         if (csv.PartNumberDesignQty != null && csv.PartNumberDesignQty.Count > 0)
-                        {   
+                        {
                             // 物资汇总表
                             var mto = await Db.Queryable<MaterialTakeOff>().FirstAsync(c => c.Status == 0 && c.ProjectId == projectId && c.DeviceId == deviceId && c.CreateUserId == csv.UserId);
                             if (mto == null)
@@ -1087,12 +1094,19 @@ namespace MaterialCodeSelectionPlatform.Data
                                     csv.LogMsg += $"#【4】找到 PartNumberDto 数量：{typeList.Count}，partNumberCode={partNumberCode}";
                                     foreach (var type in typeList)
                                     {
+                                        ///根据文件名中的内容，过滤掉重复的partNumber
+                                        if(targetCatalog!=null)
+                                        {
+                                            if (type.CatalogId != targetCatalog.Id)
+                                                continue;
+                                        }
+
                                         var ent = mapList.FirstOrDefault(c => c.CatalogId == type.CatalogId);
                                         if (ent != null)
                                         {
                                             var tempSql = $@"select * from MaterialTakeOffDetail a where a.status=0 and a.PartNumberId='{type.Id}' and a.DeviceId='{deviceId}' and a.ProjectId='{projectId}' and a.CommodityCodeId='{type.CommodityCodeId}' and a.CreateUserId='{ csv.UserId}'";
                                             csv.LogMsg += $"#明细【SQL】{tempSql}";
-                                            var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 &&c.PartNumberId==type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
+                                            var detail = await Db.Queryable<MaterialTakeOffDetail>().FirstAsync(c => c.Status == 0 && c.PartNumberId == type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
                                             if (detail == null)
                                             {
                                                 var newDetail = newList.FirstOrDefault(c => c.Status == 0 && c.PartNumberId == type.Id && c.ProjectId == projectId && c.DeviceId == deviceId && c.CommodityCodeId == type.CommodityCodeId && c.CreateUserId == csv.UserId);
@@ -1165,26 +1179,26 @@ namespace MaterialCodeSelectionPlatform.Data
                         csv.LogMsg += $"#【9】找不到项目：{projectObj.Name}与 Catalog 的关联，ProjectId=[{csv.ProjectId} 与 CatalogId=[{string.Join(',', mapList.Select(c => c.CatalogId))}] 关联 ";
                     }
                 }
-                var num = model.CSVList.Count(c=>c.Success==false);//是否全部可以导入,如果没有false可以导入
-                model.Success = num>0?false:true;
-                if (num==0)
+                var num = model.CSVList.Count(c => c.Success == false);//是否全部可以导入,如果没有false可以导入
+                model.Success = num > 0 ? false : true;
+                if (num == 0)
                 {
                     if (newList.Count > 0)
                     {
-                      var n= await Db.Insertable(newList).ExecuteCommandAsync();
-                      model.LogMsg += $"#【10】新增 MaterialTakeOffDetail 数量：{n}";
+                        var n = await Db.Insertable(newList).ExecuteCommandAsync();
+                        model.LogMsg += $"#【10】新增 MaterialTakeOffDetail 数量：{n}";
                     }
                     if (editList.Count > 0)
                     {
-                      var n=  await Db.Updateable(editList).ExecuteCommandAsync();
-                      model.LogMsg += $"#【10】更新 MaterialTakeOffDetail 数量：{n}";
+                        var n = await Db.Updateable(editList).ExecuteCommandAsync();
+                        model.LogMsg += $"#【10】更新 MaterialTakeOffDetail 数量：{n}";
                     }
                 }
                 return model;
             }
             catch (Exception e)
             {
-                model.LogMsg+=e.ToString();
+                model.LogMsg += e.ToString();
                 return model;
             }
         }

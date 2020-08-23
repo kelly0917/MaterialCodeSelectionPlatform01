@@ -145,10 +145,13 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             }
         }
 
+
         /// <summary>
-        /// 导入数据
+        /// 导入装置数据
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">装置文件路径</param>
+        /// <param name="errorPath">错误提示路径</param>
+        /// <param name="errorMsg">错误信息</param>
         /// <returns></returns>
         private bool importDeviceData(string filePath,out string errorPath,out string errorMsg)
         {
