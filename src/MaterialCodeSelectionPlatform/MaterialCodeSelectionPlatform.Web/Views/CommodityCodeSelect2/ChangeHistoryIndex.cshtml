@@ -8,7 +8,7 @@
 
 <script type="text/html" id="barDemo">
 
-    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">删除</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">确认</a>
 </script>
 
 <script type="text/javascript">
@@ -44,16 +44,16 @@
                 table.on('tool(useruv)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'delete') {
-                        layer.confirm('确定删除吗', function (index) {
+                        layer.confirm('确定已读吗', function (index) {
                             $.ajax({
                                 url: '/CommodityCodeSelect2/DeleteChangeData?id=' + data.Id + "&" + Math.random(),
                                 dataType: "json",
                                 success: function (data) {
                                     if (data.Success) {
-                                        layer.msg("删除成功");
+                                        layer.msg("确认成功");
                                         loadData();
                                     } else {
-                                        layer.msg("删除失败", { icon: 5 });
+                                        layer.msg("确认失败", { icon: 5 });
                                     }
                                 }
                             });
