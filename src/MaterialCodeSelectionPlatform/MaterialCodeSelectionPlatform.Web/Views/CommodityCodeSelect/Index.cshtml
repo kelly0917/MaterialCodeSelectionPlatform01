@@ -808,6 +808,7 @@
     var globalProjectId = null;//全局变量
     var globalDeviceId = null;//全局变量
     function projectClick(id, projectId, deviceId, revision, approver) {
+        debugger;
         globalProjectId = projectId;
         globalDeviceId = deviceId;
         currentProjectId = projectId;
@@ -841,6 +842,8 @@
                 currentDeviceId = $("#selDevice").find("option:selected").val();
                 
                 openMaterial();
+
+             
                 //编码库
                 $("select[name=selCatalog]").dropdownlist({
                     url: "/CommodityCodeSelect/GetDropDownData?type=4&parentId=" + currentProjectId + "&pt=" + Math.random(), defaultValue: "first", complete: function () {
@@ -860,7 +863,7 @@
         layer.close(winIndex);
 
 
-
+       
 
 
 

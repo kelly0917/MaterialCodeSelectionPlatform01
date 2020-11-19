@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Body.cshtml";
+}
+
+<table class="layui-hide" id="test" lay-filter="useruv"></table>
+
+<script type="text/html" id="barDemo">
+
+    <a class="layui-btn layui-btn-sm layui-btn-normal permission" action="2" lay-event="delete">删除</a>
+</script>
+
+<script type="text/javascript">
+
+    var materialTakeOffId = '@ViewData["materialTakeOffId"]';
+    layui.use(['form', 'table', 'layer', 'jquery'],
+        function () {
+            var form = layui.form;
+            var layer = layui.layer;
+            var table = layui.table;
+            var $ = layui.jquery;
+         
+            form.render();
+            window.loadData = function () {
+                var para = "?materialTakeOffId=" + materialTakeOffId;
+                table.render({
+                    elem: '#test', height: 'full-80', url: '/CommodityCodeSelect2/GetChangeDataList' + para + "&" + Math.random()//数据接口
+                    , page: true //开启分页
+                    , limit: 20
+                    , limits: [20, 50, 100]
+                    , cols: [[ //表头
+                        { field: 'ColumnName', title: '变更列', width: 150 },
+                        { field: 'Old', title: '变更前内容', width: 150 },
+                        { field: 'New', title: '变更后内容' },
+                        { field: 'ChangeDate', title: '变更日期', width: 150 }
+                        , { field: 'right', title: '操作', width: 80, templet: "#barDemo",align:'center' }
+                    ]]
+                    , id: 'testReload',
+
+                });
+            
+                //监听工具条
+                table.on('tool(useruv)', function (obj) {
+                    var data = obj.data;
+                    if (obj.event === 'delete') {
+                        layer.confirm('确定删除吗', function (index) {
+                            $.ajax({
+                                url: '/CommodityCodeSelect2/DeleteChangeData?id=' + data.Id + "&" + Math.random(),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Success) {
+                                        layer.msg("删除成功");
+                                        loadData();
+                                    } else {
+                                        layer.msg("删除失败", { icon: 5 });
+                                    }
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+            //刷新表格
+            window.flush = function () {
+                loadData();
+            }
+            loadData();
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    content: '/Device/AddOrEditPage?projectId='+$("[name=projectId]").val(),
+                    title: '新增装置信息',
+                    area: ["540px;", "380px;"]//宽 高
+                });
+            }
+            var defaultValue = $.cookie('projectId');;
+            //select 控件加载完再初始化table
+            $("select[name=projectId]").dropdownlist({
+                url: "/Device/GetProjectList" + "?pt=" + Math.random(), defaultValue: defaultValue, complete: function () {
+                    loadData();
+                }
+            });
+
+            window.downloadTemp = function() {
+                window.location.href = "/Device/DownloadTemplateFile";
+            }
+        });
+    //回车响应
+    $("body").keydown(
+        function (e) {
+            if (e.keyCode == 13) {
+                loadData();
+            }
+        });
+</script>

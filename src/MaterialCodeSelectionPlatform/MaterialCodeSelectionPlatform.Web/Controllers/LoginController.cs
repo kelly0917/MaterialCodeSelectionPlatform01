@@ -53,7 +53,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
                     return Content("登录失败");
                 }
 
-                if (DateTime.Now > DateTime.Parse("2020-11-15"))
+                if (DateTime.Now > DateTime.Parse("2021-03-01"))
                 {
                     return Content("登录失败");
                 }
