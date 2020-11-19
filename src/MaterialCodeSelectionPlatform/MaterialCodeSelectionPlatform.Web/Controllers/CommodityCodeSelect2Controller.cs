@@ -65,6 +65,28 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return ConvertListResult(list, dataPage);
         }
 
+        public async Task<IActionResult> IsNeedGetChangeData(string materialTakeOffId)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = 1;
+            dataPage.PageSize = 100;
+
+
+            ChangeHistorySearchCondition changeHistorySearchCondition = new ChangeHistorySearchCondition();
+            changeHistorySearchCondition.Page = dataPage;
+            changeHistorySearchCondition.MaterialTakeOffId = materialTakeOffId;
+            var list = await changeHistoryService.GetDataList(changeHistorySearchCondition);
+            if (list.Count > 0)
+            {
+                return ConvertSuccessResult(true);
+            }
+            else
+            {
+                return ConvertSuccessResult(false);
+            }
+          
+        }
+
         public async Task<IActionResult> DeleteChangeData(string id)
         {
             var result = await changeHistoryService.DeleteByIdAsync(id);
