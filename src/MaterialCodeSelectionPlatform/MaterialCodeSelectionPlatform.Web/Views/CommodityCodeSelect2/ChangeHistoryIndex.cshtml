@@ -3,8 +3,19 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout_Body.cshtml";
 }
+<div class="layui-form" action="" id="searchForm">
+    <div class="layui-form-item search">
 
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">批量确认</button>
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-normal" lay-filter="search" id="" onclick="loadData()">导出</button>
+        </div>
+    </div>
+</div>
 <table class="layui-hide" id="test" lay-filter="useruv"></table>
+
 
 <script type="text/html" id="barDemo">
 
@@ -44,7 +55,7 @@
                 table.on('tool(useruv)', function (obj) {
                     var data = obj.data;
                     if (obj.event === 'delete') {
-                        layer.confirm('确定已读吗', function (index) {
+                        layer.confirm('您是否要确认变更', function (index) {
                             $.ajax({
                                 url: '/CommodityCodeSelect2/DeleteChangeData?id=' + data.Id + "&" + Math.random(),
                                 dataType: "json",
