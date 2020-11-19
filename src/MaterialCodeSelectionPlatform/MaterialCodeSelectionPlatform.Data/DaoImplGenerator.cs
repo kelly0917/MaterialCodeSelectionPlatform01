@@ -14,35 +14,19 @@ using Microsoft.Extensions.Logging;
 namespace MaterialCodeSelectionPlatform.Data
 {
     /// <summary>
-    /// A Dao Impl for ProjectCatalogMap table.
+    /// A Dao Impl for Catalog table.
     /// </summary>
-	public partial class ProjectCatalogMapDaoImpl : EntityDaoBase<ProjectCatalogMap>, IProjectCatalogMapDao
+	public partial class CatalogDaoImpl : EntityDaoBase<Catalog>, ICatalogDao
 	{
-		public ProjectCatalogMapDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public CatalogDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for Temp_ComponentType table.
+    /// A Dao Impl for CommodityCode table.
     /// </summary>
-	public partial class TempComponentTypeDaoImpl : EntityDaoBase<TempComponentType>, ITempComponentTypeDao
+	public partial class CommodityCodeDaoImpl : EntityDaoBase<CommodityCode>, ICommodityCodeDao
 	{
-		public TempComponentTypeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
-	}
-
-    /// <summary>
-    /// A Dao Impl for Temp_CommodityCode table.
-    /// </summary>
-	public partial class TempCommodityCodeDaoImpl : EntityDaoBase<TempCommodityCode>, ITempCommodityCodeDao
-	{
-		public TempCommodityCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
-	}
-
-    /// <summary>
-    /// A Dao Impl for Temp_PropertyValue table.
-    /// </summary>
-	public partial class TempPropertyValueDaoImpl : EntityDaoBase<TempPropertyValue>, ITempPropertyValueDao
-	{
-		public TempPropertyValueDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public CommodityCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -51,6 +35,14 @@ namespace MaterialCodeSelectionPlatform.Data
 	public partial class CommodityCodeAttributeDaoImpl : EntityDaoBase<CommodityCodeAttribute>, ICommodityCodeAttributeDao
 	{
 		public CommodityCodeAttributeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
+    /// A Dao Impl for ComponentType table.
+    /// </summary>
+	public partial class ComponentTypeDaoImpl : EntityDaoBase<ComponentType>, IComponentTypeDao
+	{
+		public ComponentTypeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -70,11 +62,35 @@ namespace MaterialCodeSelectionPlatform.Data
 	}
 
     /// <summary>
+    /// A Dao Impl for MaterialTakeOffDetail table.
+    /// </summary>
+	public partial class MaterialTakeOffDetailDaoImpl : EntityDaoBase<MaterialTakeOffDetail>, IMaterialTakeOffDetailDao
+	{
+		public MaterialTakeOffDetailDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
+    /// A Dao Impl for PartNumber table.
+    /// </summary>
+	public partial class PartNumberDaoImpl : EntityDaoBase<PartNumber>, IPartNumberDao
+	{
+		public PartNumberDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
     /// A Dao Impl for Project table.
     /// </summary>
 	public partial class ProjectDaoImpl : EntityDaoBase<Project>, IProjectDao
 	{
 		public ProjectDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
+    /// A Dao Impl for ProjectCatalogMap table.
+    /// </summary>
+	public partial class ProjectCatalogMapDaoImpl : EntityDaoBase<ProjectCatalogMap>, IProjectCatalogMapDao
+	{
+		public ProjectCatalogMapDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -94,43 +110,27 @@ namespace MaterialCodeSelectionPlatform.Data
 	}
 
     /// <summary>
-    /// A Dao Impl for User table.
+    /// A Dao Impl for Temp_CCPropertyValue table.
     /// </summary>
-	public partial class UserDaoImpl : EntityDaoBase<User>, IUserDao
+	public partial class TempCCPropertyValueDaoImpl : EntityDaoBase<TempCCPropertyValue>, ITempCCPropertyValueDao
 	{
-		public UserDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempCCPropertyValueDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for UserProjectMap table.
+    /// A Dao Impl for Temp_CommodityCode table.
     /// </summary>
-	public partial class UserProjectMapDaoImpl : EntityDaoBase<UserProjectMap>, IUserProjectMapDao
+	public partial class TempCommodityCodeDaoImpl : EntityDaoBase<TempCommodityCode>, ITempCommodityCodeDao
 	{
-		public UserProjectMapDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempCommodityCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for MaterialTakeOffDetail table.
+    /// A Dao Impl for Temp_ComponentType table.
     /// </summary>
-	public partial class MaterialTakeOffDetailDaoImpl : EntityDaoBase<MaterialTakeOffDetail>, IMaterialTakeOffDetailDao
+	public partial class TempComponentTypeDaoImpl : EntityDaoBase<TempComponentType>, ITempComponentTypeDao
 	{
-		public MaterialTakeOffDetailDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
-	}
-
-    /// <summary>
-    /// A Dao Impl for Catalog table.
-    /// </summary>
-	public partial class CatalogDaoImpl : EntityDaoBase<Catalog>, ICatalogDao
-	{
-		public CatalogDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
-	}
-
-    /// <summary>
-    /// A Dao Impl for ComponentType table.
-    /// </summary>
-	public partial class ComponentTypeDaoImpl : EntityDaoBase<ComponentType>, IComponentTypeDao
-	{
-		public ComponentTypeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempComponentTypeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
@@ -150,27 +150,35 @@ namespace MaterialCodeSelectionPlatform.Data
 	}
 
     /// <summary>
-    /// A Dao Impl for CommodityCode table.
+    /// A Dao Impl for Temp_PropertyValue table.
     /// </summary>
-	public partial class CommodityCodeDaoImpl : EntityDaoBase<CommodityCode>, ICommodityCodeDao
+	public partial class TempPropertyValueDaoImpl : EntityDaoBase<TempPropertyValue>, ITempPropertyValueDao
 	{
-		public CommodityCodeDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public TempPropertyValueDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for PartNumber table.
+    /// A Dao Impl for User table.
     /// </summary>
-	public partial class PartNumberDaoImpl : EntityDaoBase<PartNumber>, IPartNumberDao
+	public partial class UserDaoImpl : EntityDaoBase<User>, IUserDao
 	{
-		public PartNumberDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public UserDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
     /// <summary>
-    /// A Dao Impl for Temp_CCPropertyValue table.
+    /// A Dao Impl for UserProjectMap table.
     /// </summary>
-	public partial class TempCCPropertyValueDaoImpl : EntityDaoBase<TempCCPropertyValue>, ITempCCPropertyValueDao
+	public partial class UserProjectMapDaoImpl : EntityDaoBase<UserProjectMap>, IUserProjectMapDao
 	{
-		public TempCCPropertyValueDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+		public UserProjectMapDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
+	}
+
+    /// <summary>
+    /// A Dao Impl for ChangeHistory table.
+    /// </summary>
+	public partial class ChangeHistoryDaoImpl : EntityDaoBase<ChangeHistory>, IChangeHistoryDao
+	{
+		public ChangeHistoryDaoImpl(ILoggerFactory loggerFactory):base(loggerFactory)  { }
 	}
 
 }

@@ -1,0 +1,23 @@
+/*==============================================================*/
+/* Table: ChangeHistory                                         */
+/*==============================================================*/
+create table ChangeHistory (
+   Id                   varchar(36)          not null,
+   Old                  nvarchar(1000)       not null,
+   New                  nvarchar(1000)       not null,
+   ColumnName           nvarchar(50)         not null,
+   ChangeDate           datetime             not null,
+   MaterialTakeOffId    varchar(36)          not null,
+   Flag                 bigint               not null,
+   Status               int                  not null,
+   CreateUserId         varchar(36)          not null,
+   CreateTime           datetime             not null,
+   LastModifyUserId     varchar(36)          not null,
+   LastModifyTime       datetime             not null,
+   constraint PK_CHANGEHISTORY primary key (Id)
+)
+go
+
+alter table CommodityCode add SysId varchar(200) null;
+alter table PartNumber add SysId varchar(200) null;
+alter table ComponentType add SysId varchar(200) null;

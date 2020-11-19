@@ -25,26 +25,27 @@ namespace MaterialCodeSelectionPlatform.Data.Exentions.DependencyInjection
         /// <param name="services"></param>
         public static void AddScopedDao(this IServiceCollection services)
         {
-			services.AddScoped<IProjectCatalogMapDao, ProjectCatalogMapDaoImpl>();
-			services.AddScoped<ITempComponentTypeDao, TempComponentTypeDaoImpl>();
-			services.AddScoped<ITempCommodityCodeDao, TempCommodityCodeDaoImpl>();
-			services.AddScoped<ITempPropertyValueDao, TempPropertyValueDaoImpl>();
+			services.AddScoped<ICatalogDao, CatalogDaoImpl>();
+			services.AddScoped<ICommodityCodeDao, CommodityCodeDaoImpl>();
 			services.AddScoped<ICommodityCodeAttributeDao, CommodityCodeAttributeDaoImpl>();
+			services.AddScoped<IComponentTypeDao, ComponentTypeDaoImpl>();
 			services.AddScoped<IDeviceDao, DeviceDaoImpl>();
 			services.AddScoped<IMaterialTakeOffDao, MaterialTakeOffDaoImpl>();
+			services.AddScoped<IMaterialTakeOffDetailDao, MaterialTakeOffDetailDaoImpl>();
+			services.AddScoped<IPartNumberDao, PartNumberDaoImpl>();
 			services.AddScoped<IProjectDao, ProjectDaoImpl>();
+			services.AddScoped<IProjectCatalogMapDao, ProjectCatalogMapDaoImpl>();
 			services.AddScoped<ISynchroDetailDao, SynchroDetailDaoImpl>();
 			services.AddScoped<ISynchroRecordDao, SynchroRecordDaoImpl>();
-			services.AddScoped<IUserDao, UserDaoImpl>();
-			services.AddScoped<IUserProjectMapDao, UserProjectMapDaoImpl>();
-			services.AddScoped<IMaterialTakeOffDetailDao, MaterialTakeOffDetailDaoImpl>();
-			services.AddScoped<ICatalogDao, CatalogDaoImpl>();
-			services.AddScoped<IComponentTypeDao, ComponentTypeDaoImpl>();
+			services.AddScoped<ITempCCPropertyValueDao, TempCCPropertyValueDaoImpl>();
+			services.AddScoped<ITempCommodityCodeDao, TempCommodityCodeDaoImpl>();
+			services.AddScoped<ITempComponentTypeDao, TempComponentTypeDaoImpl>();
 			services.AddScoped<ITempPartNumberDao, TempPartNumberDaoImpl>();
 			services.AddScoped<ITempPropertyDao, TempPropertyDaoImpl>();
-			services.AddScoped<ICommodityCodeDao, CommodityCodeDaoImpl>();
-			services.AddScoped<IPartNumberDao, PartNumberDaoImpl>();
-			services.AddScoped<ITempCCPropertyValueDao, TempCCPropertyValueDaoImpl>();
+			services.AddScoped<ITempPropertyValueDao, TempPropertyValueDaoImpl>();
+			services.AddScoped<IUserDao, UserDaoImpl>();
+			services.AddScoped<IUserProjectMapDao, UserProjectMapDaoImpl>();
+			services.AddScoped<IChangeHistoryDao, ChangeHistoryDaoImpl>();
 		}
 	}
 }
