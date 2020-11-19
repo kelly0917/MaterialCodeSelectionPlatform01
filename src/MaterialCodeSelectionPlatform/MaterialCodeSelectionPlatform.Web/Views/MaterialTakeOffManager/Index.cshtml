@@ -99,7 +99,7 @@
 <script type="text/javascript">
     var order = "";
     var orderType = 0;
-
+    var mtoId = '@ViewData["mtoId"]';
     layui.use(['form', 'table', 'layer', 'jquery', 'upload'],
         function () {
             var form = layui.form;
@@ -110,6 +110,16 @@
 
             form.render();
              //执行实例
+
+            if (mtoId != 'null' && mtoId != '') {
+                layer.open({
+                    type: 2,
+                    content: '/CommodityCodeSelect2/ChangeHistoryIndex?materialTakeOffId=' + mtoId+"&"+ Math.random(),
+                    title: '变更历史',
+                    area: ["800px;", "580px;"]//宽 高
+                });
+            }
+           
 
             window.uoloadfile = function () {
                 layer.confirm('上传文件会覆盖装置下的内容，请确认是否要继续上传，如需得到装置完整的材料，需使用ZIP方式打包所有的CSV进行提交。', function (index) {

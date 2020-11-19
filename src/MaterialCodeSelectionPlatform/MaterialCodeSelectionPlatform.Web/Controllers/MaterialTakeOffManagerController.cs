@@ -25,6 +25,7 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         {
             var mtoId = Request.Cookies["mtoId"];
 
+            ViewData["mtoId"] = mtoId;
             var model = await materialTakeOffService.GetAsync(mtoId);
             if (model!=null && model.Approver != null && model.Approver.Equals(UserId, StringComparison.OrdinalIgnoreCase))
             {

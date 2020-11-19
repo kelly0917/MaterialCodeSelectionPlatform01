@@ -26,19 +26,49 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
         private IComponentTypeService componentTypeService;
         private IProjectService projectService;
         private IDeviceService deviceService;
+        private IChangeHistoryService changeHistoryService;
         private ILog log = LogHelper.GetLogger<CommodityCodeSelect2Controller>();
-        public CommodityCodeSelect2Controller(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService)
+        public CommodityCodeSelect2Controller(ICommodityCodeService services, IComponentTypeService componentTypeService, IPartNumberService PartNumberService, IProjectService projectService, IDeviceService deviceService, IChangeHistoryService changeHistoryService)
         {
             this.Service = services;
             this.PartNumberService = PartNumberService;
             this.componentTypeService = componentTypeService;
             this.projectService = projectService;
             this.deviceService = deviceService;
+            this.changeHistoryService = changeHistoryService;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+
+
+        public IActionResult ChangeHistoryIndex(string materialTakeOffId)
+        {
+            ViewData["materialTakeOffId"] = materialTakeOffId;
+            return View();
+        }
+
+        public async Task<IActionResult> GetChangeDataList(string materialTakeOffId, int page, int limit)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = page;
+            dataPage.PageSize = limit;
+
+
+            ChangeHistorySearchCondition changeHistorySearchCondition = new ChangeHistorySearchCondition();
+            changeHistorySearchCondition.Page = dataPage;
+            changeHistorySearchCondition.MaterialTakeOffId = materialTakeOffId;
+            var list = await changeHistoryService.GetDataList(changeHistorySearchCondition);
+            return ConvertListResult(list, dataPage);
+        }
+
+        public async Task<IActionResult> DeleteChangeData(string id)
+        {
+            var result = await changeHistoryService.DeleteByIdAsync(id);
+            return ConvertSuccessResult(result);
         }
 
 
@@ -171,6 +201,8 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var list = await this.Service.GetCommodityCodeDataList(condition);
             return ConvertListResult(list, dataPage);
         }
+
+
 
     }
 }
