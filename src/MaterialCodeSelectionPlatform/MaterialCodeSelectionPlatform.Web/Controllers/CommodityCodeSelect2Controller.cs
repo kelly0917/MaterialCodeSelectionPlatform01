@@ -6,6 +6,7 @@ using MaterialCodeSelectionPlatform.Web.Common;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -51,6 +52,13 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 查询变更历史
+        /// </summary>
+        /// <param name="materialTakeOffId"></param>
+        /// <param name="page"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public async Task<IActionResult> GetChangeDataList(string materialTakeOffId, int page, int limit)
         {
             DataPage dataPage = new DataPage();
@@ -64,6 +72,47 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
             var list = await changeHistoryService.GetDataList(changeHistorySearchCondition);
             return ConvertListResult(list, dataPage);
         }
+
+        /// <summary>
+        /// 导出变更历史
+        /// </summary>
+        /// <param name="materialTakeOffId"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> ExportChangeData(string materialTakeOffId)
+        {
+            DataPage dataPage = new DataPage();
+            dataPage.PageNo = 1;
+            dataPage.PageSize = 10000;
+
+
+            ChangeHistorySearchCondition changeHistorySearchCondition = new ChangeHistorySearchCondition();
+            changeHistorySearchCondition.Page = dataPage;
+            changeHistorySearchCondition.MaterialTakeOffId = materialTakeOffId;
+            var list = await changeHistoryService.GetDataList(changeHistorySearchCondition);
+
+            DataTable table = new DataTable();
+            table.Columns.Add("变更列", typeof(string));
+            table.Columns.Add("变更前内容", typeof(string));
+            table.Columns.Add("变更后内容", typeof(string));
+            table.Columns.Add("变更日期", typeof(string));
+
+            foreach (var changeHistory in list)
+            {
+                DataRow dr = table.NewRow();
+                dr["变更列"] = changeHistory.ColumnName;
+                dr["变更前内容"] = changeHistory.Old;
+                dr["变更后内容"] = changeHistory.New;
+                dr["变更日期"] = changeHistory.ChangeDate;
+                table.Rows.Add(dr);
+            }
+
+            var filePath = Path.Combine(appBasePath, "TempFiles",
+                "ChangeDat_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx");
+
+            ExcelHelper.ExportData(table, filePath);
+            return DownLoad(filePath);
+        }
+
 
         public async Task<IActionResult> IsNeedGetChangeData(string materialTakeOffId)
         {
@@ -89,8 +138,12 @@ namespace MaterialCodeSelectionPlatform.Web.Controllers
 
         public async Task<IActionResult> DeleteChangeData(string id)
         {
-            var result = await changeHistoryService.DeleteByIdAsync(id);
-            return ConvertSuccessResult(result);
+            List<string> ids = id.Split(new []{ ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (var id1 in ids)
+            {
+                await changeHistoryService.DeleteByIdAsync(id1);
+            }
+            return ConvertSuccessResult(true);
         }
 
 

@@ -4,13 +4,13 @@
     Layout = "~/Views/Shared/_Layout_Body.cshtml";
 }
 <div class="layui-form" action="" id="searchForm">
-    <div class="layui-form-item search">
+    <div class="layui-form-item search"">
 
-        <div class="layui-inline">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="btnSearch" onclick="loadData()">批量确认</button>
+        <div class="layui-inline" style="margin-left: 10px;float: right">
+            <button class="layui-btn layui-btn-normal" lay-filter="search"  id="btnSearch" onclick="batchChange()">批量确认</button>
         </div>
-        <div class="layui-inline">
-            <button class="layui-btn layui-btn-normal" lay-filter="search" id="" onclick="loadData()">导出</button>
+        <div class="layui-inline" style="float: right;">
+            <button class="layui-btn layui-btn-normal"  lay-filter="search" id="" onclick="downloadTemp()">导出</button>
         </div>
     </div>
 </div>
@@ -33,6 +33,38 @@
             var $ = layui.jquery;
          
             form.render();
+
+            window.batchChange = function () {
+
+                var checkStatus = table.checkStatus('testReload')
+                    , data = checkStatus.data;
+                if (data.length == 0) {
+                    layer.alert("请勾选需要确认的数据行");
+                    return;
+                }
+
+                layer.confirm('您是否确认所选变更', function (index) {
+                    var detailIds = "";
+                    for (var i = 0; i < data.length; i++) {
+                        detailIds += data[i].Id + ",";
+                    }
+                    $.ajax({
+                        url: '/CommodityCodeSelect2/DeleteChangeData?id=' + detailIds + "&" + Math.random(),
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.Success) {
+                                layer.msg("批量确认成功");
+                                loadData();
+                            } else {
+                                layer.msg("批量确认失败", { icon: 5 });
+                            }
+                        }
+                    });
+                });
+                
+                
+            }
+
             window.loadData = function () {
                 var para = "?materialTakeOffId=" + materialTakeOffId;
                 table.render({
@@ -41,6 +73,7 @@
                     , limit: 20
                     , limits: [20, 50, 100]
                     , cols: [[ //表头
+                        { type: 'checkbox' },
                         { field: 'ColumnName', title: '变更列', width: 150 },
                         { field: 'Old', title: '变更前内容', width: 150 },
                         { field: 'New', title: '变更后内容' },
@@ -94,7 +127,7 @@
             });
 
             window.downloadTemp = function() {
-                window.location.href = "/Device/DownloadTemplateFile";
+                window.location.href = "/CommodityCodeSelect2/ExportChangeData?materialTakeOffId=" + materialTakeOffId;
             }
         });
     //回车响应
